@@ -1188,3 +1188,299 @@ body {
         text-align: center;
     }
 }
+
+/* FORM STYLES - Global */
+.form-label {
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-control,
+.form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    transition: all var(--transition-speed) ease;
+    font-size: 0.95rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--orange-primary);
+    box-shadow: 0 0 0 0.2rem rgba(251, 133, 0, 0.15);
+    outline: none;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+/* IMAGE PREVIEW */
+.img-thumbnail {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 0.5rem;
+    background: white;
+    transition: all var(--transition-speed) ease;
+}
+
+.img-thumbnail:hover {
+    border-color: var(--orange-primary);
+    transform: scale(1.02);
+}
+
+/* BREADCRUMB */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+}
+
+.breadcrumb-item {
+    font-size: 0.9rem;
+}
+
+.breadcrumb-item a {
+    color: var(--orange-primary);
+    text-decoration: none;
+    transition: color var(--transition-speed) ease;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--orange-secondary);
+}
+
+.breadcrumb-item.active {
+    color: #6c757d;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: #6c757d;
+    padding: 0 0.5rem;
+}
+
+/* BUTTON GROUPS */
+.d-flex.gap-2 {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* NOTIFIKASI */
+
+.swal2-popup {
+    border-radius: 20px !important;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3) !important;
+    padding: 2rem !important;
+}
+
+.swal2-title {
+    color: var(--blue-dark) !important;
+    font-weight: 700 !important;
+    font-size: 1.75rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.swal2-html-container {
+    color: #6c757d !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+}
+
+/* Icon Warning */
+.swal2-icon.swal2-warning {
+    border-color: var(--orange-primary) !important;
+    color: var(--orange-primary) !important;
+}
+
+.swal2-icon.swal2-warning .swal2-icon-content {
+    color: var(--orange-primary) !important;
+}
+
+/* Icon Success */
+.swal2-icon.swal2-success {
+    border-color: #28a745 !important;
+}
+
+.swal2-icon.swal2-success [class^='swal2-success-line'] {
+    background-color: #28a745 !important;
+}
+
+.swal2-icon.swal2-success .swal2-success-ring {
+    border-color: rgba(40, 167, 69, 0.3) !important;
+}
+
+/* Icon Error */
+.swal2-icon.swal2-error {
+    border-color: #dc3545 !important;
+}
+
+.swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+    background-color: #dc3545 !important;
+}
+
+/* Icon Question */
+.swal2-icon.swal2-question {
+    border-color: var(--blue-light) !important;
+    color: var(--blue-light) !important;
+}
+
+/* Confirm Button - Gradient Orange */
+.swal2-confirm {
+    background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary)) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 0.75rem 2.5rem !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    box-shadow: 0 4px 15px rgba(251, 133, 0, 0.4) !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-confirm:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(251, 133, 0, 0.6) !important;
+}
+
+.swal2-confirm:focus {
+    box-shadow: 0 0 0 3px rgba(251, 133, 0, 0.3) !important;
+}
+
+/* Cancel Button - Gradient Gray */
+.swal2-cancel {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 0.75rem 2.5rem !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    box-shadow: 0 3px 10px rgba(108, 117, 125, 0.4) !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-cancel:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.6) !important;
+}
+
+.swal2-cancel:focus {
+    box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.3) !important;
+}
+
+/* Button Actions Container */
+.swal2-actions {
+    gap: 1rem !important;
+    margin-top: 1.5rem !important;
+}
+
+/* Loading State */
+.swal2-loading .swal2-confirm {
+    background: linear-gradient(135deg, rgba(251, 133, 0, 0.7), rgba(255, 183, 3, 0.7)) !important;
+}
+
+/* Backdrop */
+.swal2-container {
+    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Toast style notifikasi*/
+.swal2-toast {
+    border-radius: 15px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.swal2-toast .swal2-title {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+}
+
+/* Animasi */
+.swal2-show {
+    animation: swal2-show 0.3s !important;
+}
+
+.swal2-hide {
+    animation: swal2-hide 0.15s !important;
+}
+
+@keyframes swal2-show {
+    0% {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+    45% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    80% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes swal2-hide {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* RESPONSIVE FORM */
+@media (max-width: 768px) {
+    .form-control,
+    .form-select {
+        font-size: 0.9rem;
+        padding: 0.65rem 0.9rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .swal2-popup {
+        padding: 1.5rem !important;
+    }
+
+    .swal2-title {
+        font-size: 1.5rem !important;
+    }
+
+    .swal2-confirm,
+    .swal2-cancel {
+        padding: 0.65rem 2rem !important;
+        font-size: 0.95rem !important;
+    }
+}
