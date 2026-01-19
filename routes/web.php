@@ -1,17 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Frontend\HomeController;
-use App\Http\Controllers\Frontend\TentangPerusahaanController;
-use App\Http\Controllers\Frontend\LayananController;
-use App\Http\Controllers\Frontend\ArmadaController;
-use App\Http\Controllers\Frontend\GalleryController;
-use App\Http\Controllers\Frontend\TestimonialController;
-use App\Http\Controllers\Frontend\ArtikelController;
-use App\Http\Controllers\Frontend\PesanKontakController;
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Frontend\ArmadaController;
+use App\Http\Controllers\Frontend\ArtikelController;
+use App\Http\Controllers\Frontend\GalleryController;
+use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\LayananController;
+use App\Http\Controllers\Frontend\PesanKontakController;
+use App\Http\Controllers\Frontend\TentangPerusahaanController;
+use App\Http\Controllers\Frontend\TestimonialController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +46,7 @@ Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name(
 
 // ADMIN ROUTES
 Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
-    
+
     // Dashboard - Semua role admin
     Route::middleware('role:owner,admin-company,admin-perusahaan')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
@@ -54,7 +54,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
     // COMPANY PROFIL (OWNER & ADMIN COMPANY)
     Route::middleware('role:owner,admin-company')->group(function () {
-        
+
         // Hero Section Management
         Route::resource('hero-section', App\Http\Controllers\Admin\HeroSectionController::class)->names([
             'index' => 'hero.index',
@@ -65,11 +65,11 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
             'update' => 'hero.update',
             'destroy' => 'hero.destroy',
         ]);
-        
+
         // Tentang Perusahaan Management
         Route::get('tentang', [App\Http\Controllers\Admin\TentangPerusahaanController::class, 'index'])->name('tentang.index');
         Route::put('tentang/{id}', [App\Http\Controllers\Admin\TentangPerusahaanController::class, 'update'])->name('tentang.update');
-        
+
         // Layanan Management
         Route::resource('layanan', App\Http\Controllers\Admin\LayananController::class)->names([
             'index' => 'layanan.index',
@@ -80,7 +80,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
             'update' => 'layanan.update',
             'destroy' => 'layanan.destroy',
         ]);
-        
+
         // Armada Management
         Route::resource('armada', App\Http\Controllers\Admin\ArmadaController::class)->names([
             'index' => 'armada.index',
@@ -91,11 +91,11 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
             'update' => 'armada.update',
             'destroy' => 'armada.destroy',
         ]);
-        
+
         // Fasilitas Armada Management
         Route::post('armada/{armada}/fasilitas', [App\Http\Controllers\Admin\ArmadaController::class, 'storeFacility'])->name('armada.fasilitas.store');
         Route::delete('armada/fasilitas/{fasilitas}', [App\Http\Controllers\Admin\ArmadaController::class, 'destroyFacility'])->name('armada.fasilitas.destroy');
-        
+
         // Gallery Management
         Route::resource('gallery', App\Http\Controllers\Admin\GalleryController::class)->names([
             'index' => 'gallery.index',
@@ -106,7 +106,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
             'update' => 'gallery.update',
             'destroy' => 'gallery.destroy',
         ]);
-        
+
         // Arttikel Management
         Route::resource('artikel', App\Http\Controllers\Admin\ArtikelController::class)->names([
             'index' => 'artikel.index',
@@ -117,14 +117,14 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
             'update' => 'artikel.update',
             'destroy' => 'artikel.destroy',
         ]);
-        
+
         // Pesan Kontak Management
         Route::prefix('pesan-kontak')->name('pesan-kontak.')->group(function () {
-        Route::get('/', [App\Http\Controllers\Admin\PesanKontakController::class, 'index'])->name('index');
-        Route::get('/{id}', [App\Http\Controllers\Admin\PesanKontakController::class, 'show'])->name('show');
-        Route::post('/{id}/tandai-dibaca', [App\Http\Controllers\Admin\PesanKontakController::class, 'markAsRead'])->name('tandai-dibaca');
-        Route::delete('/{id}', [App\Http\Controllers\Admin\PesanKontakController::class, 'destroy'])->name('destroy');
-}       );
+            Route::get('/', [App\Http\Controllers\Admin\PesanKontakController::class, 'index'])->name('index');
+            Route::get('/{id}', [App\Http\Controllers\Admin\PesanKontakController::class, 'show'])->name('show');
+            Route::post('/{id}/tandai-dibaca', [App\Http\Controllers\Admin\PesanKontakController::class, 'markAsRead'])->name('tandai-dibaca');
+            Route::delete('/{id}', [App\Http\Controllers\Admin\PesanKontakController::class, 'destroy'])->name('destroy');
+        });
 
         // Pengaturan Management
         Route::prefix('pengaturan')->name('pengaturan.')->group(function () {
@@ -135,6 +135,10 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
     // USER MANAGEMENT (OWNER)
     Route::middleware('role:owner')->group(function () {
+        Route::delete('users/{user}/photo', [App\Http\Controllers\Admin\UserController::class, 'deletePhoto'])
+            ->name('users.photo.delete');
+
+        // User Resource Routes
         Route::resource('users', App\Http\Controllers\Admin\UserController::class)->names([
             'index' => 'users.index',
             'create' => 'users.create',
