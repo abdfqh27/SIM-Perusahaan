@@ -68,7 +68,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
         // Tentang Perusahaan Management
         Route::get('tentang', [App\Http\Controllers\Admin\TentangPerusahaanController::class, 'index'])->name('tentang.index');
-        Route::put('tentang/{id}', [App\Http\Controllers\Admin\TentangPerusahaanController::class, 'update'])->name('tentang.update');
+        Route::put('tentang', [App\Http\Controllers\Admin\TentangPerusahaanController::class, 'update'])->name('tentang.update');
 
         // Layanan Management
         Route::resource('layanan', App\Http\Controllers\Admin\LayananController::class)->names([
