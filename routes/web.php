@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 // HALAMAN PUBLIK
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/tentang', [TentangPerusahaanController::class, 'index'])->name('tentang');
-Route::get('/layanan', [LayannaController::class, 'index'])->name('layanan');
+Route::get('/layanan', [LayananController::class, 'index'])->name('layanan');
 Route::get('/layanan/{slug}', [LayananController::class, 'show'])->name('layanan.detail');
 Route::get('/armada', [ArmadaController::class, 'index'])->name('armada');
 Route::get('/armada/{slug}', [ArmadaController::class, 'show'])->name('armada.detail');

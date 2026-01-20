@@ -12,6 +12,7 @@ class LayananController extends Controller
     public function index()
     {
         $layanans = Layanan::orderBy('urutan')->get();
+
         return view('admin.layanan.index', compact('layanans'));
     }
 
@@ -32,7 +33,7 @@ class LayananController extends Controller
             'harga' => 'nullable|numeric|min:0',
             'urutan' => 'required|integer|min:0',
             'unggulan' => 'boolean',
-            'aktif' => 'boolean'
+            'aktif' => 'boolean',
         ]);
 
         $validated['slug'] = Str::slug($validated['nama']);
@@ -69,15 +70,15 @@ class LayananController extends Controller
             'harga' => 'nullable|numeric|min:0',
             'urutan' => 'required|integer|min:0',
             'unggulan' => 'boolean',
-            'aktif' => 'boolean'
+            'aktif' => 'boolean',
         ]);
 
         $validated['slug'] = Str::slug($validated['nama']);
 
         if ($request->hasFile('gambar')) {
             $validated['gambar'] = $this->uploadImage(
-                $request->file('gambar'), 
-                'layanan', 
+                $request->file('gambar'),
+                'layanan',
                 $layanan->gambar
             );
         }
