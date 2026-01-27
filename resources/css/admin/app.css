@@ -1,6 +1,7 @@
 @import '../../css/app.css';
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -8,7 +9,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-primary);
     overflow-x: hidden;
     background: #f8f9fa;
 }
@@ -235,11 +236,38 @@ body {
 
 /* Sidebar Footer */
 .sidebar-footer {
-    padding: 1rem 1.5rem;
+    padding: 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.2);
     margin-top: auto;
     flex-shrink: 0;
+}
+
+.user-info-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition-speed) ease;
+    padding: 1rem 1.5rem;
+}
+
+.user-info-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: inherit;
+}
+
+.user-info-link:hover .user-avatar {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(33, 158, 188, 0.5);
+}
+
+.user-info-link:hover .user-name {
+    color: var(--orange-secondary);
+}
+
+.user-info-link:hover .user-action i {
+    transform: translateX(3px);
+    color: var(--orange-secondary);
 }
 
 .user-info {
@@ -259,10 +287,33 @@ body {
     justify-content: center;
     font-size: 1.8rem;
     box-shadow: 0 2px 10px rgba(33, 158, 188, 0.3);
+    transition: all var(--transition-speed) ease;
+    overflow: hidden;
+    position: relative;
 }
 
 .user-avatar i {
     color: white;
+}
+
+.user-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.user-avatar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(251, 133, 0, 0.2), transparent);
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.user-info-link:hover .user-avatar::after {
+    opacity: 1;
 }
 
 .user-details {
@@ -282,6 +333,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+    transition: color var(--transition-speed) ease;
 }
 
 .user-role {
@@ -294,6 +346,103 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.user-action {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all var(--transition-speed) ease;
+}
+
+.user-action i {
+    font-size: 0.85rem;
+    transition: all var(--transition-speed) ease;
+}
+
+/* Hover effect untuk keseluruhan area */
+.user-info-link {
+    position: relative;
+}
+
+.user-info-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 0;
+    background: linear-gradient(180deg, var(--orange-primary), var(--orange-secondary));
+    transition: height var(--transition-speed) ease;
+}
+
+.user-info-link:hover::before {
+    height: 100%;
+}
+
+/* Responsive untuk mobile */
+@media (max-width: 768px) {
+    .sidebar-footer {
+        padding: 0;
+    }
+
+    .user-info-link {
+        padding: 1rem;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+
+    .user-name {
+        font-size: 0.85rem;
+    }
+
+    .user-role {
+        font-size: 0.7rem;
+    }
+}
+
+/* Animation ketika sidebar dibuka */
+@keyframes fadeInProfile {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-sidebar.active .sidebar-footer {
+    animation: fadeInProfile 0.3s ease 0.2s both;
+}
+
+/* Status indicator (optional - bisa digunakan untuk online status) */
+.user-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    background: #28a745;
+    border: 2px solid var(--blue-dark);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.user-info-link:hover .user-avatar::after {
+    opacity: 1;
 }
 
 /* MAIN CONTENT */
@@ -526,8 +675,7 @@ body {
 
 /* PAGE HEADER SECTION */
 .page-header,
-.dashboard-header,
-.hero-header {
+.dashboard-header {
     background: white;
     border-radius: 15px;
     padding: 1.5rem 2rem;
@@ -540,36 +688,109 @@ body {
     gap: 1rem;
 }
 
+/* Gradient Header - Universal untuk semua halaman */
+.gradient-header,
+.welcome-card {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(1, 55, 83, 0.2);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: white;
+}
+
+.gradient-header::before,
+.welcome-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 183, 3, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
 .header-left,
-.header-content,
-.hero-header-left {
+.header-content {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    position: relative;
+    z-index: 1;
 }
 
-.header-icon,
-.hero-icon-wrapper {
+.welcome-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Button Kembali */
+.btn-back {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateX(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    color: white;
+}
+
+.btn-back:active {
+    transform: translateX(-2px) scale(0.95);
+}
+
+.btn-back i {
+    transition: transform 0.3s ease;
+}
+
+.btn-back:hover i {
+    transform: translateX(-2px);
+}
+
+.header-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
     border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 5px 15px rgba(251, 133, 0, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     flex-shrink: 0;
 }
 
-.header-icon i,
-.hero-icon-wrapper i {
+.header-icon i {
     font-size: 1.8rem;
     color: white;
 }
 
 .page-title,
-.dashboard-title,
-.hero-title {
+.dashboard-title {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--blue-dark);
@@ -577,12 +798,25 @@ body {
     line-height: 1.2;
 }
 
+.header-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+}
+
 .page-subtitle,
-.dashboard-subtitle,
-.hero-subtitle {
+.dashboard-subtitle {
     font-size: 0.95rem;
     color: #6c757d;
     margin: 0.25rem 0 0 0;
+}
+
+.header-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
 }
 
 .header-actions,
@@ -590,6 +824,85 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+/* Responsive untuk button kembali */
+@media (max-width: 768px) {
+    .btn-back {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+}
+
+/* Button Action di Header */
+.btn-header-action {
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-header-action i {
+    font-size: 1rem;
+}
+
+.btn-edit {
+    background: rgba(255, 193, 7, 0.9);
+    color: white;
+}
+
+.btn-edit:hover {
+    background: rgba(255, 193, 7, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+    color: white;
+}
+
+.btn-delete {
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+}
+
+.btn-delete:hover {
+    background: rgba(220, 53, 69, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .btn-header-action span {
+        display: none;
+    }
+
+    .btn-header-action {
+        padding: 0.6rem;
+        width: 40px;
+        height: 40px;
+        justify-content: center;
+    }
+}
+
+/* Welcome Time */
+.welcome-time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    opacity: 0.9;
 }
 
 /* Refresh Button */
@@ -619,7 +932,7 @@ body {
     background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
     border: none;
     color: white;
-    padding: 0.6rem 1.5rem;
+    padding: 0.7rem 2rem;
     border-radius: 10px;
     font-weight: 600;
     cursor: pointer;
@@ -628,13 +941,15 @@ body {
     align-items: center;
     gap: 0.5rem;
     text-decoration: none;
-    box-shadow: 0 4px 15px rgba(251, 133, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(251, 133, 0, 0.4);
+    position: relative;
+    z-index: 10;
 }
 
 .btn-hero-add:hover,
 .btn-add:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(251, 133, 0, 0.5);
+    box-shadow: 0 6px 20px rgba(251, 133, 0, 0.6);
     color: white;
 }
 
@@ -837,6 +1152,7 @@ body {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -890,6 +1206,7 @@ body {
     width: 100%;
     margin-bottom: 0;
 }
+
 .table thead th {
     background: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
     color: white;
@@ -978,6 +1295,7 @@ body {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -988,6 +1306,7 @@ body {
         transform: translateX(-20px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -1280,7 +1599,7 @@ body {
     color: #6c757d;
 }
 
-.breadcrumb-item + .breadcrumb-item::before {
+.breadcrumb-item+.breadcrumb-item::before {
     content: "›";
     color: #6c757d;
     padding: 0 0.5rem;
@@ -1435,13 +1754,16 @@ body {
         transform: scale(0.7);
         opacity: 0;
     }
+
     45% {
         transform: scale(1.05);
         opacity: 1;
     }
+
     80% {
         transform: scale(0.95);
     }
+
     100% {
         transform: scale(1);
     }
@@ -1452,6 +1774,7 @@ body {
         transform: scale(1);
         opacity: 1;
     }
+
     100% {
         transform: scale(0.5);
         opacity: 0;
@@ -1460,6 +1783,7 @@ body {
 
 /* RESPONSIVE FORM */
 @media (max-width: 768px) {
+
     .form-control,
     .form-select {
         font-size: 0.9rem;

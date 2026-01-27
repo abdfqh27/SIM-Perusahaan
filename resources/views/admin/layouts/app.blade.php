@@ -105,6 +105,46 @@
                     </a>
                 </div>
                 @endif
+
+                <!-- Operasional - Owner & Admin Perusahaan -->
+                @if(auth()->user()->role && in_array(auth()->user()->role->slug, ['owner', 'admin-perusahaan']))
+                <div class="menu-section">
+                    <div class="menu-section-title">
+                        <i class="fas fa-cogs"></i>
+                        <span>Operasional</span>
+                    </div>
+                    <a href="{{ route('admin.operasional.kategori-bus.index') }}" class="menu-item {{ request()->routeIs('admin.operasional.kategori-bus.*') ? 'active' : '' }}">
+                        <i class="fas fa-tags"></i>
+                        <span>Kategori Bus</span>
+                    </a>
+                    <a href="{{ route('admin.operasional.sopir.index') }}" class="menu-item {{ request()->routeIs('admin.operasional.sopir.*') ? 'active' : '' }}">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Sopir</span>
+                    </a>
+                    <a href="{{ route('admin.operasional.bus.index') }}" class="menu-item {{ request()->routeIs('admin.operasional.bus.*') ? 'active' : '' }}">
+                        <i class="fas fa-bus-alt"></i>
+                        <span>Bus</span>
+                    </a>
+                    <a href="{{ route('admin.operasional.booking.index') }}" class="menu-item {{ request()->routeIs('admin.operasional.booking.*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Booking / Pesanan</span>
+                    </a>
+                </div>
+                @endif
+
+                <!-- Laporan - Hanya Owner -->
+                @if(auth()->user()->role && auth()->user()->role->slug === 'owner')
+                <div class="menu-section">
+                    <div class="menu-section-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Laporan</span>
+                    </div>
+                    <a href="{{ route('admin.laporan.index') }}" class="menu-item {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Laporan & Analisis</span>
+                    </a>
+                </div>
+                @endif
                 
                 <!-- Pengaturan Sistem -->
                 @if(auth()->user()->role && in_array(auth()->user()->role->slug, ['owner', 'admin-company']))
@@ -127,16 +167,28 @@
                 @endif
             </div>
 
+            <!-- Sidebar Footer -->
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar">
-                        <i class="fas fa-user-circle"></i>
+                <a href="{{ route('admin.profile.show') }}" class="user-info-link">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            @if(auth()->user()->profile_photo)
+                                <img src="{{ asset('storage/' . auth()->user()->profile_photo) }}" 
+                                    alt="{{ auth()->user()->name }}" 
+                                    class="user-avatar-img">
+                            @else
+                                <i class="fas fa-user-circle"></i>
+                            @endif
+                        </div>
+                        <div class="user-details">
+                            <p class="user-name" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</p>
+                            <p class="user-role">{{ auth()->user()->role ? auth()->user()->role->nama : 'User' }}</p>
+                        </div>
+                        <div class="user-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
                     </div>
-                    <div class="user-details">
-                        <p class="user-name" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</p>
-                        <p class="user-role">{{ auth()->user()->role ? auth()->user()->role->nama : 'User' }}</p>
-                    </div>
-                </div>
+                </a>
             </div>
         </aside>
 
