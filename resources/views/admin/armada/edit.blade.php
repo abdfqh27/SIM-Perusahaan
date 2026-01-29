@@ -359,26 +359,31 @@
 }
 </style>
 
-<div class="armada-edit">
-    <!-- Halaman Header -->
-    <div class="page-header">
-        <div class="header-content">
-            <div class="header-left">
-                <a href="{{ route('admin.armada.index') }}" class="btn-back">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
+    <!-- Header Section -->
+    <div class="gradient-header">
+        <div class="header-left">
+            <a href="{{ route('admin.armada.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
                 <div>
-                    <h1 class="page-title">
-                        <i class="fas fa-edit"></i>
+                    <h2 class="Header-title">
                         Edit Armada: {{ $armada->nama }}
-                    </h1>
+                    </h2>
                     <p class="page-subtitle">Update informasi armada bus</p>
                 </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.armada.index') }}">Armada</a></li>
+                        <li class="breadcrumb-item active">Edit</li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
 
-    <form action="{{ route('admin.armada.update', $armada->id) }}" method="POST" enctype="multipart/form-data">
+    <form id="armadaEditForm" action="{{ route('admin.armada.update', $armada->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         
@@ -669,7 +674,7 @@
 <div class="modal fade" id="addFasilitasModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{ route('admin.armada.fasilitas.store', $armada->id) }}" method="POST">
+            <form id="armadaEditForm" action="{{ route('admin.armada.fasilitas.store', $armada->id) }}" method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">
@@ -719,6 +724,8 @@
 </div>
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 // Preview Gambar Utama
 document.getElementById('gambar_utama').addEventListener('change', function(e) {
@@ -778,6 +785,44 @@ function removeGalleryItem(btn) {
         document.getElementById('galeri').value = '';
     }
 }
+
+// SUBMIT FORM DENGAN KONFIRMASI
+document.getElementById('armadaEditForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // VALIDASI URUTAN TERLEBIH DAHULU
+    if (!validateUrutan()) {
+        return; // Jangan lanjut jika validasi gagal
+    }
+    
+    // Jika validasi lolos, tampilkan konfirmasi
+    Swal.fire({
+        title: 'Konfirmasi Update',
+        html: 'Apakah Anda yakin ingin mengupdate data armada ini?<br><small class="text-muted">Pastikan semua perubahan sudah benar sebelum menyimpan.</small>',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-check"></i> Ya, Update',
+        cancelButtonText: '<i class="fas fa-times"></i> Batal',
+        reverseButtons: true,
+        focusCancel: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Menampilkan indikator loading
+            Swal.fire({
+                title: 'Mengupdate Data...',
+                html: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Mengirim form
+            this.submit();
+        }
+    });
+});
 </script>
 @endpush
 @endsection

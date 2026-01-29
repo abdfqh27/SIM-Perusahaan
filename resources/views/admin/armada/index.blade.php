@@ -326,23 +326,26 @@
 }
 </style>
 
-<div class="armada-manajemen">
-    <div class="page-header">
-        <div class="header-left">
-            <div class="header-icon">
-                <i class="fas fa-bus"></i>
-            </div>
-            <div>
-                <h2 class="page-title">Manajemen Armada</h2>
-                <p class="page-subtitle">Kelola armada bus perusahaan Anda</p>
-            </div>
+<!-- Header Section -->
+<div class="gradient-header">
+    <div class="header-left">
+        <div class="header-icon">
+            <i class="fas fa-bus"></i>
         </div>
-        <div class="header-actions">
-            <a href="{{ route('admin.armada.create') }}" class="btn-primary">
-                <i class="fas fa-plus"></i>
-                <span>Tambah Armada</span>
-            </a>
+        <div>
+            <h2 class="header-title">Manajemen Armada</h2>
+            <p class="header-subtitle">Kelola Daftar Armada Anda</p>
         </div>
+    </div>
+    <div class="header-actions">
+        <button class="btn-refresh" onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+        </button>
+        <a href="{{ route('admin.armada.create') }}" class="btn-add">
+            <i class="fas fa-plus"></i>
+            <span>Tambah Pesanan</span>
+        </a>
     </div>
 </div>
 

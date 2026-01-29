@@ -396,20 +396,24 @@
 }
 </style>
 <div class="armada-create">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="header-content">
-            <div class="header-left">
-                <a href="{{ route('admin.armada.index') }}" class="btn-back">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <div>
-                    <h1 class="page-title">
-                        <i class="fas fa-plus-circle"></i>
-                        Tambah Armada Baru
-                    </h1>
-                    <p class="page-subtitle">Lengkapi informasi armada bus</p>
-                </div>
+    <!-- Header Section -->
+    <div class="gradient-header">
+        <div class="header-left">
+            <a href="{{ route('admin.armada.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="header-icon">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            <div>
+                <h2 class="header-title">Tambah armada</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.armada.index') }}">Armada</a></li>
+                        <li class="breadcrumb-item active">Tambah</li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
