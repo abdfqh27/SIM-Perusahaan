@@ -215,15 +215,15 @@
 
 <div class="tentang-admin-container">
     {{-- Bagian Header --}}
-    <div class="page-header">
-        <div class="header-content">
-            <h1 class="page-title">
-                <i class="fas fa-building"></i>
-                Tentang Perusahaan
-            </h1>
-            <p class="page-subtitle">
-                Kelola Informasi profil perusahaan
-            </p>
+    <div class="gradient-header">
+        <div class="header-left">
+            <div class="header-icon">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div>
+                <h2 class="header-title">Tentang Kami</h2>
+                <p class="header-subtitle">Informasi tentang perusahaan</p>
+            </div>
         </div>
     </div>
 

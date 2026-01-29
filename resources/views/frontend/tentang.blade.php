@@ -2,7 +2,7 @@
 
 @section('title', 'Tentang Kami')
 
-@section('content')
+@push('styles')
 <style>
     .tentang-section {
         padding: 80px 0;
@@ -117,7 +117,7 @@
         color: #adb5bd;
     }
     
-    /* Visi Misi Cards */
+    /* Visi Misi Card */
     .visi-misi-card {
         background: white;
         border-radius: 20px;
@@ -368,6 +368,185 @@
         }
     }
     
+    /* CTA Section */
+    .tentang-cta {
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--blue-dark) 0%, #023d54 100%);
+    }
+    
+    .cta-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(251, 133, 0, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(33, 158, 188, 0.1) 0%, transparent 50%);
+        z-index: 0;
+    }
+    
+    .cta-background::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background-image: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 50px,
+            rgba(255, 255, 255, 0.03) 50px,
+            rgba(255, 255, 255, 0.03) 51px
+        );
+        animation: slide 20s linear infinite;
+    }
+    
+    @keyframes slide {
+        0% {
+            transform: translate(0, 0);
+        }
+        100% {
+            transform: translate(50px, 50px);
+        }
+    }
+    
+    .cta-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 30px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .cta-icon {
+        width: 100px;
+        height: 100px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
+        border-radius: 50%;
+        font-size: 3rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 15px 40px rgba(251, 133, 0, 0.4);
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+    
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .cta-text {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 2.5rem;
+        line-height: 1.8;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-cta-primary,
+    .btn-cta-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-cta-primary {
+        background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
+        color: white;
+        box-shadow: 0 8px 25px rgba(251, 133, 0, 0.4);
+    }
+    
+    .btn-cta-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(251, 133, 0, 0.5);
+        color: white;
+    }
+    
+    .btn-cta-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+    
+    .btn-cta-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-3px);
+        color: white;
+    }
+    
+    .btn-cta-primary::before,
+    .btn-cta-secondary::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+    
+    .btn-cta-primary:hover::before,
+    .btn-cta-secondary:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .btn-cta-primary i,
+    .btn-cta-secondary i {
+        font-size: 1.2rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .btn-cta-primary span,
+    .btn-cta-secondary span {
+        position: relative;
+        z-index: 1;
+    }
+    
     /* Responsive */
     @media (max-width: 991px) {
         .section-title {
@@ -376,6 +555,14 @@
         
         .image-wrapper {
             margin-top: 2rem;
+        }
+        
+        .cta-title {
+            font-size: 2rem;
+        }
+        
+        .cta-text {
+            font-size: 1.1rem;
         }
     }
     
@@ -393,8 +580,40 @@
         .pengalaman-card {
             padding: 2rem;
         }
+        
+        .tentang-cta {
+            padding: 60px 0;
+        }
+        
+        .cta-content {
+            padding: 2rem;
+        }
+        
+        .cta-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 2.5rem;
+        }
+        
+        .cta-title {
+            font-size: 1.75rem;
+        }
+        
+        .cta-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .btn-cta-primary,
+        .btn-cta-secondary {
+            width: 100%;
+            justify-content: center;
+        }
     }
-    </style>
+</style>
+@endpush
+
+@section('content')
 <div class="tentang-page">
     <section class="hero-section">
         <div class="hero-overlay"></div>
@@ -594,7 +813,7 @@
                 <h2 class="cta-title">Mari Berkembang Bersama</h2>
                 <p class="cta-text">Bergabunglah dengan kami dalam perjalanan menuju kesuksesan yang berkelanjutan</p>
                 <div class="cta-buttons">
-                    <a href="{{ url('/contact') }}" class="btn btn-cta-primary">
+                    <a href="{{ route('kontak') }}" class="btn btn-cta-primary">
                         <i class="fas fa-envelope"></i>
                         <span>Hubungi Kami</span>
                     </a>
