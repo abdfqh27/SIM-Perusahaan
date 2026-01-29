@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('tombol_text')->nullable();
             $table->string('tombol_link')->nullable();
             $table->string('gambar')->nullable();
-            $table->integer('urutan')->default(0);
+            $table->integer('urutan')->default(0)->unique();
             $table->boolean('aktif')->default(true);
             $table->timestamps();
         });

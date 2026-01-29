@@ -488,20 +488,26 @@
 </style>
 
 <!-- Header Section -->
-<div class="hero-header">
-    <div class="hero-header-left">
-        <div class="hero-icon-wrapper">
+<div class="gradient-header">
+    <div class="header-left">
+        <div class="header-icon">
             <i class="fas fa-images"></i>
         </div>
         <div>
-            <h2 class="hero-title">Hero Section</h2>
-            <p class="hero-subtitle">Kelola konten hero section website Anda</p>
+            <h2 class="header-title">Hero Section</h2>
+            <p class="header-subtitle">Kelola konten hero section website Anda</p>
         </div>
     </div>
-    <a href="{{ route('admin.hero.create') }}" class="btn-hero-add">
-        <i class="fas fa-plus"></i>
-        <span>Tambah Hero Section</span>
-    </a>
+    <div class="header-actions">
+        <button class="btn-refresh" onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+        </button>
+        <a href="{{ route('admin.hero.create') }}" class="btn-add">
+            <i class="fas fa-plus"></i>
+            <span>Tambah Hero Section</span>
+        </a>
+    </div>
 </div>
 
 <!-- Alert -->
@@ -615,7 +621,6 @@
                 <form action="{{ route('admin.hero.destroy', $hero) }}" 
                       method="POST" 
                       class="hero-form-inline"
-                      onsubmit="return confirm('Yakin ingin menghapus hero section ini?')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="hero-btn hero-btn-delete" title="Hapus">
@@ -640,7 +645,43 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle delete konfirmasi
+        const deleteForms = document.querySelectorAll('.hero-form-inline');
+        
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data user akan dihapus permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+        
+        // Auto hide alerts
+        const alerts = document.querySelectorAll('.alert-success, .alert-danger');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }, 5000);
+        });
+    });
+
 // Fungsi Untuk pencarian
 document.getElementById('searchInput')?.addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();

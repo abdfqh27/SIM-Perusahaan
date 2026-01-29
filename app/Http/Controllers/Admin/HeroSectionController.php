@@ -11,6 +11,7 @@ class HeroSectionController extends Controller
     public function index()
     {
         $heroes = HeroSection::orderBy('urutan')->get();
+
         return view('admin.hero.index', compact('heroes'));
     }
 
@@ -26,9 +27,15 @@ class HeroSectionController extends Controller
             'deskripsi' => 'nullable|string',
             'tombol_text' => 'nullable|string|max:100',
             'tombol_link' => 'nullable|string|max:255',
-            'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:10240', // 10MB
-            'urutan' => 'required|integer|min:0',
-            'aktif' => 'boolean'
+            'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:10240',
+            'urutan' => 'required|integer|min:1|unique:hero_section,urutan',
+            'aktif' => 'boolean',
+        ], [
+            // CUSTOM ERROR MESSAGES
+            'urutan.required' => 'Urutan harus diisi.',
+            'urutan.integer' => 'Urutan harus berupa angka.',
+            'urutan.min' => 'Urutan minimal dimulai dari 1.',
+            'urutan.unique' => 'Urutan :input sudah digunakan. Silakan pilih urutan yang berbeda.',
         ]);
 
         if ($request->hasFile('gambar')) {
@@ -59,14 +66,20 @@ class HeroSectionController extends Controller
             'tombol_text' => 'nullable|string|max:100',
             'tombol_link' => 'nullable|string|max:255',
             'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:10240',
-            'urutan' => 'required|integer|min:0',
-            'aktif' => 'boolean'
+            'urutan' => 'required|integer|min:1|unique:hero_section,urutan,'.$heroSection->id,
+            'aktif' => 'boolean',
+        ], [
+            // CUSTOM ERROR MESSAGES
+            'urutan.required' => 'Urutan harus diisi.',
+            'urutan.integer' => 'Urutan harus berupa angka.',
+            'urutan.min' => 'Urutan minimal dimulai dari 1.',
+            'urutan.unique' => 'Urutan :input sudah digunakan oleh hero section lain. Silakan pilih urutan yang berbeda.',
         ]);
 
         if ($request->hasFile('gambar')) {
             $validated['gambar'] = $this->uploadImage(
-                $request->file('gambar'), 
-                'hero', 
+                $request->file('gambar'),
+                'hero',
                 $heroSection->gambar
             );
         }

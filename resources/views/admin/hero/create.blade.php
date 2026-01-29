@@ -68,23 +68,27 @@
     }
 </style>
 
-<div class="page-header mb-4">
-    <div class="header-left">
-        <div class="header-icon">
-            <i class="fas fa-plus-circle"></i>
-        </div>
-        <div>
-            <h2 class="page-title mb-0">Tambah Hero Section</h2>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('admin.hero.index') }}">Hero Section</a></li>
-                    <li class="breadcrumb-item active">Tambah</li>
-                </ol>
-            </nav>
+<!-- Header Section -->
+    <div class="gradient-header">
+        <div class="header-left">
+            <a href="{{ route('admin.hero.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="header-icon">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            <div>
+                <h2 class="header-title">Tambah Hero Section</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.hero.index') }}">Hero Section</a></li>
+                        <li class="breadcrumb-item active">Tambah</li>
+                    </ol>
+                </nav>
+            </div>
         </div>
     </div>
-</div>
 
 <div class="card create-hero-card">
     <div class="card-header">
@@ -203,14 +207,14 @@
                     <div class="col-md-6 mb-3">
                         <label for="urutan" class="form-label">Urutan Tampilan <span class="text-danger">*</span></label>
                         <input type="number" 
-                               class="form-control @error('urutan') is-invalid @enderror" 
-                               id="urutan" 
-                               name="urutan" 
-                               value="{{ old('urutan', 0) }}" 
-                               min="0"
-                               placeholder="0"
-                               required>
-                        <small class="text-muted">Semakin kecil angka, semakin awal ditampilkan</small>
+                            class="form-control @error('urutan') is-invalid @enderror" 
+                            id="urutan" 
+                            name="urutan" 
+                            value="{{ old('urutan', 1) }}" 
+                            min="1"
+                            placeholder="1"
+                            required>
+                        <small class="text-muted">Urutan dimulai dari 1. Semakin kecil angka, semakin awal ditampilkan</small>
                         @error('urutan')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -300,10 +304,60 @@ function previewImage(event) {
     }
 }
 
+// VALIDASI URUTAN SEBELUM SUBMIT
+function validateUrutan() {
+    const urutanInput = document.getElementById('urutan');
+    const urutanValue = parseInt(urutanInput.value);
+    
+    // Cek apakah kosong
+    if (!urutanInput.value || urutanInput.value.trim() === '') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Urutan Belum Diisi',
+            text: 'Silakan isi urutan terlebih dahulu',
+            confirmButtonText: 'OK'
+        });
+        urutanInput.focus();
+        return false;
+    }
+    
+    // Cek apakah angka valid
+    if (isNaN(urutanValue)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Format Urutan Tidak Valid',
+            text: 'Urutan harus berupa angka',
+            confirmButtonText: 'OK'
+        });
+        urutanInput.focus();
+        return false;
+    }
+    
+    // Cek apakah kurang dari 1
+    if (urutanValue < 1) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Urutan Tidak Valid',
+            text: 'Urutan minimal dimulai dari angka 1',
+            confirmButtonText: 'OK'
+        });
+        urutanInput.focus();
+        return false;
+    }
+    
+    return true;
+}
+
 // SUBMIT FORM DENGAN KONFIRMASI
 document.getElementById('heroForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
+    // VALIDASI URUTAN TERLEBIH DAHULU
+    if (!validateUrutan()) {
+        return; // Jangan lanjut jika validasi gagal
+    }
+    
+    // Jika validasi lolos, tampilkan konfirmasi
     Swal.fire({
         title: 'Konfirmasi Penyimpanan',
         html: 'Apakah Anda yakin ingin menyimpan data hero section ini?<br><small class="text-muted">Pastikan semua data sudah benar sebelum menyimpan.</small>',
@@ -330,6 +384,29 @@ document.getElementById('heroForm').addEventListener('submit', function(e) {
             this.submit();
         }
     });
+});
+
+// VALIDASI REAL-TIME SAAT INPUT URUTAN
+document.getElementById('urutan').addEventListener('input', function(e) {
+    const value = parseInt(e.target.value);
+    
+    if (e.target.value && value < 1) {
+        e.target.classList.add('is-invalid');
+        // Tambahkan pesan error jika belum ada
+        if (!e.target.nextElementSibling || !e.target.nextElementSibling.classList.contains('invalid-feedback')) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback d-block';
+            errorDiv.textContent = 'Urutan minimal dimulai dari 1';
+            e.target.parentNode.appendChild(errorDiv);
+        }
+    } else {
+        e.target.classList.remove('is-invalid');
+        // Hapus pesan error jika ada
+        const errorDiv = e.target.parentNode.querySelector('.invalid-feedback');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+    }
 });
 </script>
 @endpush
