@@ -91,14 +91,25 @@
 
 <div class="container-fluid">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center page-header-custom">
-        <div>
-            <h2>Edit Artikel</h2>
-            <p>Perbarui informasi artikel</p>
+    <div class="gradient-header">
+        <div class="header-left">
+            <a href="{{ route('admin.artikel.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="header-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+            <div>
+                <h2 class="header-title">Edit artikel</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.artikel.index') }}">Artikel</a></li>
+                        <li class="breadcrumb-item active">Edit</li>
+                    </ol>
+                </nav>
+            </div>
         </div>
-        <a href="{{ route('admin.artikel.index') }}" class="btn btn-outline-primary">
-            <i class="fas fa-arrow-left me-2"></i>Kembali
-        </a>
     </div>
 
     <form action="{{ route('admin.artikel.update', $artikel) }}" method="POST" enctype="multipart/form-data">

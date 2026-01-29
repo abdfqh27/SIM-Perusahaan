@@ -85,15 +85,26 @@
 </style>
 
 <div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center page-header-custom">
-        <div>
-            <h2>Tambah Artikel Baru</h2>
-            <p>Buat artikel baru untuk website Anda</p>
+    <!-- Header Section -->
+    <div class="gradient-header">
+        <div class="header-left">
+            <a href="{{ route('admin.artikel.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="header-icon">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            <div>
+                <h2 class="header-title">Tambah artikel</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.artikel.index') }}">Artikel</a></li>
+                        <li class="breadcrumb-item active">Tambah</li>
+                    </ol>
+                </nav>
+            </div>
         </div>
-        <a href="{{ route('admin.artikel.index') }}" class="btn btn-outline-primary">
-            <i class="fas fa-arrow-left me-2"></i>Kembali
-        </a>
     </div>
 
     <form action="{{ route('admin.artikel.store') }}" method="POST" enctype="multipart/form-data">
@@ -273,7 +284,7 @@
 
                 <!-- Action Buttons -->
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary btn-lg btn-lg-custom">
+                    <button type="submit" class="btn btn-primary btn-lg btn-lg-custom d-flex align-items-center justify-content-center">
                         <i class="fas fa-save me-2"></i>Simpan Artikel
                     </button>
                     <a href="{{ route('admin.artikel.index') }}" class="btn btn-outline-secondary">

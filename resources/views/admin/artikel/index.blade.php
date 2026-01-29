@@ -154,18 +154,22 @@
     </div>
     @endif
 
-    <!-- Page Header -->
-    <div class="page-header">
+    <!-- Header Section -->
+    <div class="gradient-header">
         <div class="header-left">
             <div class="header-icon">
-                <i class="fas fa-newspaper"></i>
+                <i class="fas fa-file-alt"></i>
             </div>
             <div>
-                <h2 class="page-title">Manajemen Artikel</h2>
-                <p class="page-subtitle">Kelola semua artikel website Anda</p>
+                <h2 class="header-title">Manajemen Artikel</h2>
+                <p class="header-subtitle">Kelola Artikel Website</p>
             </div>
         </div>
         <div class="header-actions">
+            <button class="btn-refresh" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i>
+                <span>Refresh</span>
+            </button>
             <a href="{{ route('admin.artikel.create') }}" class="btn-add">
                 <i class="fas fa-plus"></i>
                 <span>Tambah Artikel</span>
