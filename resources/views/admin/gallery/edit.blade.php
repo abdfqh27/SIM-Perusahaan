@@ -411,17 +411,23 @@
 </style>
 <div class="form-container">
     <!-- Header -->
-    <div class="form-header">
+    <div class="gradient-header">
         <div class="header-left">
             <a href="{{ route('admin.gallery.index') }}" class="btn-back">
                 <i class="fas fa-arrow-left"></i>
             </a>
+            <div class="header-icon">
+                <i class="fas fa-edit"></i>
+            </div>
             <div>
-                <h2 class="page-title">
-                    <i class="fas fa-edit"></i>
-                    Edit Galeri
-                </h2>
-                <p class="page-subtitle">Perbarui informasi dan foto galeri</p>
+                <h2 class="header-title">Edit gallery</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.gallery.index') }}">gallery</a></li>
+                        <li class="breadcrumb-item active">Edit</li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>

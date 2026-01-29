@@ -391,20 +391,26 @@
         }
     }
 </style>
-<div class="page-header">
+
+<!-- Header Section -->
+<div class="gradient-header">
     <div class="header-left">
         <div class="header-icon">
             <i class="fas fa-images"></i>
         </div>
         <div>
-            <h2 class="page-title">Manajemen Galeri</h2>
-            <p class="page-subtitle">Kelola foto dan dokumentasi perusahaan</p>
+            <h2 class="header-title">Manajemen Gallery</h2>
+            <p class="header-subtitle">Kelola Foto dan Dokumentasi Perusahaan</p>
         </div>
     </div>
     <div class="header-actions">
-        <a href="{{ route('admin.gallery.create') }}" class="btn-primary">
-            <i class="fas fa-plus-circle"></i>
-            <span>Tambah Galeri</span>
+        <button class="btn-refresh" onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+        </button>
+        <a href="{{ route('admin.gallery.create') }}" class="btn-add">
+            <i class="fas fa-plus"></i>
+            <span>Tambah Gallery</span>
         </a>
     </div>
 </div>
