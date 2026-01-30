@@ -90,28 +90,82 @@
     .preview-label i {
         font-size: 1.1rem;
     }
+    
+    .urutan-info-box {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border: 2px solid var(--blue-light);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .urutan-current {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--blue-dark);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+    
+    .hero-option {
+        padding: 0.5rem;
+        border-left: 3px solid transparent;
+    }
+    
+    .hero-option.current {
+        background: #e3f2fd;
+        border-left-color: var(--blue-light);
+        font-weight: 600;
+    }
+    
+    .hero-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 0.5rem;
+    }
+    
+    .hero-badge.current {
+        background: var(--blue-light);
+        color: white;
+    }
+    
+    .hero-badge.active {
+        background: #4caf50;
+        color: white;
+    }
+    
+    .hero-badge.inactive {
+        background: #9e9e9e;
+        color: white;
+    }
 </style>
 
 <div class="gradient-header">
-        <div class="header-left">
-            <a href="{{ route('admin.hero.index') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i>
-            </a>
-            <div class="header-icon">
-                <i class="fas fa-plus-circle"></i>
-            </div>
-            <div>
-                <h2 class="header-title">Tambah Hero Section</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('admin.hero.index') }}">Hero Section</a></li>
-                        <li class="breadcrumb-item active">Tambah</li>
-                    </ol>
-                </nav>
-            </div>
+    <div class="header-left">
+        <a href="{{ route('admin.hero.index') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-icon">
+            <i class="fas fa-edit"></i>
+        </div>
+        <div>
+            <h2 class="header-title">Edit Hero Section</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.hero.index') }}">Hero Section</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </nav>
         </div>
     </div>
+</div>
 
 <div class="card edit-hero-card">
     <div class="card-header">
@@ -240,42 +294,86 @@
                 </div>
             </div>
 
-            <!-- Pengaturan -->
+            <!-- Pengaturan Urutan dengan Dropdown -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-sort"></i>
+                    <span>Urutan Tampilan</span>
+                </div>
+                
+                <div class="urutan-info-box">
+                    <div class="d-flex align-items-center mb-2">
+                        <span style="font-weight: 500; color: var(--blue-dark);">Urutan Saat Ini:</span>
+                        <span class="urutan-current ms-2">
+                            <i class="fas fa-hashtag"></i>
+                            {{ $heroSection->urutan }}
+                        </span>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        Pilih hero mana yang ingin ditukar urutannya
+                    </small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="urutan" class="form-label">Tukar Urutan Dengan <span class="text-danger">*</span></label>
+                    <select class="form-control @error('urutan') is-invalid @enderror" 
+                            id="urutan" 
+                            name="urutan"
+                            required>
+                        @foreach($allHeroes as $hero)
+                            <option value="{{ $hero->urutan }}" 
+                                    {{ old('urutan', $heroSection->urutan) == $hero->urutan ? 'selected' : '' }}
+                                    data-hero-id="{{ $hero->id }}"
+                                    data-is-current="{{ $hero->id == $heroSection->id ? 'true' : 'false' }}">
+                                #{{ $hero->urutan }} - {{ Str::limit($hero->judul, 50) }}
+                                @if($hero->id == $heroSection->id)
+                                    (Ini)
+                                @endif
+                                @if($hero->aktif)
+                                    ✓
+                                @else
+                                    ✗
+                                @endif
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('urutan')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <small class="text-muted">
+                        <i class="fas fa-exchange-alt"></i>
+                        Pilih urutan tujuan. Hero lain akan otomatis menyesuaikan.
+                    </small>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Cara Kerja:</strong><br>
+                    • Pilih urutan yang ingin dituju dari dropdown<br>
+                    • Hero lain akan otomatis bergeser untuk memberi tempat<br>
+                    • Urutan tetap rapi dan berurutan tanpa gap
+                </div>
+            </div>
+
+            <!-- Pengaturan Status -->
             <div class="form-section">
                 <div class="section-title">
                     <i class="fas fa-cog"></i>
                     <span>Pengaturan</span>
                 </div>
                 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="urutan" class="form-label">Urutan Tampilan <span class="text-danger">*</span></label>
-                        <input type="number" 
-                            class="form-control @error('urutan') is-invalid @enderror" 
-                            id="urutan" 
-                            name="urutan" 
-                            value="{{ old('urutan', $heroSection->urutan) }}" 
-                            min="1"
-                            placeholder="1"
-                            required>
-                        <small class="text-muted">Urutan dimulai dari 1. Semakin kecil angka, semakin awal ditampilkan</small>
-                        @error('urutan')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="aktif" class="form-label">Status Tampilan</label>
-                        <select class="form-control @error('aktif') is-invalid @enderror" 
-                                id="aktif" 
-                                name="aktif">
-                            <option value="1" {{ old('aktif', $heroSection->aktif) == 1 ? 'selected' : '' }}>Aktif (Ditampilkan)</option>
-                            <option value="0" {{ old('aktif', $heroSection->aktif) == 0 ? 'selected' : '' }}>Nonaktif (Disembunyikan)</option>
-                        </select>
-                        @error('aktif')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                <div class="mb-3">
+                    <label for="aktif" class="form-label">Status Tampilan</label>
+                    <select class="form-control @error('aktif') is-invalid @enderror" 
+                            id="aktif" 
+                            name="aktif">
+                        <option value="1" {{ old('aktif', $heroSection->aktif) == 1 ? 'selected' : '' }}>Aktif (Ditampilkan)</option>
+                        <option value="0" {{ old('aktif', $heroSection->aktif) == 0 ? 'selected' : '' }}>Nonaktif (Disembunyikan)</option>
+                    </select>
+                    @error('aktif')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
@@ -298,6 +396,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+const urutanAwal = {{ $heroSection->urutan }};
+
 // FUNGSI PREVIEW GAMBAR
 function previewImage(event) {
     const preview = document.getElementById('imagePreview');
@@ -351,63 +451,32 @@ function previewImage(event) {
     }
 }
 
-// VALIDASI URUTAN SEBELUM SUBMIT
-function validateUrutan() {
-    const urutanInput = document.getElementById('urutan');
-    const urutanValue = parseInt(urutanInput.value);
-    
-    // Cek apakah kosong
-    if (!urutanInput.value || urutanInput.value.trim() === '') {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Urutan Belum Diisi',
-            text: 'Silakan isi urutan terlebih dahulu',
-            confirmButtonText: 'OK'
-        });
-        urutanInput.focus();
-        return false;
-    }
-    
-    // Cek apakah angka valid
-    if (isNaN(urutanValue)) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Format Urutan Tidak Valid',
-            text: 'Urutan harus berupa angka',
-            confirmButtonText: 'OK'
-        });
-        urutanInput.focus();
-        return false;
-    }
-    
-    // Cek apakah kurang dari 1
-    if (urutanValue < 1) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Urutan Tidak Valid',
-            text: 'Urutan minimal dimulai dari angka 1',
-            confirmButtonText: 'OK'
-        });
-        urutanInput.focus();
-        return false;
-    }
-    
-    return true;
-}
-
 // SUBMIT FORM DENGAN KONFIRMASI
 document.getElementById('heroEditForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    // VALIDASI URUTAN TERLEBIH DAHULU
-    if (!validateUrutan()) {
-        return; // Jangan lanjut jika validasi gagal
+    const urutanBaru = parseInt(document.getElementById('urutan').value);
+    const selectedOption = document.getElementById('urutan').selectedOptions[0];
+    const selectedHeroText = selectedOption.text;
+    
+    // Pesan konfirmasi berbeda jika urutan berubah atau tidak
+    let confirmMessage = '';
+    if (urutanBaru !== urutanAwal) {
+        confirmMessage = `
+            <strong>Tukar Urutan:</strong><br>
+            Dari urutan <strong>#${urutanAwal}</strong> ke <strong>#${urutanBaru}</strong><br>
+            <small class="text-muted">Hero lain akan otomatis bergeser untuk menyesuaikan urutan.</small>
+        `;
+    } else {
+        confirmMessage = `
+            Apakah Anda yakin ingin mengupdate data hero section ini?<br>
+            <small class="text-muted">Urutan tetap di posisi #${urutanAwal}</small>
+        `;
     }
     
-    // Jika validasi lolos, tampilkan konfirmasi
     Swal.fire({
         title: 'Konfirmasi Update',
-        html: 'Apakah Anda yakin ingin mengupdate data hero section ini?<br><small class="text-muted">Pastikan semua perubahan sudah benar sebelum menyimpan.</small>',
+        html: confirmMessage,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '<i class="fas fa-check"></i> Ya, Update',
@@ -431,29 +500,6 @@ document.getElementById('heroEditForm').addEventListener('submit', function(e) {
             this.submit();
         }
     });
-});
-
-// VALIDASI REAL-TIME SAAT INPUT URUTAN
-document.getElementById('urutan').addEventListener('input', function(e) {
-    const value = parseInt(e.target.value);
-    
-    if (e.target.value && value < 1) {
-        e.target.classList.add('is-invalid');
-        // Tambahkan pesan error jika belum ada
-        if (!e.target.nextElementSibling || !e.target.nextElementSibling.classList.contains('invalid-feedback')) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'invalid-feedback d-block';
-            errorDiv.textContent = 'Urutan minimal dimulai dari 1';
-            e.target.parentNode.appendChild(errorDiv);
-        }
-    } else {
-        e.target.classList.remove('is-invalid');
-        // Hapus pesan error jika ada
-        const errorDiv = e.target.parentNode.querySelector('.invalid-feedback');
-        if (errorDiv) {
-            errorDiv.remove();
-        }
-    }
 });
 </script>
 @endpush
