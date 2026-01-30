@@ -4,52 +4,6 @@
 
 @section('content')
 <style>
-    .form-header {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 2px solid #e9ecef;
-    }
-
-    .header-back .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background: white;
-        color: var(--blue-dark);
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .header-back .btn-back:hover {
-        background: var(--blue-dark);
-        color: white;
-        border-color: var(--blue-dark);
-        transform: translateX(-5px);
-    }
-
-    .header-text h2 {
-        margin: 0 0 0.5rem 0;
-        color: var(--blue-dark);
-        font-size: 1.75rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .header-text p {
-        margin: 0;
-        color: #6c757d;
-        font-size: 0.95rem;
-    }
-
     .form-container {
         background: white;
         border-radius: 15px;
@@ -147,7 +101,6 @@
         font-size: 1.8rem;
         flex-shrink: 0;
         box-shadow: 0 4px 12px rgba(251, 133, 0, 0.3);
-        transition: all 0.3s ease;
     }
 
     .current-image {
@@ -425,6 +378,58 @@
         box-shadow: 0 6px 20px rgba(251, 133, 0, 0.4);
     }
 
+    .urutan-selector {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1.5rem;
+    }
+
+    .current-order-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--orange-primary);
+    }
+
+    .current-order-info i {
+        font-size: 2rem;
+        color: var(--orange-primary);
+    }
+
+    .current-order-info strong {
+        display: block;
+        color: var(--blue-dark);
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .current-order-info p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+
+    .urutan-help {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding: 0.75rem;
+        background: #e3f2fd;
+        border-radius: 8px;
+        color: #1976d2;
+        font-size: 0.875rem;
+    }
+
+    .urutan-help i {
+        font-size: 1.2rem;
+    }
+
     @media (max-width: 768px) {
         .form-row {
             flex-direction: column;
@@ -451,16 +456,24 @@
     }
 </style>
 
-<div class="form-header">
-    <div class="header-back">
+<div class="gradient-header">
+    <div class="header-left">
         <a href="{{ route('admin.layanan.index') }}" class="btn-back">
             <i class="fas fa-arrow-left"></i>
-            <span>Kembali</span>
         </a>
-    </div>
-    <div class="header-text">
-        <h2><i class="fas fa-edit"></i> Edit Layanan</h2>
-        <p>Perbarui informasi layanan</p>
+        <div class="header-icon">
+            <i class="fas fa-edit"></i>
+        </div>
+        <div>
+            <h2 class="header-title">Edit Layanan</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.layanan.index') }}">Layanan</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </nav>
+        </div>
     </div>
 </div>
 
@@ -469,22 +482,52 @@
         @csrf
         @method('PUT')
         
-        <div class="form-row">
-            <div class="form-group col-md-8">
-                <label for="nama">Nama Layanan <span class="required">*</span></label>
-                <input type="text" name="nama" id="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama', $layanan->nama) }}" required>
-                @error('nama')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+        <div class="form-group">
+            <label for="nama">Nama Layanan <span class="required">*</span></label>
+            <input type="text" name="nama" id="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama', $layanan->nama) }}" required>
+            @error('nama')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        
+        <div class="form-group">
+            <label for="urutan">Urutan Tampil <span class="required">*</span></label>
+            
+            <div class="urutan-selector">
+                <div class="current-order-info">
+                    <i class="fas fa-layer-group"></i>
+                    <div>
+                        <strong>Urutan Saat Ini: #{{ $layanan->urutan }}</strong>
+                        <p>Total {{ $maxUrutan }} layanan</p>
+                    </div>
+                </div>
+                
+                <select name="urutan" id="urutan" class="form-control @error('urutan') is-invalid @enderror" required>
+                    @for($i = 1; $i <= $maxUrutan; $i++)
+                        @php
+                            $layananDiUrutan = $allLayanans->firstWhere('urutan', $i);
+                        @endphp
+                        <option value="{{ $i }}" {{ $layanan->urutan == $i ? 'selected' : '' }}>
+                            #{{ $i }} 
+                            @if($layananDiUrutan)
+                                → {{ Str::limit($layananDiUrutan->nama, 40) }}
+                                @if($layananDiUrutan->id == $layanan->id)
+                                    ⭐ (Anda di sini)
+                                @endif
+                            @endif
+                        </option>
+                    @endfor
+                </select>
+                
+                <div class="urutan-help">
+                    <i class="fas fa-magic"></i>
+                    <span>Sistem akan otomatis mengatur ulang urutan layanan lain agar tidak bentrok</span>
+                </div>
             </div>
             
-            <div class="form-group col-md-4">
-                <label for="urutan">Urutan Tampil <span class="required">*</span></label>
-                <input type="number" name="urutan" id="urutan" class="form-control @error('urutan') is-invalid @enderror" value="{{ old('urutan', $layanan->urutan) }}" min="0" required>
-                @error('urutan')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            @error('urutan')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
         
         <div class="form-group">
@@ -505,40 +548,29 @@
             @enderror
         </div>
         
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="icon">Icon (Font Awesome Class)</label>
-                <div class="icon-input-group">
-                    <input type="text" name="icon" id="icon" class="form-control @error('icon') is-invalid @enderror" value="{{ old('icon', $layanan->icon) }}" placeholder="fas fa-concierge-bell">
-                    <div class="icon-preview" id="iconPreview">
-                        @if($layanan->icon)
-                            <i class="{{ $layanan->icon }}"></i>
-                        @else
-                            <i class="fas fa-icons"></i>
-                        @endif
-                    </div>
+        <div class="form-group">
+            <label for="icon">Icon (Font Awesome Class)</label>
+            <div class="icon-input-group">
+                <input type="text" name="icon" id="icon" class="form-control @error('icon') is-invalid @enderror" value="{{ old('icon', $layanan->icon) }}" placeholder="fas fa-concierge-bell">
+                <div class="icon-preview" id="iconPreview">
+                    @if($layanan->icon)
+                        <i class="{{ $layanan->icon }}"></i>
+                    @else
+                        <i class="fas fa-icons"></i>
+                    @endif
                 </div>
-                <small class="form-text">Contoh: fas fa-spa, fas fa-hotel, fas fa-utensils</small>
-                @error('icon')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
             </div>
-
-            <div class="form-group col-md-6">
-                <label for="harga">Harga (Opsional)</label>
-                <input type="number" name="harga" id="harga" class="form-control @error('harga') is-invalid @enderror" value="{{ old('harga', $layanan->harga) }}" min="0" step="1000" placeholder="0">
-                <small class="form-text">Masukkan harga layanan jika diperlukan</small>
-                @error('harga')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <small class="form-text">Contoh: fas fa-spa, fas fa-hotel, fas fa-utensils</small>
+            @error('icon')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
         
         <div class="form-group">
             <label for="gambar">Gambar Layanan</label>
             @if($layanan->gambar)
             <div class="current-image">
-                <img src="{{ asset('storage/' . $layanan->gambar) }}" alt="{{ $layanan->nama }}">
+                <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}">
                 <span class="current-image-label">Gambar saat ini</span>
             </div>
             @endif
@@ -617,6 +649,11 @@
         </div>
     </form>
 </div>
+@endsection
+
+@push('scripts')
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 // Icon Preview
@@ -696,8 +733,53 @@ function removeFasilitas(button) {
     if (container.children.length > 1) {
         button.closest('.fasilitas-item').remove();
     } else {
-        alert('Minimal harus ada satu fasilitas');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Peringatan',
+            text: 'Minimal harus ada satu input fasilitas',
+        });
     }
 }
+
+// SUBMIT FORM DENGAN KONFIRMASI
+document.getElementById('layananForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    Swal.fire({
+        title: 'Konfirmasi Update',
+        html: 'Apakah Anda yakin ingin mengupdate data layanan ini?<br><small class="text-muted">Pastikan semua data sudah benar sebelum menyimpan.</small>',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-check"></i> Ya, Update',
+        cancelButtonText: '<i class="fas fa-times"></i> Batal',
+        reverseButtons: true,
+        focusCancel: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Menampilkan indikator loading
+            Swal.fire({
+                title: 'Mengupdate Data...',
+                html: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Submit form
+            this.submit();
+        }
+    });
+});
+
+// Show error messages if validation failed
+@if($errors->any())
+    Swal.fire({
+        icon: 'error',
+        title: 'Validasi Gagal',
+        html: '<ul style="text-align: left;">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>',
+    });
+@endif
 </script>
-@endsection
+@endpush

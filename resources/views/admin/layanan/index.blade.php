@@ -163,7 +163,8 @@
     }
 
     .layanan-actions {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr 1fr 50px;
         gap: 0.5rem;
         padding: 1rem 1.5rem;
         background: #f8f9fa;
@@ -171,7 +172,6 @@
     }
 
     .btn-action {
-        width: 45px;
         height: 45px;
         border: none;
         border-radius: 10px;
@@ -179,24 +179,29 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        gap: 0.5rem;
         cursor: pointer;
         transition: all 0.3s ease;
-        font-size: 1.1rem;
+        font-size: 1rem;
+        font-weight: 600;
         text-decoration: none;
+    }
+
+    .btn-action i {
+        font-size: 1.1rem;
     }
 
     .btn-action.btn-view {
         background: linear-gradient(135deg, var(--blue-light), var(--blue-lighter));
-        flex: 1;
     }
 
     .btn-action.btn-edit {
         background: linear-gradient(135deg, #ffc107, #ff9800);
-        flex: 1;
     }
 
     .btn-action.btn-delete {
         background: linear-gradient(135deg, #dc3545, #c82333);
+        width: 50px;
     }
 
     .btn-action:hover {
@@ -206,6 +211,7 @@
 
     .d-inline {
         display: inline;
+        width: 100%;
     }
 
     .empty-state {
@@ -259,22 +265,42 @@
             align-items: flex-start;
             gap: 0.5rem;
         }
+        
+        .layanan-actions {
+            grid-template-columns: 1fr;
+        }
+        
+        .btn-action.btn-delete {
+            width: 100%;
+        }
+    }
+    
+    @keyframes slideOutUp {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
     }
 </style>
 
-<div class="page-header">
+<!-- Header Section -->
+<div class="gradient-header">
     <div class="header-left">
         <div class="header-icon">
             <i class="fas fa-concierge-bell"></i>
         </div>
         <div>
-            <h2 class="page-title">Kelola Layanan</h2>
-            <p class="page-subtitle">Atur dan kelola semua layanan yang tersedia</p>
+            <h2 class="header-title">Kelola Layanan</h2>
+            <p class="header-subtitle">Kelola Daftar Layanan Perusahaan</p>
         </div>
     </div>
     <div class="header-actions">
-        <a href="{{ route('admin.layanan.create') }}" class="btn-primary">
-            <i class="fas fa-plus-circle"></i>
+        <a href="{{ route('admin.layanan.create') }}" class="btn-add">
+            <i class="fas fa-plus"></i>
             <span>Tambah Layanan</span>
         </a>
     </div>
@@ -285,7 +311,6 @@
 <div class="alert alert-success">
     <i class="fas fa-check-circle"></i>
     <span>{{ session('success') }}</span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 @endif
 
@@ -293,7 +318,6 @@
 <div class="alert alert-danger">
     <i class="fas fa-exclamation-circle"></i>
     <span>{{ session('error') }}</span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 @endif
 
@@ -350,74 +374,80 @@
 
 <!-- Layanan Grid -->
 @forelse($layanans as $item)
-<div class="layanans-grid">
-    <div class="layanan-card">
-        <div class="layanan-image">
-            @if($item->gambar)
-                <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama }}">
-            @else
-                <div class="no-image">
-                    <i class="fas fa-image"></i>
-                </div>
-            @endif
-            <div class="layanan-badges">
-                <div>
-                    @if($item->unggulan)
-                        <span class="badge badge-featured">
-                            <i class="fas fa-star"></i> Unggulan
-                        </span>
-                    @endif
-                </div>
-                <div>
-                    <span class="badge badge-{{ $item->aktif ? 'active' : 'inactive' }}">
-                        <i class="fas fa-circle"></i> {{ $item->aktif ? 'Aktif' : 'Nonaktif' }}
-                    </span>
-                </div>
-            </div>
-            <div class="layanan-order">
-                <i class="fas fa-sort"></i> Urutan: {{ $item->urutan }}
-            </div>
-        </div>
-        
-        <div class="layanan-body">
-            <div class="layanan-icon-name">
-                @if($item->icon)
-                    <div class="layanan-icon-display">
-                        <i class="{{ $item->icon }}"></i>
+    @if($loop->first)
+    <div class="layanans-grid">
+    @endif
+        <div class="layanan-card">
+            <div class="layanan-image">
+                @if($item->gambar)
+                    <img src="{{ asset($item->gambar) }}" alt="{{ $item->nama }}">
+                @else
+                    <div class="no-image">
+                        <i class="fas fa-image"></i>
                     </div>
                 @endif
-                <h3>{{ $item->nama }}</h3>
+                <div class="layanan-badges">
+                    <div>
+                        @if($item->unggulan)
+                            <span class="badge badge-featured">
+                                <i class="fas fa-star"></i> Unggulan
+                            </span>
+                        @endif
+                    </div>
+                    <div>
+                        <span class="badge badge-{{ $item->aktif ? 'active' : 'inactive' }}">
+                            <i class="fas fa-circle"></i> {{ $item->aktif ? 'Aktif' : 'Nonaktif' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="layanan-order">
+                    <i class="fas fa-sort"></i> Urutan: {{ $item->urutan }}
+                </div>
             </div>
             
-            <p class="layanan-description">
-                {{ Str::limit($item->deskripsi_singkat, 100) }}
-            </p>
-            
-            @if($item->fasilitas && count($item->fasilitas) > 0)
-            <div class="layanan-fasilitas">
-                <i class="fas fa-list-check"></i>
-                <span>{{ count($item->fasilitas) }} Fasilitas</span>
+            <div class="layanan-body">
+                <div class="layanan-icon-name">
+                    @if($item->icon)
+                        <div class="layanan-icon-display">
+                            <i class="{{ $item->icon }}"></i>
+                        </div>
+                    @endif
+                    <h3>{{ $item->nama }}</h3>
+                </div>
+                
+                <p class="layanan-description">
+                    {{ $item->deskripsi_singkat ? Str::limit($item->deskripsi_singkat, 100) : 'Tidak ada deskripsi' }}
+                </p>
+                
+                @if($item->fasilitas && count($item->fasilitas) > 0)
+                <div class="layanan-fasilitas">
+                    <i class="fas fa-list-check"></i>
+                    <span>{{ count($item->fasilitas) }} Fasilitas</span>
+                </div>
+                @endif
             </div>
-            @endif
+            
+            <div class="layanan-actions">
+                <a href="{{ route('admin.layanan.show', $item) }}" class="btn-action btn-view" title="Lihat Detail">
+                    <i class="fas fa-eye"></i>
+                    <span>Lihat</span>
+                </a>
+                <a href="{{ route('admin.layanan.edit', $item) }}" class="btn-action btn-edit" title="Edit">
+                    <i class="fas fa-edit"></i>
+                    <span>Edit</span>
+                </a>
+                <form action="{{ route('admin.layanan.destroy', $item) }}" method="POST" class="d-inline delete-form">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-action btn-delete" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+            </div>
         </div>
-        
-        <div class="layanan-actions">
-            <a href="{{ route('admin.layanan.show', $item) }}" class="btn-action btn-view" title="Lihat Detail">
-                <i class="fas fa-eye"></i>
-            </a>
-            <a href="{{ route('admin.layanan.edit', $item) }}" class="btn-action btn-edit" title="Edit">
-                <i class="fas fa-edit"></i>
-            </a>
-            <form action="{{ route('admin.layanan.destroy', $item) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus layanan ini?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn-action btn-delete" title="Hapus">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </form>
-        </div>
+    @if($loop->last)
     </div>
-</div>
+    @endif
 @empty
 <div class="empty-state">
     <i class="fas fa-box-open"></i>
@@ -429,15 +459,60 @@
     </a>
 </div>
 @endforelse
+@endsection
+
+@push('scripts')
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 // Auto hide alerts after 5 seconds
 setTimeout(() => {
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
-        const bsAlert = new bootstrap.Alert(alert);
-        bsAlert.close();
+        alert.style.animation = 'slideOutUp 0.5s ease';
+        setTimeout(() => {
+            alert.remove();
+        }, 500);
     });
 }, 5000);
+
+// Konfirmasi hapus dengan SweetAlert2
+document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        Swal.fire({
+            title: 'Konfirmasi Hapus',
+            html: 'Apakah Anda yakin ingin menghapus layanan ini?<br><small class="text-muted">Tindakan ini tidak dapat dibatalkan.</small>',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '<i class="fas fa-trash"></i> Ya, Hapus',
+            cancelButtonText: '<i class="fas fa-times"></i> Batal',
+            reverseButtons: true,
+            focusCancel: true,
+            customClass: {
+                confirmButton: 'swal2-confirm',
+                cancelButton: 'swal2-cancel'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Tampilkan loading
+                Swal.fire({
+                    title: 'Menghapus Data...',
+                    html: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Submit form
+                this.submit();
+            }
+        });
+    });
+});
 </script>
-@endsection
+@endpush

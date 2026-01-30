@@ -4,52 +4,6 @@
 
 @section('content')
 <style>
-    .form-header {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 2px solid #e9ecef;
-    }
-
-    .header-back .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background: white;
-        color: var(--blue-dark);
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .header-back .btn-back:hover {
-        background: var(--blue-dark);
-        color: white;
-        border-color: var(--blue-dark);
-        transform: translateX(-5px);
-    }
-
-    .header-text h2 {
-        margin: 0 0 0.5rem 0;
-        color: var(--blue-dark);
-        font-size: 1.75rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .header-text p {
-        margin: 0;
-        color: #6c757d;
-        font-size: 0.95rem;
-    }
-
     .form-container {
         background: white;
         border-radius: 15px;
@@ -104,6 +58,11 @@
     .form-control.is-invalid {
         border-color: #dc3545;
         background: #fff5f5;
+    }
+
+    .form-control.is-valid {
+        border-color: #28a745;
+        background: #f0fff4;
     }
 
     .invalid-feedback {
@@ -402,6 +361,44 @@
         box-shadow: 0 6px 20px rgba(251, 133, 0, 0.4);
     }
 
+    .auto-urutan-info {
+        background: #e3f2fd;
+        border: 2px solid #2196F3;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .auto-urutan-info i {
+        font-size: 2rem;
+        color: #2196F3;
+    }
+
+    .auto-urutan-info div {
+        flex: 1;
+    }
+
+    .auto-urutan-info h4 {
+        margin: 0 0 0.25rem 0;
+        color: var(--blue-dark);
+        font-size: 1rem;
+    }
+
+    .auto-urutan-info p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+
+    .auto-urutan-info .urutan-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--orange-primary);
+    }
+
     @media (max-width: 768px) {
         .form-row {
             flex-direction: column;
@@ -428,16 +425,36 @@
     }
 </style>
 
-<div class="form-header">
-    <div class="header-back">
+<div class="gradient-header">
+    <div class="header-left">
         <a href="{{ route('admin.layanan.index') }}" class="btn-back">
             <i class="fas fa-arrow-left"></i>
-            <span>Kembali</span>
         </a>
+        <div class="header-icon">
+            <i class="fas fa-plus-circle"></i>
+        </div>
+        <div>
+            <h2 class="header-title">Tambah Layanan</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.layanan.index') }}">Layanan</a></li>
+                    <li class="breadcrumb-item active">Tambah</li>
+                </ol>
+            </nav>
+        </div>
     </div>
-    <div class="header-text">
-        <h2><i class="fas fa-plus-circle"></i> Tambah Layanan Baru</h2>
-        <p>Lengkapi form di bawah untuk menambahkan layanan</p>
+</div>
+
+<!-- Info Urutan Otomatis -->
+<div class="auto-urutan-info">
+    <i class="fas fa-info-circle"></i>
+    <div>
+        <h4>Urutan Otomatis</h4>
+        <p>Layanan baru akan otomatis ditempatkan pada urutan berikutnya. Anda tidak perlu mengisi urutan secara manual.</p>
+    </div>
+    <div class="urutan-number">
+        #{{ $nextUrutan }}
     </div>
 </div>
 
@@ -445,22 +462,12 @@
     <form action="{{ route('admin.layanan.store') }}" method="POST" enctype="multipart/form-data" id="layananForm">
         @csrf
         
-        <div class="form-row">
-            <div class="form-group col-md-8">
-                <label for="nama">Nama Layanan <span class="required">*</span></label>
-                <input type="text" name="nama" id="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama') }}" required>
-                @error('nama')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div class="form-group col-md-4">
-                <label for="urutan">Urutan Tampil <span class="required">*</span></label>
-                <input type="number" name="urutan" id="urutan" class="form-control @error('urutan') is-invalid @enderror" value="{{ old('urutan', 0) }}" min="0" required>
-                @error('urutan')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+        <div class="form-group">
+            <label for="nama">Nama Layanan <span class="required">*</span></label>
+            <input type="text" name="nama" id="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama') }}" required>
+            @error('nama')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
         
         <div class="form-group">
@@ -481,29 +488,18 @@
             @enderror
         </div>
         
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="icon">Icon (Font Awesome Class)</label>
-                <div class="icon-input-group">
-                    <input type="text" name="icon" id="icon" class="form-control @error('icon') is-invalid @enderror" value="{{ old('icon') }}" placeholder="fas fa-concierge-bell">
-                    <div class="icon-preview" id="iconPreview">
-                        <i class="fas fa-icons"></i>
-                    </div>
+        <div class="form-group">
+            <label for="icon">Icon (Font Awesome Class)</label>
+            <div class="icon-input-group">
+                <input type="text" name="icon" id="icon" class="form-control @error('icon') is-invalid @enderror" value="{{ old('icon') }}" placeholder="fas fa-concierge-bell">
+                <div class="icon-preview" id="iconPreview">
+                    <i class="fas fa-icons"></i>
                 </div>
-                <small class="form-text">Contoh: fas fa-spa, fas fa-hotel, fas fa-utensils</small>
-                @error('icon')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
             </div>
-
-            <div class="form-group col-md-6">
-                <label for="harga">Harga (Opsional)</label>
-                <input type="number" name="harga" id="harga" class="form-control @error('harga') is-invalid @enderror" value="{{ old('harga') }}" min="0" step="1000" placeholder="0">
-                <small class="form-text">Masukkan harga layanan jika diperlukan</small>
-                @error('harga')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <small class="form-text">Contoh: fas fa-spa, fas fa-hotel, fas fa-utensils</small>
+            @error('icon')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
         
         <div class="form-group">
@@ -530,12 +526,23 @@
         <div class="form-group">
             <label>Fasilitas</label>
             <div class="fasilitas-container" id="fasilitasContainer">
-                <div class="fasilitas-item">
-                    <input type="text" name="fasilitas[]" class="form-control" placeholder="Nama fasilitas">
-                    <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+                @if(old('fasilitas'))
+                    @foreach(old('fasilitas') as $fasilitas)
+                    <div class="fasilitas-item">
+                        <input type="text" name="fasilitas[]" class="form-control" placeholder="Nama fasilitas" value="{{ $fasilitas }}">
+                        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="fasilitas-item">
+                        <input type="text" name="fasilitas[]" class="form-control" placeholder="Nama fasilitas">
+                        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                @endif
             </div>
             <button type="button" class="btn-add-fasilitas" id="addFasilitas">
                 <i class="fas fa-plus"></i> Tambah Fasilitas
@@ -656,7 +663,11 @@ function removeFasilitas(button) {
     if (container.children.length > 1) {
         button.closest('.fasilitas-item').remove();
     } else {
-        alert('Minimal harus ada satu fasilitas');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Peringatan',
+            text: 'Minimal harus ada satu input fasilitas',
+        });
     }
 }
 
@@ -666,7 +677,7 @@ document.getElementById('layananForm').addEventListener('submit', function(e) {
     
     Swal.fire({
         title: 'Konfirmasi Penyimpanan',
-        html: 'Apakah Anda yakin ingin menyimpan data layanan ini?<br><small class="text-muted">Pastikan semua data sudah benar sebelum menyimpan.</small>',
+        html: 'Apakah Anda yakin ingin menyimpan data layanan ini?<br><small class="text-muted">Layanan akan otomatis ditempatkan pada urutan ke-{{ $nextUrutan }}.</small>',
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '<i class="fas fa-check"></i> Ya, Simpan',
@@ -686,10 +697,19 @@ document.getElementById('layananForm').addEventListener('submit', function(e) {
                 }
             });
             
-            // Mengirim form
+            // Submit form
             this.submit();
         }
     });
 });
+
+// Show error validation failed
+@if($errors->any())
+    Swal.fire({
+        icon: 'error',
+        title: 'Validasi Gagal',
+        html: '<ul style="text-align: left;">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>',
+    });
+@endif
 </script>
 @endpush

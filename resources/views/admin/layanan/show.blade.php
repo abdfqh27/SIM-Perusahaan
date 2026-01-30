@@ -4,107 +4,6 @@
 
 @section('content')
 <style>
-    .detail-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 2px solid #e9ecef;
-        flex-wrap: wrap;
-    }
-
-    .header-back .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background: white;
-        color: var(--blue-dark);
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .header-back .btn-back:hover {
-        background: var(--blue-dark);
-        color: white;
-        border-color: var(--blue-dark);
-        transform: translateX(-5px);
-    }
-
-    .header-text {
-        flex: 1;
-    }
-
-    .header-text h2 {
-        margin: 0 0 0.5rem 0;
-        color: var(--blue-dark);
-        font-size: 1.75rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .header-text p {
-        margin: 0;
-        color: #6c757d;
-        font-size: 0.95rem;
-    }
-
-    .header-actions {
-        display: flex;
-        gap: 0.75rem;
-    }
-
-    .btn-edit-detail {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background: linear-gradient(135deg, #ffc107, #ff9800);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
-    }
-
-    .btn-edit-detail:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
-    }
-
-    .btn-delete-detail {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background: linear-gradient(135deg, #dc3545, #c82333);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-    }
-
-    .btn-delete-detail:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
-    }
-
-    .d-inline {
-        display: inline;
-    }
-
     .detail-container {
         display: grid;
         grid-template-columns: 1fr 380px;
@@ -484,29 +383,9 @@
         .detail-image-section {
             height: 300px;
         }
-
-        .header-actions {
-            width: 100%;
-            justify-content: flex-start;
-        }
     }
 
     @media (max-width: 576px) {
-        .detail-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .header-actions {
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .btn-edit-detail,
-        .btn-delete-detail {
-            width: 100%;
-            justify-content: center;
-        }
 
         .detail-title-section {
             flex-direction: column;
@@ -519,26 +398,30 @@
     }
 </style>
 
-<div class="detail-header">
-    <div class="header-back">
+<div class="gradient-header">
+    <div class="header-left">
         <a href="{{ route('admin.layanan.index') }}" class="btn-back">
             <i class="fas fa-arrow-left"></i>
-            <span>Kembali</span>
         </a>
-    </div>
-    <div class="header-text">
-        <h2><i class="fas fa-info-circle"></i> Detail Layanan</h2>
-        <p>Informasi lengkap layanan</p>
+        <div class="header-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div>
+            <h2 class="header-title">Detail Layanan</h2>
+            <p class="header-subtitle">Informasi lengkap layanan</p>
+        </div>
     </div>
     <div class="header-actions">
-        <a href="{{ route('admin.layanan.edit', $layanan) }}" class="btn-edit-detail">
-            <i class="fas fa-edit"></i> Edit
+        <a href="{{ route('admin.layanan.edit', $layanan) }}" class="btn-header-action btn-edit">
+            <i class="fas fa-edit"></i>
+            <span>Edit</span>
         </a>
         <form action="{{ route('admin.layanan.destroy', $layanan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus layanan ini?')">
             @csrf
             @method('DELETE')
-            <button type="submit" class="btn-delete-detail">
-                <i class="fas fa-trash"></i> Hapus
+            <button type="submit" class="btn-header-action btn-delete">
+                <i class="fas fa-trash"></i>
+                <span>Hapus</span>
             </button>
         </form>
     </div>
