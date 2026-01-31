@@ -1,738 +1,712 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Tambah Armada')
+@section('title', 'Tambah Armada Baru')
 
 @section('content')
 <style>
-.btn-back {
-    width: 45px;
-    height: 45px;
-    background: linear-gradient(135deg, var(--blue-light), var(--blue-lighter));
-    border: none;
-    border-radius: 12px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    transition: all var(--transition-speed) ease;
-    box-shadow: 0 3px 10px rgba(33, 158, 188, 0.3);
-}
-
-.btn-back:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(33, 158, 188, 0.5);
-    color: white;
-}
-
-.form-card {
-    margin-bottom: 1.5rem;
-}
-
-.form-label.required::after {
-    content: ' *';
-    color: #dc3545;
-}
-
-.input-group-text {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border: 2px solid #e9ecef;
-    border-left: none;
-    color: #6c757d;
-    font-weight: 500;
-}
-
-.form-check-input {
-    width: 3rem;
-    height: 1.5rem;
-    cursor: pointer;
-    border: 2px solid #e9ecef;
-}
-
-.form-check-input:checked {
-    background-color: var(--orange-primary);
-    border-color: var(--orange-primary);
-}
-
-.form-check-input:focus {
-    border-color: var(--orange-primary);
-    box-shadow: 0 0 0 0.2rem rgba(251, 133, 0, 0.15);
-}
-
-.form-check-label {
-    margin-left: 0.75rem;
-    cursor: pointer;
-}
-
-.form-check-label strong {
-    display: block;
-    color: var(--blue-dark);
-    margin-bottom: 0.25rem;
-}
-
-/* Image Upload Styles */
-.image-upload-container {
-    position: relative;
-}
-
-.image-input {
-    display: none;
-}
-
-.image-upload-label {
-    display: block;
-    padding: 3rem 2rem;
-    border: 3px dashed #e9ecef;
-    border-radius: 15px;
-    text-align: center;
-    cursor: pointer;
-    transition: all var(--transition-speed) ease;
-    background: #f8f9fa;
-}
-
-.image-upload-label:hover {
-    border-color: var(--orange-primary);
-    background: rgba(251, 133, 0, 0.05);
-}
-
-.upload-content i {
-    font-size: 3rem;
-    color: var(--orange-primary);
-    margin-bottom: 1rem;
-    display: block;
-}
-
-.upload-content p {
-    color: var(--blue-dark);
-    font-weight: 600;
-    margin: 0.5rem 0;
-}
-
-.upload-content small {
-    color: #6c757d;
-}
-
-.image-preview {
-    margin-top: 1rem;
-}
-
-.preview-image {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.preview-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 12px;
-}
-
-.btn-remove-preview {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 35px;
-    height: 35px;
-    background: rgba(220, 53, 69, 0.9);
-    border: none;
-    border-radius: 50%;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition-speed) ease;
-}
-
-.btn-remove-preview:hover {
-    background: #dc3545;
-    transform: scale(1.1);
-}
-
-.gallery-preview {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.gallery-item {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-.gallery-item img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    display: block;
-}
-
-.btn-remove-gallery {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 30px;
-    height: 30px;
-    background: rgba(220, 53, 69, 0.9);
-    border: none;
-    border-radius: 50%;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition-speed) ease;
-}
-
-.btn-remove-gallery:hover {
-    background: #dc3545;
-    transform: scale(1.1);
-}
-
-/* Help Card */
-.help-card {
-    background: linear-gradient(135deg, #fff9e6, #fff);
-    border-left: 4px solid var(--orange-primary);
-}
-
-.help-card h6 {
-    color: var(--blue-dark);
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
-
-.help-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.help-list li {
-    padding: 0.5rem 0;
-    color: #6c757d;
-    font-size: 0.9rem;
-    position: relative;
-    padding-left: 1.5rem;
-}
-
-.help-list li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    color: var(--orange-primary);
-    font-weight: bold;
-}
-
-/* Action Buttons Sticky */
-.action-buttons-sticky {
-    position: sticky;
-    top: calc(var(--navbar-height) + 1rem);
-}
-
-/* Current Images (for edit page) */
-.current-image {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1rem;
-}
-
-.current-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.current-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1rem;
-}
-
-.gallery-item-current {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-.gallery-item-current img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    display: block;
-}
-
-.gallery-item-actions {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 0.5rem;
-}
-
-.gallery-item-actions .form-check {
-    margin: 0;
-}
-
-.gallery-item-actions .form-check-input {
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
-.gallery-item-actions .form-check-label {
-    color: white;
-    margin-left: 0.5rem;
-    font-size: 0.85rem;
-}
-
-/* Fasilitas Management */
-.fasilitas-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.fasilitas-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 10px;
-    border-left: 4px solid var(--orange-primary);
-    transition: all var(--transition-speed) ease;
-}
-
-.fasilitas-item:hover {
-    background: rgba(251, 133, 0, 0.05);
-    transform: translateX(5px);
-}
-
-.fasilitas-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex: 1;
-}
-
-.fasilitas-icon {
-    font-size: 1.5rem;
-    color: var(--orange-primary);
-    width: 40px;
-    text-align: center;
-}
-
-.fasilitas-name {
-    font-weight: 600;
-    color: var(--blue-dark);
-}
-
-.badge {
-    padding: 0.35rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.badge-success {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-}
-
-.badge-secondary {
-    background: linear-gradient(135deg, #6c757d, #5a6268);
-    color: white;
-}
-
-/* Modal */
-.modal-content {
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-}
-
-.modal-header {
-    background: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
-    color: white;
-    border-radius: 15px 15px 0 0;
-    border: none;
-}
-
-.modal-title {
-    font-weight: 700;
-}
-
-.btn-close {
-    filter: brightness(0) invert(1);
-}
-
-.modal-footer {
-    border: none;
-    padding: 1.5rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .action-buttons-sticky {
-        position: static;
+    .form-section {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     }
 
-    .gallery-preview,
-    .current-gallery {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--blue-dark);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
     }
 
-    .help-card {
-        margin-bottom: 1rem;
+    .section-title i {
+        font-size: 1.5rem;
+        color: var(--orange-primary);
     }
-}
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .required-indicator {
+        color: #dc3545;
+        margin-left: 0.25rem;
+    }
+
+    .image-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .preview-wrapper {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        border: 2px dashed #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .preview-wrapper:hover {
+        border-color: var(--orange-primary);
+        background: rgba(251, 133, 0, 0.05);
+    }
+
+    .preview-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .preview-placeholder {
+        text-align: center;
+        color: #6c757d;
+        padding: 1rem;
+    }
+
+    .preview-placeholder i {
+        font-size: 3rem;
+        color: #e9ecef;
+        margin-bottom: 0.5rem;
+    }
+
+    .fasilitas-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .fasilitas-item-input {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .fasilitas-item-input input {
+        flex: 1;
+    }
+
+    .btn-remove-fasilitas {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .btn-remove-fasilitas:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    }
+
+    .btn-add-fasilitas {
+        background: linear-gradient(135deg, var(--blue-light), var(--blue-lighter));
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .btn-add-fasilitas:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(33, 158, 188, 0.4);
+    }
+
+    .switch-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+
+    .switch-label {
+        font-weight: 600;
+        color: var(--blue-dark);
+    }
+
+    .switch-description {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-left: auto;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e9ecef;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
+        color: white;
+        border: none;
+        padding: 0.8rem 2.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(251, 133, 0, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(251, 133, 0, 0.5);
+    }
+
+    .btn-cancel {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        color: white;
+        border: none;
+        padding: 0.8rem 2.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        color: white;
+    }
+
+    .galeri-preview-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .galeri-preview-item {
+        position: relative;
+        width: 100%;
+        padding-top: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .galeri-preview-item img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+        .form-section {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .preview-wrapper {
+            width: 100%;
+        }
+
+        .switch-container {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .switch-description {
+            margin-left: 0;
+        }
+    }
 </style>
-<div class="armada-create">
-    <!-- Header Section -->
-    <div class="gradient-header">
-        <div class="header-left">
-            <a href="{{ route('admin.armada.index') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i>
-            </a>
-            <div class="header-icon">
-                <i class="fas fa-plus-circle"></i>
+
+<!-- Page Header -->
+<div class="gradient-header">
+    <div class="header-left">
+        <a href="{{ route('admin.armada.index') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-icon">
+            <i class="fas fa-plus-circle"></i>
+        </div>
+        <div>
+            <h1 class="header-title">Tambah Armada Baru</h1>
+            <p class="header-subtitle">Tambahkan armada bus baru ke dalam sistem</p>
+        </div>
+    </div>
+</div>
+
+<form action="{{ route('admin.armada.store') }}" method="POST" enctype="multipart/form-data" id="formArmada">
+    @csrf
+
+    <!-- Informasi Dasar -->
+    <div class="form-section">
+        <h2 class="section-title">
+            <i class="fas fa-info-circle"></i>
+            Informasi Dasar
+        </h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="nama" class="form-label">
+                        Nama Armada<span class="required-indicator">*</span>
+                    </label>
+                    <input type="text" 
+                           class="form-control @error('nama') is-invalid @enderror" 
+                           id="nama" 
+                           name="nama" 
+                           value="{{ old('nama') }}"
+                           placeholder="Contoh: Bus Pariwisata Executive"
+                           required>
+                    @error('nama')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
-            <div>
-                <h2 class="header-title">Tambah armada</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('admin.armada.index') }}">Armada</a></li>
-                        <li class="breadcrumb-item active">Tambah</li>
-                    </ol>
-                </nav>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="slug" class="form-label">
+                        Slug (URL)
+                    </label>
+                    <input type="text" 
+                           class="form-control @error('slug') is-invalid @enderror" 
+                           id="slug" 
+                           name="slug" 
+                           value="{{ old('slug') }}"
+                           placeholder="Otomatis diisi jika dikosongkan">
+                    @error('slug')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <small class="text-muted">Biarkan kosong untuk generate otomatis dari nama</small>
+                </div>
             </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="tipe_bus" class="form-label">
+                        Tipe Bus<span class="required-indicator">*</span>
+                    </label>
+                    <select class="form-select @error('tipe_bus') is-invalid @enderror" 
+                            id="tipe_bus" 
+                            name="tipe_bus" 
+                            required>
+                        <option value="">-- Pilih Tipe Bus --</option>
+                        @foreach($daftarTipeBus as $tipe)
+                            <option value="{{ $tipe }}" {{ old('tipe_bus') == $tipe ? 'selected' : '' }}>
+                                {{ $tipe }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('tipe_bus')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="kapasitas_min" class="form-label">
+                        Kapasitas Minimum<span class="required-indicator">*</span>
+                    </label>
+                    <input type="number" 
+                           class="form-control @error('kapasitas_min') is-invalid @enderror" 
+                           id="kapasitas_min" 
+                           name="kapasitas_min" 
+                           value="{{ old('kapasitas_min') }}"
+                           min="1"
+                           placeholder="20"
+                           required>
+                    @error('kapasitas_min')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="kapasitas_max" class="form-label">
+                        Kapasitas Maximum<span class="required-indicator">*</span>
+                    </label>
+                    <input type="number" 
+                           class="form-control @error('kapasitas_max') is-invalid @enderror" 
+                           id="kapasitas_max" 
+                           name="kapasitas_max" 
+                           value="{{ old('kapasitas_max') }}"
+                           min="1"
+                           placeholder="45"
+                           required>
+                    @error('kapasitas_max')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="deskripsi" class="form-label">Deskripsi</label>
+            <textarea class="form-control @error('deskripsi') is-invalid @enderror" 
+                      id="deskripsi" 
+                      name="deskripsi" 
+                      rows="4"
+                      placeholder="Deskripsi lengkap tentang armada ini...">{{ old('deskripsi') }}</textarea>
+            @error('deskripsi')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Urutan Tampilan</label>
+            <input type="text" 
+                   class="form-control" 
+                   value="{{ $nextUrutan }}" 
+                   disabled>
+            <small class="text-muted">Armada baru akan ditambahkan di urutan terakhir</small>
         </div>
     </div>
 
-    <form id="armadaForm" action="{{ route('admin.armada.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        
-        <div class="row">
-            <!-- Left Column -->
-            <div class="col-lg-8">
-                <!-- Basic Information Card -->
-                <div class="card form-card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-info-circle"></i>
-                            Informasi Dasar
-                        </h5>
+    <!-- Gambar -->
+    <div class="form-section">
+        <h2 class="section-title">
+            <i class="fas fa-images"></i>
+            Gambar Armada
+        </h2>
+
+        <div class="form-group">
+            <label for="gambar_utama" class="form-label">
+                Gambar Utama
+            </label>
+            <input type="file" 
+                   class="form-control @error('gambar_utama') is-invalid @enderror" 
+                   id="gambar_utama" 
+                   name="gambar_utama"
+                   accept="image/jpeg,image/jpg,image/png,image/webp"
+                   onchange="previewImage(this, 'preview-utama')">
+            @error('gambar_utama')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <small class="text-muted">Format: JPG, PNG, WebP. Maksimal 10MB. Gambar akan dikonversi ke WebP HD.</small>
+            
+            <div class="image-preview-container">
+                <div class="preview-wrapper" id="preview-utama">
+                    <div class="preview-placeholder">
+                        <i class="fas fa-image"></i>
+                        <p>Preview gambar utama</p>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Nama Armada</label>
-                                <input type="text" 
-                                       name="nama" 
-                                       class="form-control @error('nama') is-invalid @enderror" 
-                                       value="{{ old('nama') }}"
-                                       placeholder="Contoh: Executive Class"
-                                       required>
-                                @error('nama')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Tipe Bus</label>
-                                <select name="tipe_bus" 
-                                        class="form-select @error('tipe_bus') is-invalid @enderror"
-                                        required>
-                                    <option value="">Pilih Tipe Bus</option>
-                                    <option value="Medium Bus" {{ old('tipe_bus') == 'Medium Bus' ? 'selected' : '' }}>Medium Bus</option>
-                                    <option value="Big Bus" {{ old('tipe_bus') == 'Big Bus' ? 'selected' : '' }}>Big Bus</option>
-                                    <option value="Executive Bus" {{ old('tipe_bus') == 'Executive Bus' ? 'selected' : '' }}>Executive Bus</option>
-                                    <option value="VIP Bus" {{ old('tipe_bus') == 'VIP Bus' ? 'selected' : '' }}>VIP Bus</option>
-                                    <option value="Super VIP Bus" {{ old('tipe_bus') == 'Super VIP Bus' ? 'selected' : '' }}>Super VIP Bus</option>
-                                </select>
-                                @error('tipe_bus')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Kapasitas Penumpang</label>
-                                <div class="input-group">
-                                    <input type="number" 
-                                           name="kapasitas" 
-                                           class="form-control @error('kapasitas') is-invalid @enderror" 
-                                           value="{{ old('kapasitas') }}"
-                                           min="1"
-                                           placeholder="Jumlah kursi"
-                                           required>
-                                    <span class="input-group-text">
-                                        <i class="fas fa-users"></i> Orang
-                                    </span>
-                                    @error('kapasitas')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Urutan Tampilan</label>
-                                <input type="number" 
-                                       name="urutan" 
-                                       class="form-control @error('urutan') is-invalid @enderror" 
-                                       value="{{ old('urutan', 0) }}"
-                                       min="0"
-                                       placeholder="0"
-                                       required>
-                                @error('urutan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="form-text text-muted">Semakin kecil angka, semakin awal ditampilkan</small>
-                            </div>
-
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Deskripsi</label>
-                                <textarea name="deskripsi" 
-                                          rows="5" 
-                                          class="form-control @error('deskripsi') is-invalid @enderror"
-                                          placeholder="Masukkan deskripsi detail armada...">{{ old('deskripsi') }}</textarea>
-                                @error('deskripsi')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Image Upload Card -->
-                <div class="card form-card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-images"></i>
-                            Gambar Armada
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <label class="form-label">Gambar Utama</label>
-                            <div class="image-upload-container">
-                                <input type="file" 
-                                       name="gambar_utama" 
-                                       id="gambar_utama"
-                                       class="image-input @error('gambar_utama') is-invalid @enderror"
-                                       accept="image/jpeg,image/jpg,image/png">
-                                <label for="gambar_utama" class="image-upload-label">
-                                    <div class="upload-content">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <p>Klik atau drag gambar ke sini</p>
-                                        <small>Format: JPG, JPEG, PNG (Maks. 10MB)</small>
-                                    </div>
-                                </label>
-                                <div id="preview_gambar_utama" class="image-preview"></div>
-                            </div>
-                            @error('gambar_utama')
-                                <div class="text-danger mt-2">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label class="form-label">Galeri Gambar</label>
-                            <div class="image-upload-container">
-                                <input type="file" 
-                                       name="galeri[]" 
-                                       id="galeri"
-                                       class="image-input @error('galeri.*') is-invalid @enderror"
-                                       accept="image/jpeg,image/jpg,image/png"
-                                       multiple>
-                                <label for="galeri" class="image-upload-label">
-                                    <div class="upload-content">
-                                        <i class="fas fa-images"></i>
-                                        <p>Upload multiple gambar</p>
-                                        <small>Format: JPG, JPEG, PNG (Maks. 10MB per file)</small>
-                                    </div>
-                                </label>
-                                <div id="preview_galeri" class="gallery-preview"></div>
-                            </div>
-                            @error('galeri.*')
-                                <div class="text-danger mt-2">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column -->
-            <div class="col-lg-4">
-                <!-- Status Card -->
-                <div class="card form-card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-toggle-on"></i>
-                            Status & Pengaturan
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-check form-switch mb-3">
-                            <input type="checkbox" 
-                                   name="unggulan" 
-                                   class="form-check-input" 
-                                   id="unggulan"
-                                   value="1"
-                                   {{ old('unggulan') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="unggulan">
-                                <i class="fas fa-star text-warning"></i>
-                                <strong>Armada Unggulan</strong>
-                                <small class="d-block text-muted">Tampilkan sebagai armada unggulan</small>
-                            </label>
-                        </div>
-
-                        <div class="form-check form-switch">
-                            <input type="checkbox" 
-                                   name="tersedia" 
-                                   class="form-check-input" 
-                                   id="tersedia"
-                                   value="1"
-                                   {{ old('tersedia', true) ? 'checked' : '' }}>
-                            <label class="form-check-label" for="tersedia">
-                                <i class="fas fa-check-circle text-success"></i>
-                                <strong>Tersedia</strong>
-                                <small class="d-block text-muted">Armada dapat dilihat di website</small>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Help Card -->
-                <div class="card help-card">
-                    <div class="card-body">
-                        <h6><i class="fas fa-info-circle"></i> Panduan</h6>
-                        <ul class="help-list">
-                            <li>Isi semua field yang bertanda <span class="text-danger">*</span></li>
-                            <li>Pastikan gambar jelas dan berkualitas baik</li>
-                            <li>Deskripsi yang detail membantu customer</li>
-                            <li>Set urutan untuk mengatur posisi tampilan</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="action-buttons-sticky mt-5">
-                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-2 d-flex justify-content-center align-items-center">
-                        <i class="fas fa-save me-2"></i>
-                        Simpan Armada
-                    </button>
-                    <a href="{{ route('admin.armada.index') }}" class="btn btn-secondary btn-lg w-100">
-                        <i class="fas fa-times"></i>
-                        Batal
-                    </a>
                 </div>
             </div>
         </div>
-    </form>
-</div>
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-// Preview Gambar Utama
-document.getElementById('gambar_utama').addEventListener('change', function(e) {
-    const preview = document.getElementById('preview_gambar_utama');
-    preview.innerHTML = '';
-    
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.innerHTML = `
-                <div class="preview-image">
-                    <img src="${e.target.result}" alt="Preview">
-                    <button type="button" class="btn-remove-preview" onclick="removeMainImage()">
+        <div class="form-group">
+            <label for="galeri" class="form-label">
+                Galeri Gambar
+            </label>
+            <input type="file" 
+                   class="form-control @error('galeri.*') is-invalid @enderror" 
+                   id="galeri" 
+                   name="galeri[]"
+                   accept="image/jpeg,image/jpg,image/png,image/webp"
+                   multiple
+                   onchange="previewGaleri(this)">
+            @error('galeri.*')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <small class="text-muted">Pilih multiple gambar. Format: JPG, PNG, WebP. Maksimal 10MB per file.</small>
+            
+            <div class="galeri-preview-container" id="galeri-preview"></div>
+        </div>
+    </div>
+
+    <!-- Fasilitas -->
+    <div class="form-section">
+        <h2 class="section-title">
+            <i class="fas fa-list-check"></i>
+            Fasilitas Armada
+        </h2>
+
+        <div id="fasilitas-container" class="fasilitas-container">
+            @if(old('fasilitas'))
+                @foreach(old('fasilitas') as $index => $fasilitas)
+                <div class="fasilitas-item-input">
+                    <input type="text" 
+                           class="form-control" 
+                           name="fasilitas[]" 
+                           value="{{ $fasilitas }}"
+                           placeholder="Contoh: AC, Reclining Seat, TV, etc">
+                    <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-            `;
-        }
-        reader.readAsDataURL(file);
-    }
-});
+                @endforeach
+            @else
+                <div class="fasilitas-item-input">
+                    <input type="text" 
+                           class="form-control" 
+                           name="fasilitas[]" 
+                           placeholder="Contoh: AC, Reclining Seat, TV, etc">
+                    <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
+        </div>
 
-function removeMainImage() {
-    document.getElementById('gambar_utama').value = '';
-    document.getElementById('preview_gambar_utama').innerHTML = '';
-}
+        <button type="button" class="btn-add-fasilitas" onclick="addFasilitas()">
+            <i class="fas fa-plus"></i>
+            Tambah Fasilitas
+        </button>
+    </div>
 
-// Preview Galeri
-document.getElementById('galeri').addEventListener('change', function(e) {
-    const preview = document.getElementById('preview_galeri');
-    preview.innerHTML = '';
-    
-    const files = e.target.files;
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const div = document.createElement('div');
-            div.className = 'gallery-item';
-            div.innerHTML = `
-                <img src="${e.target.result}" alt="Gallery ${i+1}">
-                <button type="button" class="btn-remove-gallery" onclick="removeGalleryItem(this, ${i})">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            preview.appendChild(div);
-        }
-        reader.readAsDataURL(file);
-    }
-});
+    <!-- Status -->
+    <div class="form-section">
+        <h2 class="section-title">
+            <i class="fas fa-toggle-on"></i>
+            Status Armada
+        </h2>
 
-function removeGalleryItem(btn, index) {
-    btn.parentElement.remove();
-    
-    const preview = document.getElementById('preview_galeri');
-    if (preview.children.length === 0) {
-        document.getElementById('galeri').value = '';
-    }
-}
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" 
+                       name="unggulan" 
+                       value="1" 
+                       {{ old('unggulan') ? 'checked' : '' }}>
+                <span class="slider"></span>
+            </label>
+            <span class="switch-label">Armada Unggulan</span>
+            <span class="switch-description">Tampilkan sebagai armada unggulan di website</span>
+        </div>
 
-// SUBMIT FORM DENGAN KONFIRMASI
-document.getElementById('armadaForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    Swal.fire({
-        title: 'Konfirmasi Penyimpanan',
-        html: 'Apakah Anda yakin ingin menyimpan armada ini?<br><small class="text-muted">Pastikan semua data sudah benar sebelum menyimpan.</small>',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: '<i class="fas fa-check"></i> Ya, Simpan',
-        cancelButtonText: '<i class="fas fa-times"></i> Batal',
-        reverseButtons: true,
-        focusCancel: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Menampilkan indikator loading
-            Swal.fire({
-                title: 'Menyimpan Data...',
-                html: 'Mohon tunggu sebentar',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" 
+                       name="tersedia" 
+                       value="1" 
+                       {{ old('tersedia', true) ? 'checked' : '' }}>
+                <span class="slider"></span>
+            </label>
+            <span class="switch-label">Tersedia</span>
+            <span class="switch-description">Armada dapat disewa oleh customer</span>
+        </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+        <a href="{{ route('admin.armada.index') }}" class="btn-cancel">
+            <i class="fas fa-times"></i>
+            Batal
+        </a>
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-save"></i>
+            Simpan Armada
+        </button>
+    </div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Preview gambar utama
+    function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
             
-            // Mengirim form
-            this.submit();
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Preview galeri multiple
+    function previewGaleri(input) {
+        const container = document.getElementById('galeri-preview');
+        container.innerHTML = '';
+        
+        if (input.files) {
+            Array.from(input.files).forEach((file, index) => {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'galeri-preview-item';
+                    wrapper.innerHTML = `<img src="${e.target.result}" alt="Galeri ${index + 1}">`;
+                    container.appendChild(wrapper);
+                }
+                
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    // Tambah fasilitas
+    function addFasilitas() {
+        const container = document.getElementById('fasilitas-container');
+        const newItem = document.createElement('div');
+        newItem.className = 'fasilitas-item-input';
+        newItem.innerHTML = `
+            <input type="text" 
+                   class="form-control" 
+                   name="fasilitas[]" 
+                   placeholder="Contoh: AC, Reclining Seat, TV, etc">
+            <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(newItem);
+    }
+
+    // Hapus fasilitas
+    function removeFasilitas(button) {
+        const container = document.getElementById('fasilitas-container');
+        if (container.children.length > 1) {
+            button.parentElement.remove();
+        } else {
+            Swal.fire({
+                title: 'Perhatian',
+                text: 'Minimal harus ada 1 field fasilitas',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+    // Auto-generate slug dari nama
+    document.getElementById('nama').addEventListener('input', function() {
+        const slugInput = document.getElementById('slug');
+        if (!slugInput.value || slugInput.value === '') {
+            const slug = this.value
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim();
+            slugInput.value = slug;
         }
     });
-});
+
+    // Form submission confirmation
+    document.getElementById('formArmada').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        Swal.fire({
+            title: 'Simpan Armada?',
+            text: "Data armada baru akan disimpan ke database",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Simpan!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loading
+                Swal.fire({
+                    title: 'Menyimpan...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                this.submit();
+            }
+        });
+    });
 </script>
-@endpush
 @endsection

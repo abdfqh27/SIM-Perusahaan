@@ -12,15 +12,26 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('slug')->unique();
-            $table->string('tipe_bus'); // SHD, HDD, Elf, HiAce
-            $table->integer('kapasitas');
+            $table->string('tipe_bus');
+            $table->integer('kapasitas_min');
+            $table->integer('kapasitas_max');
             $table->text('deskripsi')->nullable();
+            // Gambar (akan dikonversi ke WebP)
             $table->string('gambar_utama')->nullable();
-            $table->text('galeri')->nullable(); // JSON array
-            $table->integer('urutan')->default(0);
+            // Galeri (JSON array untuk multiple gambar)
+            $table->json('galeri')->nullable();
+            $table->json('fasilitas')->nullable();
+            $table->integer('urutan')->unique();
             $table->boolean('unggulan')->default(false);
             $table->boolean('tersedia')->default(true);
             $table->timestamps();
+
+            // Index untuk performa query
+            $table->index('tipe_bus');
+            $table->index('unggulan');
+            $table->index('tersedia');
+            $table->index('urutan');
+            $table->index(['kapasitas_min', 'kapasitas_max']);
         });
     }
 
