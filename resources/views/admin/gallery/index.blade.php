@@ -211,6 +211,7 @@
     .btn-action:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white;
     }
 
     .empty-state {
@@ -221,161 +222,24 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     }
 
-    .empty-state .empty-icon {
-        width: 100px;
-        height: 100px;
-        margin: 0 auto 1.5rem;
-        background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        color: white;
+    .empty-state i {
+        font-size: 5rem;
+        color: #e9ecef;
+        margin-bottom: 1.5rem;
     }
 
-    .empty-state h3 {
+    .empty-state h4 {
         color: var(--blue-dark);
+        font-weight: 700;
         margin-bottom: 0.5rem;
     }
 
     .empty-state p {
         color: #6c757d;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
     }
 
-    /* Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 9999;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        align-items: center;
-        justify-content: center;
-        animation: fadeIn 0.3s ease;
-    }
-
-    .modal-content {
-        background: white;
-        border-radius: 15px;
-        width: 90%;
-        max-width: 500px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        animation: slideInDown 0.3s ease;
-    }
-
-    .modal-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .modal-header h3 {
-        margin: 0;
-        color: var(--blue-dark);
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .modal-header h3 i {
-        color: #dc3545;
-        font-size: 1.5rem;
-    }
-
-    .modal-body {
-        padding: 1.5rem;
-    }
-
-    .modal-body p {
-        margin-bottom: 0.75rem;
-        color: #495057;
-    }
-
-    .warning-text {
-        color: #dc3545;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    .modal-footer {
-        padding: 1rem 1.5rem;
-        background: #f8f9fa;
-        border-top: 1px solid #e9ecef;
-        display: flex;
-        gap: 0.75rem;
-        justify-content: flex-end;
-        border-radius: 0 0 15px 15px;
-    }
-
-    .btn-cancel {
-        background: #6c757d;
-        border: none;
-        color: white;
-        padding: 0.6rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-cancel:hover {
-        background: #5a6268;
-        transform: translateY(-2px);
-    }
-
-    .btn-delete-confirm {
-        background: linear-gradient(135deg, #dc3545, #c82333);
-        border: none;
-        color: white;
-        padding: 0.6rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-delete-confirm:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.5);
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    @keyframes slideInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes slideOutUp {
-        from {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateY(-50px);
-        }
-    }
-
+    /* Responsive */
     @media (max-width: 768px) {
         .gallery-grid {
             grid-template-columns: 1fr;
@@ -384,15 +248,9 @@
         .gallery-image {
             height: 200px;
         }
-
-        .modal-content {
-            width: 95%;
-            margin: 1rem;
-        }
     }
 </style>
-
-<!-- Header Section -->
+<!-- Gradient Header -->
 <div class="gradient-header">
     <div class="header-left">
         <div class="header-icon">
@@ -415,11 +273,11 @@
     </div>
 </div>
 
+<!-- Alert Messages -->
 @if(session('success'))
 <div class="alert alert-success">
     <i class="fas fa-check-circle"></i>
     <span>{{ session('success') }}</span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 @endif
 
@@ -427,10 +285,10 @@
 <div class="alert alert-danger">
     <i class="fas fa-exclamation-circle"></i>
     <span>{{ session('error') }}</span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 @endif
 
+<!-- Statistics -->
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-card-inner">
@@ -439,11 +297,11 @@
             </div>
             <div class="stat-content">
                 <h3 class="stat-number">{{ $galleries->count() }}</h3>
-                <p class="stat-label">Total Galeri</p>
+                <p class="stat-label">Total Gallery</p>
             </div>
         </div>
     </div>
-    
+
     <div class="stat-card">
         <div class="stat-card-inner">
             <div class="icon-wrapper icon-success">
@@ -451,23 +309,11 @@
             </div>
             <div class="stat-content">
                 <h3 class="stat-number">{{ $galleries->where('tampilkan', true)->count() }}</h3>
-                <p class="stat-label">Aktif Ditampilkan</p>
+                <p class="stat-label">Ditampilkan</p>
             </div>
         </div>
     </div>
-    
-    <div class="stat-card">
-        <div class="stat-card-inner">
-            <div class="icon-wrapper icon-info">
-                <i class="fas fa-layer-group"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ $galleries->pluck('kategori')->unique()->count() }}</h3>
-                <p class="stat-label">Kategori</p>
-            </div>
-        </div>
-    </div>
-    
+
     <div class="stat-card">
         <div class="stat-card-inner">
             <div class="icon-wrapper icon-warning">
@@ -475,7 +321,19 @@
             </div>
             <div class="stat-content">
                 <h3 class="stat-number">{{ $galleries->where('tampilkan', false)->count() }}</h3>
-                <p class="stat-label">Tidak Aktif</p>
+                <p class="stat-label">Disembunyikan</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-inner">
+            <div class="icon-wrapper icon-info">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $galleries->pluck('kategori')->filter()->unique()->count() }}</h3>
+                <p class="stat-label">Kategori</p>
             </div>
         </div>
     </div>
@@ -484,14 +342,12 @@
 <!-- Gallery Grid -->
 @if($galleries->isEmpty())
 <div class="empty-state">
-    <div class="empty-icon">
-        <i class="fas fa-images"></i>
-    </div>
-    <h3>Belum Ada Galeri</h3>
-    <p>Mulai tambahkan foto dan dokumentasi perusahaan Anda</p>
+    <i class="fas fa-images"></i>
+    <h4>Belum Ada Gallery</h4>
+    <p>Mulai tambahkan foto ke gallery Anda</p>
     <a href="{{ route('admin.gallery.create') }}" class="btn-primary">
-        <i class="fas fa-plus-circle"></i>
-        <span>Tambah Galeri Pertama</span>
+        <i class="fas fa-plus me-2"></i>
+        Tambah Gallery Pertama
     </a>
 </div>
 @else
@@ -503,19 +359,23 @@
             <img src="{{ asset('storage/' . $gallery->gambar) }}" alt="{{ $gallery->judul }}">
             <div class="image-overlay">
                 <div class="overlay-actions">
-                    <a href="{{ route('admin.gallery.show', $gallery->id) }}" class="action-btn view" title="Lihat Detail">
+                    <a href="{{ route('admin.gallery.show', $gallery) }}" class="action-btn view" title="Lihat Detail">
                         <i class="fas fa-eye"></i>
                     </a>
-                    <a href="{{ route('admin.gallery.edit', $gallery->id) }}" class="action-btn edit" title="Edit">
+                    <a href="{{ route('admin.gallery.edit', $gallery) }}" class="action-btn edit" title="Edit">
                         <i class="fas fa-edit"></i>
                     </a>
-                    <button type="button" class="action-btn delete" title="Hapus" onclick="confirmDelete({{ $gallery->id }})">
+                    <button type="button" 
+                            class="action-btn delete" 
+                            data-id="{{ $gallery->id }}" 
+                            data-name="{{ $gallery->judul }}"
+                            title="Hapus">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
             @if($gallery->kategori)
-            <span class="category-badge">{{ $gallery->kategori }}</span>
+            <span class="category-badge">{{ $gallery->kategori_label }}</span>
             @endif
             @if(!$gallery->tampilkan)
             <span class="status-badge inactive-badge">Tidak Aktif</span>
@@ -542,11 +402,14 @@
 
         <!-- Actions -->
         <div class="gallery-actions">
-            <a href="{{ route('admin.gallery.edit', $gallery->id) }}" class="btn-action btn-edit">
+            <a href="{{ route('admin.gallery.edit', $gallery) }}" class="btn-action btn-edit">
                 <i class="fas fa-edit"></i>
                 <span>Edit</span>
             </a>
-            <button type="button" class="btn-action btn-delete" onclick="confirmDelete({{ $gallery->id }})">
+            <button type="button" 
+                    class="btn-action btn-delete" 
+                    data-id="{{ $gallery->id }}" 
+                    data-name="{{ $gallery->judul }}">
                 <i class="fas fa-trash"></i>
                 <span>Hapus</span>
             </button>
@@ -556,63 +419,70 @@
 </div>
 @endif
 
-<!-- Delete Modal -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>
-                <i class="fas fa-exclamation-triangle"></i>
-                Konfirmasi Hapus
-            </h3>
-        </div>
-        <div class="modal-body">
-            <p>Apakah Anda yakin ingin menghapus galeri ini?</p>
-            <p class="warning-text">Data yang dihapus tidak dapat dikembalikan!</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-cancel" onclick="closeDeleteModal()">
-                <i class="fas fa-times"></i>
-                <span>Batal</span>
-            </button>
-            <form id="deleteForm" method="POST" style="display: inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn-delete-confirm">
-                    <i class="fas fa-trash"></i>
-                    <span>Ya, Hapus</span>
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<script>
-function confirmDelete(galleryId) {
-    const modal = document.getElementById('deleteModal');
-    const form = document.getElementById('deleteForm');
-    form.action = `/admin/gallery/${galleryId}`;
-    modal.style.display = 'flex';
-}
-
-function closeDeleteModal() {
-    document.getElementById('deleteModal').style.display = 'none';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('deleteModal');
-    if (event.target === modal) {
-        closeDeleteModal();
-    }
-}
-
-// Auto hide alerts after 5 seconds
-setTimeout(() => {
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        const bsAlert = new bootstrap.Alert(alert);
-        bsAlert.close();
-    });
-}, 5000);
-</script>
+<!-- Hidden Form untuk Delete -->
+<form id="deleteForm" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle delete confirmation
+    const deleteButtons = document.querySelectorAll('.btn-action.btn-delete, .action-btn.delete');
+    
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            const galleryId = this.getAttribute('data-id');
+            const galleryName = this.getAttribute('data-name');
+            
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                html: `Gallery <strong>${galleryName}</strong> akan dihapus permanen beserta gambarnya!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        html: 'Sedang menghapus gallery dan gambarnya',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    // Submit form
+                    const form = document.getElementById('deleteForm');
+                    form.action = `/admin/gallery/${galleryId}`;
+                    form.submit();
+                }
+            });
+            
+            return false;
+        }, true); // Use capture phase
+    });
+    
+    // Auto hide alerts
+    const alerts = document.querySelectorAll('.alert-success, .alert-danger');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.transition = 'opacity 0.5s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 500);
+        }, 5000);
+    });
+});
+</script>
+@endpush
