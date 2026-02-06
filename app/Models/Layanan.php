@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\DateHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -20,27 +21,43 @@ class Layanan extends Model
         'icon',
         'gambar',
         'fasilitas',
-        'harga',
         'urutan',
         'unggulan',
-        'aktif'
+        'aktif',
     ];
 
     protected $casts = [
         'fasilitas' => 'array',
         'unggulan' => 'boolean',
         'aktif' => 'boolean',
-        'harga' => 'decimal:2'
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected static function boot()
     {
         parent::boot();
 
+        // Set timezone default
+        DateHelper::setDefaultTimezone();
+
         static::creating(function ($layanan) {
             if (empty($layanan->slug)) {
                 $layanan->slug = Str::slug($layanan->nama);
             }
+
+            // Set timestamps menggunakan DateHelper
+            if (! $layanan->created_at) {
+                $layanan->created_at = DateHelper::now();
+            }
+            if (! $layanan->updated_at) {
+                $layanan->updated_at = DateHelper::now();
+            }
+        });
+
+        static::updating(function ($layanan) {
+            // Update timestamp menggunakan DateHelper
+            $layanan->updated_at = DateHelper::now();
         });
     }
 
@@ -52,5 +69,25 @@ class Layanan extends Model
     public function scopeUnggulan($query)
     {
         return $query->where('unggulan', true)->where('aktif', true);
+    }
+
+    public function getCreatedAtIndonesiaAttribute()
+    {
+        return DateHelper::formatDateTimeIndonesia($this->created_at);
+    }
+
+    public function getUpdatedAtIndonesiaAttribute()
+    {
+        return DateHelper::formatDateTimeIndonesia($this->updated_at);
+    }
+
+    public function getCreatedAtRelativeAttribute()
+    {
+        return DateHelper::diffForHumans($this->created_at);
+    }
+
+    public function getUpdatedAtRelativeAttribute()
+    {
+        return DateHelper::diffForHumans($this->updated_at);
     }
 }

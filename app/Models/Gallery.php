@@ -17,11 +17,11 @@ class Gallery extends Model
         'gambar',
         'kategori',
         'urutan',
-        'tampilkan'
+        'tampilkan',
     ];
 
     protected $casts = [
-        'tampilkan' => 'boolean'
+        'tampilkan' => 'boolean',
     ];
 
     public function scopeTampilkan($query)
@@ -32,5 +32,21 @@ class Gallery extends Model
     public function scopeKategori($query, $kategori)
     {
         return $query->where('kategori', $kategori);
+    }
+
+    public static function getDaftarKategori()
+    {
+        return [
+            'perjalanan' => 'Perjalanan',
+            'armada' => 'Armada',
+            'kegiatan' => 'Kegiatan',
+        ];
+    }
+
+    public function getKategoriLabelAttribute()
+    {
+        $kategori = self::getDaftarKategori();
+
+        return $kategori[$this->kategori] ?? $this->kategori;
     }
 }

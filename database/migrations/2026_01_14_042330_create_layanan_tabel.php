@@ -17,11 +17,15 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->string('gambar')->nullable();
             $table->text('fasilitas')->nullable(); // JSON array
-            $table->decimal('harga', 15, 2)->nullable();
-            $table->integer('urutan')->default(0);
+            $table->unsignedInteger('urutan')->unique();
             $table->boolean('unggulan')->default(false);
             $table->boolean('aktif')->default(true);
             $table->timestamps();
+
+            // Index untuk performa query
+            $table->index('urutan');
+            $table->index('aktif');
+            $table->index('unggulan');
         });
     }
 

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->string('gambar');
             $table->string('kategori')->nullable(); // perjalanan, armada, kegiatan
-            $table->integer('urutan')->default(0);
+            $table->integer('urutan')->unique();
             $table->boolean('tampilkan')->default(true);
             $table->timestamps();
         });
