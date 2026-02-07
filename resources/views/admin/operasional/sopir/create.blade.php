@@ -3,267 +3,6 @@
 @section('title', 'Tambah Sopir')
 
 @section('content')
-<div class="admin-content">
-    <!-- Page Header -->
-    <div class="gradient-header">
-        <div class="header-left">
-            <a href="{{ route('admin.operasional.sopir.index') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i>
-            </a>
-            <div class="header-icon">
-                <i class="fas fa-plus-circle"></i>
-            </div>
-            <div>
-                <h2 class="header-title">Tambah sopir</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('admin.operasional.sopir.index') }}">sopir</a></li>
-                        <li class="breadcrumb-item active">Tambah</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-    </div>
-
-    <!-- Form Card -->
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-edit"></i> Form Data Sopir
-        </div>
-        <div class="card-body">
-            <form action="{{ route('admin.operasional.sopir.store') }}" method="POST">
-                @csrf
-                
-                <div class="row">
-                    <!-- Nama Lengkap -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="nama_sopir" class="form-label">
-                                Nama Lengkap <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-icon">
-                                    <i class="fas fa-user"></i>
-                                </span>
-                                <input type="text" 
-                                       class="form-control @error('nama_sopir') is-invalid @enderror" 
-                                       id="nama_sopir" 
-                                       name="nama_sopir" 
-                                       value="{{ old('nama_sopir') }}" 
-                                       placeholder="Masukkan nama lengkap"
-                                       required>
-                            </div>
-                            @error('nama_sopir')
-                                <div class="invalid-feedback-custom">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- NIK -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="nik" class="form-label">
-                                NIK (16 Digit) <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-icon">
-                                    <i class="fas fa-id-card-alt"></i>
-                                </span>
-                                <input type="text" 
-                                       class="form-control @error('nik') is-invalid @enderror" 
-                                       id="nik" 
-                                       name="nik" 
-                                       value="{{ old('nik') }}" 
-                                       placeholder="Masukkan 16 digit NIK"
-                                       maxlength="16"
-                                       required>
-                            </div>
-                            @error('nik')
-                                <div class="invalid-feedback-custom">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- No. HP -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="no_hp" class="form-label">
-                                No. HP <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-icon">
-                                    <i class="fas fa-phone"></i>
-                                </span>
-                                <input type="text" 
-                                       class="form-control @error('no_hp') is-invalid @enderror" 
-                                       id="no_hp" 
-                                       name="no_hp" 
-                                       value="{{ old('no_hp') }}" 
-                                       placeholder="08xxxxxxxxxx"
-                                       maxlength="15"
-                                       required>
-                            </div>
-                            @error('no_hp')
-                                <div class="invalid-feedback-custom">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Jenis SIM -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="jenis_sim" class="form-label">
-                                Jenis SIM <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-icon">
-                                    <i class="fas fa-certificate"></i>
-                                </span>
-                                <select class="form-control @error('jenis_sim') is-invalid @enderror" 
-                                        id="jenis_sim" 
-                                        name="jenis_sim" 
-                                        required>
-                                    <option value="">Pilih Jenis SIM</option>
-                                    <option value="SIM A" {{ old('jenis_sim') == 'SIM A' ? 'selected' : '' }}>SIM A</option>
-                                    <option value="SIM B1" {{ old('jenis_sim') == 'SIM B1' ? 'selected' : '' }}>SIM B1</option>
-                                    <option value="SIM B2" {{ old('jenis_sim') == 'SIM B2' ? 'selected' : '' }}>SIM B2</option>
-                                </select>
-                            </div>
-                            @error('jenis_sim')
-                                <div class="invalid-feedback-custom">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- No. SIM -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="no_sim" class="form-label">
-                                No. SIM <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-icon">
-                                    <i class="fas fa-id-card"></i>
-                                </span>
-                                <input type="text" 
-                                       class="form-control @error('no_sim') is-invalid @enderror" 
-                                       id="no_sim" 
-                                       name="no_sim" 
-                                       value="{{ old('no_sim') }}" 
-                                       placeholder="Masukkan nomor SIM"
-                                       maxlength="20"
-                                       required>
-                            </div>
-                            @error('no_sim')
-                                <div class="invalid-feedback-custom">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Status -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="status" class="form-label">
-                                Status <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-icon">
-                                    <i class="fas fa-toggle-on"></i>
-                                </span>
-                                <select class="form-control @error('status') is-invalid @enderror" 
-                                        id="status" 
-                                        name="status" 
-                                        required>
-                                    <option value="">Pilih Status</option>
-                                    <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                    <option value="nonaktif" {{ old('status') == 'nonaktif' ? 'selected' : '' }}>Non-Aktif</option>
-                                </select>
-                            </div>
-                            @error('status')
-                                <div class="invalid-feedback-custom">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Alamat -->
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label for="alamat" class="form-label">
-                                Alamat <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-icon" style="align-items: flex-start; padding-top: 0.75rem;">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </span>
-                                <textarea class="form-control @error('alamat') is-invalid @enderror" 
-                                          id="alamat" 
-                                          name="alamat" 
-                                          rows="4" 
-                                          placeholder="Masukkan alamat lengkap"
-                                          required>{{ old('alamat') }}</textarea>
-                            </div>
-                            @error('alamat')
-                                <div class="invalid-feedback-custom">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Form Actions -->
-                <div class="form-actions">
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-save"></i> Simpan Data
-                    </button>
-                    <button type="reset" class="btn-secondary">
-                        <i class="fas fa-redo"></i> Reset Form
-                    </button>
-                    <a href="{{ route('admin.operasional.sopir.index') }}" class="btn-danger">
-                        <i class="fas fa-times"></i> Batal
-                    </a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Info Card -->
-    <div class="card" style="margin-top: 1.5rem;">
-        <div class="card-body" style="background: linear-gradient(135deg, rgba(251, 133, 0, 0.05), rgba(255, 183, 3, 0.05));">
-            <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                <div style="color: var(--orange-primary); font-size: 2rem;">
-                    <i class="fas fa-info-circle"></i>
-                </div>
-                <div>
-                    <h5 style="color: var(--blue-dark); margin: 0 0 0.5rem 0; font-weight: 600;">
-                        <i class="fas fa-lightbulb"></i> Informasi Penting
-                    </h5>
-                    <ul style="margin: 0; padding-left: 1.25rem; color: #6c757d; line-height: 1.8;">
-                        <li>Pastikan semua data yang diisi sudah benar dan sesuai</li>
-                        <li>NIK harus 16 digit angka sesuai KTP</li>
-                        <li>Nomor SIM harus masih berlaku dan sesuai jenis SIM</li>
-                        <li>Nomor HP harus aktif dan dapat dihubungi</li>
-                        <li>Sopir baru akan berstatus "Belum Bertugas" sampai ditugaskan ke bus</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
 /* Form Styling */
 .form-group {
@@ -372,4 +111,358 @@ textarea.form-control {
     }
 }
 </style>
+<div class="admin-content">
+    {{-- Page Header --}}
+    <div class="gradient-header">
+        <div class="header-left">
+            <a href="{{ route('admin.operasional.sopir.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="header-icon">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            <div>
+                <h2 class="header-title">Tambah Sopir</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.operasional.sopir.index') }}">Sopir</a></li>
+                        <li class="breadcrumb-item active">Tambah</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    {{--  Form Card --}}
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-edit"></i> Form Data Sopir
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.operasional.sopir.store') }}" method="POST" id="formSopir">
+                @csrf
+                
+                <div class="row">
+                    <!-- Nama Lengkap -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nama_sopir" class="form-label">
+                                Nama Lengkap <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-icon">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control @error('nama_sopir') is-invalid @enderror" 
+                                       id="nama_sopir" 
+                                       name="nama_sopir" 
+                                       value="{{ old('nama_sopir') }}" 
+                                       placeholder="Masukkan nama lengkap sopir"
+                                       required>
+                            </div>
+                            @error('nama_sopir')
+                                <div class="invalid-feedback-custom">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- NIK -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nik" class="form-label">
+                                NIK (16 Digit) <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-icon">
+                                    <i class="fas fa-id-card-alt"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control @error('nik') is-invalid @enderror" 
+                                       id="nik" 
+                                       name="nik" 
+                                       value="{{ old('nik') }}" 
+                                       placeholder="Masukkan 16 digit NIK"
+                                       maxlength="16"
+                                       pattern="[0-9]{16}"
+                                       required>
+                            </div>
+                            @error('nik')
+                                <div class="invalid-feedback-custom">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> NIK harus 16 digit angka sesuai KTP
+                            </small>
+                        </div>
+                    </div>
+
+                    {{-- HP --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="no_hp" class="form-label">
+                                No. HP <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-icon">
+                                    <i class="fas fa-phone"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control @error('no_hp') is-invalid @enderror" 
+                                       id="no_hp" 
+                                       name="no_hp" 
+                                       value="{{ old('no_hp') }}" 
+                                       placeholder="Contoh: 081234567890"
+                                       maxlength="15"
+                                       required>
+                            </div>
+                            @error('no_hp')
+                                <div class="invalid-feedback-custom">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Jenis Sim --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="jenis_sim" class="form-label">
+                                Jenis SIM <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-icon">
+                                    <i class="fas fa-certificate"></i>
+                                </span>
+                                <select class="form-control @error('jenis_sim') is-invalid @enderror" 
+                                        id="jenis_sim" 
+                                        name="jenis_sim" 
+                                        required>
+                                    <option value="">Pilih Jenis SIM</option>
+                                    <option value="SIM A" {{ old('jenis_sim') == 'SIM A' ? 'selected' : '' }}>SIM A</option>
+                                    <option value="SIM B1" {{ old('jenis_sim') == 'SIM B1' ? 'selected' : '' }}>SIM B1</option>
+                                    <option value="SIM B2" {{ old('jenis_sim') == 'SIM B2' ? 'selected' : '' }}>SIM B2</option>
+                                </select>
+                            </div>
+                            @error('jenis_sim')
+                                <div class="invalid-feedback-custom">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- No SIM --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="no_sim" class="form-label">
+                                No. SIM <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-icon">
+                                    <i class="fas fa-id-card"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control @error('no_sim') is-invalid @enderror" 
+                                       id="no_sim" 
+                                       name="no_sim" 
+                                       value="{{ old('no_sim') }}" 
+                                       placeholder="Masukkan nomor SIM"
+                                       maxlength="20"
+                                       required>
+                            </div>
+                            @error('no_sim')
+                                <div class="invalid-feedback-custom">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Status --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="status" class="form-label">
+                                Status <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-icon">
+                                    <i class="fas fa-toggle-on"></i>
+                                </span>
+                                <select class="form-control @error('status') is-invalid @enderror" 
+                                        id="status" 
+                                        name="status" 
+                                        required>
+                                    <option value="">Pilih Status</option>
+                                    <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="nonaktif" {{ old('status') == 'nonaktif' ? 'selected' : '' }}>Non-Aktif</option>
+                                    <option value="cuti" {{ old('status') == 'cuti' ? 'selected' : '' }}>Cuti</option>
+                                </select>
+                            </div>
+                            @error('status')
+                                <div class="invalid-feedback-custom">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Aalamat --}}
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="alamat" class="form-label">
+                                Alamat Lengkap <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-icon" style="align-items: flex-start; padding-top: 0.75rem;">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </span>
+                                <textarea class="form-control @error('alamat') is-invalid @enderror" 
+                                          id="alamat" 
+                                          name="alamat" 
+                                          rows="4" 
+                                          placeholder="Masukkan alamat lengkap sopir"
+                                          required>{{ old('alamat') }}</textarea>
+                            </div>
+                            @error('alamat')
+                                <div class="invalid-feedback-custom">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Aksi --}}
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Simpan Data
+                    </button>
+                    <button type="reset" class="btn-secondary">
+                        <i class="fas fa-redo"></i> Reset Form
+                    </button>
+                    <a href="{{ route('admin.operasional.sopir.index') }}" class="btn-danger">
+                        <i class="fas fa-times"></i> Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Info Card --}}
+    <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-body" style="background: linear-gradient(135deg, rgba(251, 133, 0, 0.05), rgba(255, 183, 3, 0.05));">
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="color: var(--orange-primary); font-size: 2rem;">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div>
+                    <h5 style="color: var(--blue-dark); margin: 0 0 0.5rem 0; font-weight: 600;">
+                        <i class="fas fa-lightbulb"></i> Informasi Penting
+                    </h5>
+                    <ul style="margin: 0; padding-left: 1.25rem; color: #6c757d; line-height: 1.8;">
+                        <li>Pastikan semua data yang diisi sudah benar dan sesuai</li>
+                        <li>NIK harus 16 digit angka sesuai dengan KTP</li>
+                        <li>Nomor SIM harus masih berlaku dan sesuai dengan jenis SIM</li>
+                        <li>Nomor HP harus aktif dan dapat dihubungi</li>
+                        <li>Sopir baru akan berstatus "Belum Bertugas" sampai ditugaskan ke bus</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SweetAlert2 Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('formSopir');
+        
+        // Handle form submit dengan konfirmasi
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validasi NIK 16 digit
+            const nik = document.getElementById('nik').value;
+            if (nik.length !== 16 || !/^\d+$/.test(nik)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'NIK Tidak Valid',
+                    text: 'NIK harus berisi 16 digit angka!',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
+            Swal.fire({
+                title: 'Konfirmasi Penyimpanan',
+                text: "Apakah Anda yakin data yang diisi sudah benar?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Cek Lagi',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Menyimpan Data...',
+                        text: 'Mohon tunggu sebentar',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        willOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    // Submit form
+                    form.submit();
+                }
+            });
+        });
+        
+        // Handle reset button
+        const resetBtn = form.querySelector('button[type="reset"]');
+        resetBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Reset Form?',
+                text: "Semua data yang telah diisi akan dihapus!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Reset!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.reset();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Form Direset',
+                        text: 'Silakan isi form kembali',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
+        
+        // NIK validation - hanya angka
+        document.getElementById('nik').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+        
+        // No HP validation - hanya angka
+        document.getElementById('no_hp').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    });
+</script>
 @endsection

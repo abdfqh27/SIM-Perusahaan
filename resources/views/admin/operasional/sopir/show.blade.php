@@ -3,291 +3,8 @@
 @section('title', 'Detail Sopir')
 
 @section('content')
-<div class="admin-content">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="header-left">
-            <div class="header-icon">
-                <i class="fas fa-user-circle"></i>
-            </div>
-            <div>
-                <h1 class="page-title">Detail Sopir</h1>
-                <p class="page-subtitle">Informasi lengkap sopir {{ $sopir->nama_sopir }}</p>
-            </div>
-        </div>
-        <div class="header-actions">
-            <a href="{{ route('admin.operasional.sopir.edit', $sopir) }}" class="btn-warning">
-                <i class="fas fa-edit"></i>
-                <span>Edit</span>
-            </a>
-            <a href="{{ route('admin.operasional.sopir.index') }}" class="btn-secondary">
-                <i class="fas fa-arrow-left"></i>
-                <span>Kembali</span>
-            </a>
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- Profile Card -->
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-body" style="text-align: center; padding: 2rem;">
-                    <!-- Avatar -->
-                    <div class="profile-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    
-                    <!-- Name -->
-                    <h3 class="profile-name">{{ $sopir->nama_sopir }}</h3>
-                    
-                    <!-- Status Badge -->
-                    <div style="margin-bottom: 1.5rem;">
-                        @if($sopir->status === 'aktif')
-                            <span class="badge-status-large badge-aktif">
-                                <i class="fas fa-check-circle"></i> Status Aktif
-                            </span>
-                        @else
-                            <span class="badge-status-large badge-nonaktif">
-                                <i class="fas fa-times-circle"></i> Status Non-Aktif
-                            </span>
-                        @endif
-                    </div>
-
-                    <!-- Quick Info -->
-                    <div class="quick-info">
-                        <div class="quick-info-item">
-                            <i class="fas fa-calendar-alt"></i>
-                            <div>
-                                <small>Terdaftar Sejak</small>
-                                <strong>{{ $sopir->created_at->format('d M Y') }}</strong>
-                            </div>
-                        </div>
-                        <div class="quick-info-item">
-                            <i class="fas fa-clock"></i>
-                            <div>
-                                <small>Terakhir Diupdate</small>
-                                <strong>{{ $sopir->updated_at->format('d M Y') }}</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="profile-actions">
-                        <a href="{{ route('admin.operasional.sopir.edit', $sopir) }}" class="btn-primary" style="width: 100%;">
-                            <i class="fas fa-edit"></i> Edit Data
-                        </a>
-                        <form action="{{ route('admin.operasional.sopir.destroy', $sopir) }}" 
-                              method="POST" 
-                              style="margin-top: 0.75rem;"
-                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus sopir ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-danger" style="width: 100%;">
-                                <i class="fas fa-trash"></i> Hapus Sopir
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Details Card -->
-        <div class="col-lg-8">
-            <!-- Personal Information -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-user-alt"></i> Informasi Personal
-                </div>
-                <div class="card-body">
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-user"></i> Nama Lengkap
-                            </div>
-                            <div class="detail-value">{{ $sopir->nama_sopir }}</div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-id-card-alt"></i> NIK
-                            </div>
-                            <div class="detail-value">{{ $sopir->nik }}</div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-phone"></i> No. HP
-                            </div>
-                            <div class="detail-value">
-                                <a href="tel:{{ $sopir->no_hp }}" class="contact-link">
-                                    {{ $sopir->no_hp }}
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-certificate"></i> Jenis SIM
-                            </div>
-                            <div class="detail-value">
-                                <span style="background: linear-gradient(135deg, #ffc107, #ff9800); color: white; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: 600; display: inline-block;">
-                                    {{ $sopir->jenis_sim }}
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-id-card"></i> No. SIM
-                            </div>
-                            <div class="detail-value">{{ $sopir->no_sim }}</div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-toggle-on"></i> Status
-                            </div>
-                            <div class="detail-value">
-                                @if($sopir->status === 'aktif')
-                                    <span class="badge-status badge-aktif">
-                                        <i class="fas fa-check-circle"></i> Aktif
-                                    </span>
-                                @else
-                                    <span class="badge-status badge-nonaktif">
-                                        <i class="fas fa-times-circle"></i> Non-Aktif
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <div class="detail-item detail-full">
-                            <div class="detail-label">
-                                <i class="fas fa-map-marker-alt"></i> Alamat
-                            </div>
-                            <div class="detail-value">{{ $sopir->alamat }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bus Assignment -->
-            <div class="card" style="margin-top: 1.5rem;">
-                <div class="card-header">
-                    <i class="fas fa-bus"></i> Penugasan Bus
-                </div>
-                <div class="card-body">
-                    @if($sopir->bus)
-                        <div class="assignment-card">
-                            <div class="assignment-header">
-                                <div class="assignment-icon">
-                                    <i class="fas fa-bus"></i>
-                                </div>
-                                <div class="assignment-info">
-                                    <h4>{{ $sopir->bus->nama_bus }}</h4>
-                                    <p>{{ $sopir->bus->plat_nomor }}</p>
-                                </div>
-                                <div class="assignment-badge">
-                                    <span class="badge-assigned">
-                                        <i class="fas fa-check"></i> Ditugaskan
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div class="assignment-details">
-                                <div class="assignment-detail-item">
-                                    <span class="label">Kategori Bus:</span>
-                                    <span class="value">{{ $sopir->bus->kategoriBus->nama_kategori ?? '-' }}</span>
-                                </div>
-                                <div class="assignment-detail-item">
-                                    <span class="label">Kapasitas:</span>
-                                    <span class="value">{{ $sopir->bus->kapasitas }} penumpang</span>
-                                </div>
-                                <div class="assignment-detail-item">
-                                    <span class="label">Status Bus:</span>
-                                    <span class="value">
-                                        @if($sopir->bus->status === 'tersedia')
-                                            <span style="color: #28a745; font-weight: 600;">
-                                                <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Tersedia
-                                            </span>
-                                        @elseif($sopir->bus->status === 'digunakan')
-                                            <span style="color: #ffc107; font-weight: 600;">
-                                                <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Digunakan
-                                            </span>
-                                        @else
-                                            <span style="color: #dc3545; font-weight: 600;">
-                                                <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Maintenance
-                                            </span>
-                                        @endif
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    @else
-                        <div class="no-assignment">
-                            <div class="no-assignment-icon">
-                                <i class="fas fa-inbox"></i>
-                            </div>
-                            <h4>Belum Ada Penugasan</h4>
-                            <p>Sopir ini belum ditugaskan ke bus manapun</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Timeline -->
-            <div class="card" style="margin-top: 1.5rem;">
-                <div class="card-header">
-                    <i class="fas fa-history"></i> Riwayat Aktivitas
-                </div>
-                <div class="card-body">
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-marker timeline-success"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-header">
-                                    <strong>Data Diperbarui</strong>
-                                    <span class="timeline-date">{{ $sopir->updated_at->format('d M Y, H:i') }}</span>
-                                </div>
-                                <p>Data sopir terakhir diperbarui</p>
-                            </div>
-                        </div>
-                        
-                        <div class="timeline-item">
-                            <div class="timeline-marker timeline-primary"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-header">
-                                    <strong>Data Dibuat</strong>
-                                    <span class="timeline-date">{{ $sopir->created_at->format('d M Y, H:i') }}</span>
-                                </div>
-                                <p>Sopir terdaftar dalam sistem</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
 /* Profile Card Styles */
-.profile-avatar {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 1.5rem;
-    background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 30px rgba(251, 133, 0, 0.3);
-}
-
-.profile-avatar i {
-    font-size: 4rem;
-    color: white;
-}
-
 .profile-name {
     font-size: 1.5rem;
     font-weight: 700;
@@ -400,6 +117,18 @@
     color: var(--orange-primary);
 }
 
+.badge-sim-detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
 /* Badge Status */
 .badge-status {
     display: inline-flex;
@@ -413,6 +142,11 @@
 
 .badge-aktif {
     background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.badge-cuti {
+    background: linear-gradient(135deg, var(--blue-light), var(--blue-lighter));
     color: white;
 }
 
@@ -481,6 +215,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    white-space: nowrap;
 }
 
 .assignment-details {
@@ -501,6 +236,10 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.assignment-detail-item .label i {
+    margin-right: 0.25rem;
 }
 
 .assignment-detail-item .value {
@@ -637,4 +376,395 @@
     }
 }
 </style>
+<div class="admin-content">
+    {{-- Page Header --}}
+    <div class="gradient-header">
+        <div class="header-left">
+            <a href="{{ route('admin.operasional.sopir.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div>
+                <h2 class="header-title">Detail Sopir</h2>
+                <p class="header-subtitle">Informasi lengkap sopir {{ $sopir->nama_sopir }}</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="{{ route('admin.operasional.sopir.edit', $sopir) }}" class="btn-header-action btn-edit">
+                <i class="fas fa-edit"></i>
+                <span>Edit</span>
+            </a>
+            <button type="button" 
+                    class="btn-header-action btn-delete btn-delete-sopir"
+                    data-has-bus="{{ $sopir->bus ? 'true' : 'false' }}"
+                    data-sopir-id="{{ $sopir->id }}"
+                    data-sopir-name="{{ $sopir->nama_sopir }}"
+                    data-bus-name="{{ $sopir->bus ? $sopir->bus->nama_bus : '' }}"
+                    data-url="{{ route('admin.operasional.sopir.destroy', $sopir) }}">
+                <i class="fas fa-trash"></i>
+                <span>Hapus</span>
+            </button>
+        </div>
+    </div>
+
+    {{-- Alert Messages --}}
+    @if(session('success'))
+    <div class="alert-success">
+        <i class="fas fa-check-circle"></i>
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="alert-danger">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ session('error') }}
+    </div>
+    @endif
+
+    <div class="row">
+        {{-- Profile Summary Card --}}
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body" style="text-align: center; padding: 2rem;">
+                    {{-- Name & Status --}}
+                    <h3 class="profile-name">{{ $sopir->nama_sopir }}</h3>
+                    
+                    {{-- Status Badge --}}
+                    <div style="margin-bottom: 1.5rem;">
+                        @if($sopir->status === 'aktif')
+                            <span class="badge-status-large badge-aktif">
+                                <i class="fas fa-check-circle"></i> Status Aktif
+                            </span>
+                        @elseif($sopir->status === 'cuti')
+                            <span class="badge-status-large badge-cuti">
+                                <i class="fas fa-umbrella-beach"></i> Sedang Cuti
+                            </span>
+                        @else
+                            <span class="badge-status-large badge-nonaktif">
+                                <i class="fas fa-times-circle"></i> Status Non-Aktif
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- Quick Info --}}
+                    <div class="quick-info">
+                        <div class="quick-info-item">
+                            <i class="fas fa-calendar-plus"></i>
+                            <div>
+                                <small>Terdaftar Sejak</small>
+                                <strong>{{ $sopir->created_at->format('d M Y') }}</strong>
+                            </div>
+                        </div>
+                        <div class="quick-info-item">
+                            <i class="fas fa-calendar-check"></i>
+                            <div>
+                                <small>Terakhir Diupdate</small>
+                                <strong>{{ $sopir->updated_at->format('d M Y') }}</strong>
+                            </div>
+                        </div>
+                        <div class="quick-info-item">
+                            <i class="fas fa-{{ $sopir->bus ? 'check-circle' : 'times-circle' }}"></i>
+                            <div>
+                                <small>Status Tugas</small>
+                                <strong>{{ $sopir->bus ? 'Sedang Bertugas' : 'Belum Bertugas' }}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Action Buttons --}}
+                    <div class="profile-actions">
+                        <a href="{{ route('admin.operasional.sopir.edit', $sopir) }}" class="btn-primary" style="width: 100%;">
+                            <i class="fas fa-edit"></i> Edit Data
+                        </a>
+                        <button type="button" 
+                                class="btn-danger btn-delete-sopir"
+                                style="width: 100%; margin-top: 0.75rem;"
+                                data-has-bus="{{ $sopir->bus ? 'true' : 'false' }}"
+                                data-sopir-id="{{ $sopir->id }}"
+                                data-sopir-name="{{ $sopir->nama_sopir }}"
+                                data-bus-name="{{ $sopir->bus ? $sopir->bus->nama_bus : '' }}"
+                                data-url="{{ route('admin.operasional.sopir.destroy', $sopir) }}">
+                            <i class="fas fa-trash"></i> Hapus Sopir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Details Card --}}
+        <div class="col-lg-8">
+            {{-- Personal Information --}}
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user-alt"></i> Informasi Personal
+                </div>
+                <div class="card-body">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-user"></i> Nama Lengkap
+                            </div>
+                            <div class="detail-value">{{ $sopir->nama_sopir }}</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-id-card-alt"></i> NIK
+                            </div>
+                            <div class="detail-value">{{ $sopir->nik }}</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-phone"></i> No. HP
+                            </div>
+                            <div class="detail-value">
+                                <a href="tel:{{ $sopir->no_hp }}" class="contact-link">
+                                    <i class="fas fa-phone-alt"></i> {{ $sopir->no_hp }}
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-certificate"></i> Jenis SIM
+                            </div>
+                            <div class="detail-value">
+                                <span class="badge-sim-detail">
+                                    <i class="fas fa-id-badge"></i> {{ $sopir->jenis_sim }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-id-card"></i> No. SIM
+                            </div>
+                            <div class="detail-value">{{ $sopir->no_sim }}</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-toggle-on"></i> Status
+                            </div>
+                            <div class="detail-value">
+                                @if($sopir->status === 'aktif')
+                                    <span class="badge-status badge-aktif">
+                                        <i class="fas fa-check-circle"></i> Aktif
+                                    </span>
+                                @elseif($sopir->status === 'cuti')
+                                    <span class="badge-status badge-cuti">
+                                        <i class="fas fa-umbrella-beach"></i> Cuti
+                                    </span>
+                                @else
+                                    <span class="badge-status badge-nonaktif">
+                                        <i class="fas fa-times-circle"></i> Non-Aktif
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item detail-full">
+                            <div class="detail-label">
+                                <i class="fas fa-map-marker-alt"></i> Alamat Lengkap
+                            </div>
+                            <div class="detail-value">{{ $sopir->alamat }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Bus Assignment --}}
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <i class="fas fa-bus"></i> Penugasan Bus
+                </div>
+                <div class="card-body">
+                    @if($sopir->bus)
+                        <div class="assignment-card">
+                            <div class="assignment-header">
+                                <div class="assignment-icon">
+                                    <i class="fas fa-bus"></i>
+                                </div>
+                                <div class="assignment-info">
+                                    <h4>{{ $sopir->bus->nama_bus }}</h4>
+                                    <p><i class="fas fa-id-badge"></i> {{ $sopir->bus->plat_nomor }}</p>
+                                </div>
+                                <div class="assignment-badge">
+                                    <span class="badge-assigned">
+                                        <i class="fas fa-check-double"></i> Sedang Bertugas
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="assignment-details">
+                                <div class="assignment-detail-item">
+                                    <span class="label"><i class="fas fa-tag"></i> Kategori Bus:</span>
+                                    <span class="value">{{ $sopir->bus->kategoriBus->nama_kategori ?? '-' }}</span>
+                                </div>
+                                <div class="assignment-detail-item">
+                                    <span class="label"><i class="fas fa-users"></i> Kapasitas:</span>
+                                    <span class="value">{{ $sopir->bus->kapasitas }} penumpang</span>
+                                </div>
+                                <div class="assignment-detail-item">
+                                    <span class="label"><i class="fas fa-info-circle"></i> Status Bus:</span>
+                                    <span class="value">
+                                        @if($sopir->bus->status === 'tersedia')
+                                            <span style="color: #28a745; font-weight: 600;">
+                                                <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Tersedia
+                                            </span>
+                                        @elseif($sopir->bus->status === 'digunakan')
+                                            <span style="color: #ffc107; font-weight: 600;">
+                                                <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Digunakan
+                                            </span>
+                                        @else
+                                            <span style="color: #dc3545; font-weight: 600;">
+                                                <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Maintenance
+                                            </span>
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="no-assignment">
+                            <div class="no-assignment-icon">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                            <h4>Belum Ada Penugasan</h4>
+                            <p>Sopir ini belum ditugaskan ke bus manapun</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Timeline --}}
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <i class="fas fa-history"></i> Riwayat Aktivitas
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker timeline-success"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <strong>Data Diperbarui</strong>
+                                    <span class="timeline-date">{{ $sopir->updated_at->format('d M Y, H:i') }}</span>
+                                </div>
+                                <p>Data sopir terakhir diperbarui dalam sistem</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-marker timeline-primary"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <strong>Data Dibuat</strong>
+                                    <span class="timeline-date">{{ $sopir->created_at->format('d M Y, H:i') }}</span>
+                                </div>
+                                <p>Sopir terdaftar dalam sistem</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Hidden Form for Delete (akan disubmit via JavaScript) --}}
+<form id="deleteForm" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+<!-- SweetAlert2 Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to handle delete
+        function handleDelete(button) {
+            // Prevent any default behavior
+            if (button) {
+                const hasBus = button.dataset.hasBus === 'true';
+                const sopirName = button.dataset.sopirName;
+                const busName = button.dataset.busName;
+                const deleteUrl = button.dataset.url;
+                
+                // Cek apakah sopir sedang bertugas
+                if (hasBus) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Tidak Dapat Menghapus!',
+                        html: `
+                            <p>Sopir <strong>${sopirName}</strong> sedang bertugas di bus <strong>${busName}</strong>.</p>
+                            <p>Lepaskan tugasan bus terlebih dahulu sebelum menghapus sopir!</p>
+                        `,
+                        confirmButtonText: 'OK'
+                    });
+                    return false;
+                }
+                
+                // Jika tidak sedang bertugas, tampilkan konfirmasi hapus
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    html: `Data sopir <strong>${sopirName}</strong> akan dihapus permanen!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading
+                        Swal.fire({
+                            title: 'Menghapus Data...',
+                            text: 'Mohon tunggu sebentar',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        
+                        // Submit form via JavaScript
+                        const form = document.getElementById('deleteForm');
+                        form.action = deleteUrl;
+                        form.submit();
+                    }
+                });
+            }
+            
+            return false;
+        }
+        
+        // Get all delete buttons
+        const deleteButtons = document.querySelectorAll('.btn-delete-sopir');
+        
+        // Add event listener to each button
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                handleDelete(this);
+                return false;
+            });
+        });
+        
+        // Auto hide alerts
+        const alerts = document.querySelectorAll('.alert-success, .alert-danger');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }, 5000);
+        });
+    });
+</script>
 @endsection

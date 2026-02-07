@@ -16,8 +16,9 @@ return new class extends Migration
             $table->enum('jenis_sim', ['SIM A', 'SIM B1', 'SIM B2']);
             $table->string('no_hp');
             $table->text('alamat');
-            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+            $table->enum('status', ['aktif', 'nonaktif', 'cuti'])->default('aktif');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

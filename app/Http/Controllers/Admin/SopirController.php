@@ -2,17 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\DateHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SopirRequest;
 use App\Models\Sopir;
 
 class SopirController extends Controller
 {
+    public function __construct()
+    {
+        DateHelper::setDefaultTimezone();
+    }
+
     public function index()
     {
         $sopirs = Sopir::with('bus')->latest()->get();
 
-        return view('admin.operasional.sopir.index', compact('sopirs'));
+        $stats = [
+            'total' => Sopir::count(),
+            'aktif' => Sopir::where('status', 'aktif')->count(),
+            'nonaktif' => Sopir::where('status', 'nonaktif')->count(),
+            'cuti' => Sopir::where('status', 'cuti')->count(),
+        ];
+
+        return view('admin.operasional.sopir.index', compact('sopirs', 'stats'));
     }
 
     public function create()
@@ -42,6 +55,11 @@ class SopirController extends Controller
 
     public function update(SopirRequest $request, Sopir $sopir)
     {
+        // Validasi khusus jika sopir sedang bertugas dan status diubah ke nonaktif/cuti
+        if ($sopir->isBertugas() && in_array($request->status, ['nonaktif', 'cuti'])) {
+            return back()->with('error', 'Sopir sedang bertugas di bus, tidak dapat diubah ke status nonaktif/cuti. Lepaskan tugasan bus terlebih dahulu.');
+        }
+
         $sopir->update($request->validated());
 
         return redirect()->route('admin.operasional.sopir.index')
@@ -50,7 +68,8 @@ class SopirController extends Controller
 
     public function destroy(Sopir $sopir)
     {
-        if ($sopir->bus) {
+        // Cek apakah sopir sedang bertugas
+        if ($sopir->isBertugas()) {
             return back()->with('error', 'Sopir tidak dapat dihapus karena masih ditugaskan ke bus');
         }
 
