@@ -12,12 +12,12 @@ class PengaturanController extends Controller
     public function index()
     {
         $pengaturan = Pengaturan::first();
-        
+
         // Jika belum ada data, buat data kosong
-        if (!$pengaturan) {
+        if (! $pengaturan) {
             $pengaturan = Pengaturan::create([]);
         }
-        
+
         return view('admin.pengaturan.index', compact('pengaturan'));
     }
 
@@ -39,13 +39,13 @@ class PengaturanController extends Controller
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
             'logo' => 'nullable|image|mimes:jpeg,jpg,png,gif,svg|max:2048',
-            'favicon' => 'nullable|image|mimes:ico,png|max:1024'
+            'favicon' => 'nullable|image|mimes:ico,png|max:1024',
         ]);
 
         $pengaturan = Pengaturan::first();
-        
-        if (!$pengaturan) {
-            $pengaturan = new Pengaturan();
+
+        if (! $pengaturan) {
+            $pengaturan = new Pengaturan;
         }
 
         // Handle logo upload
@@ -54,7 +54,7 @@ class PengaturanController extends Controller
             if ($pengaturan->logo && Storage::disk('public')->exists($pengaturan->logo)) {
                 Storage::disk('public')->delete($pengaturan->logo);
             }
-            
+
             $logoPath = $request->file('logo')->store('logo', 'public');
             $validated['logo'] = $logoPath;
         }
@@ -65,7 +65,7 @@ class PengaturanController extends Controller
             if ($pengaturan->favicon && Storage::disk('public')->exists($pengaturan->favicon)) {
                 Storage::disk('public')->delete($pengaturan->favicon);
             }
-            
+
             $faviconPath = $request->file('favicon')->store('logo', 'public');
             $validated['favicon'] = $faviconPath;
         }
