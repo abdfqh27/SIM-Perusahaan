@@ -4,251 +4,125 @@
 
 @section('content')
 <style>
-    .unread-row {
-        background: linear-gradient(90deg, rgba(251, 133, 0, 0.03), transparent);
-        font-weight: 500;
+    /* Highlight untuk baris yang belum dibaca */
+    .table-warning {
+        background-color: rgba(255, 193, 7, 0.1) !important;
     }
     
-    .sender-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-    
+    /* Container untuk badge baru */
     .badge-new {
-        background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
-        color: white;
-        font-size: 0.65rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.7rem;
         padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        font-weight: 600;
     }
     
-    .email-link {
-        color: var(--blue-light);
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-    
-    .email-link:hover {
-        color: var(--orange-primary);
-        text-decoration: underline;
-    }
-    
-    .subject-preview {
-        font-size: 0.9rem;
-        color: var(--blue-dark);
-        line-height: 1.4;
-    }
-    
-    .date-info {
-        font-size: 0.85rem;
-        color: #6c757d;
-    }
-    
-    .date-info i {
-        color: var(--blue-light);
-        margin-right: 0.25rem;
-    }
-    
-    .badge-read {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
-        padding: 0.35rem 0.7rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-    
-    .badge-unread {
-        background: linear-gradient(135deg, #ffc107, #ffb700);
-        color: #000;
-        padding: 0.35rem 0.7rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-    
+    /* Styling untuk kolom aksi */
     .action-buttons {
         display: flex;
         gap: 0.25rem;
         justify-content: center;
+        flex-wrap: wrap;
     }
     
-    .btn-view {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        border: 1px solid var(--blue-light);
-        color: var(--blue-light);
-        border-radius: 6px;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-view:hover {
-        background: var(--blue-light);
-        color: white;
-        transform: translateY(-2px);
-    }
-    
-    .btn-mark-read {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        border: 1px solid #28a745;
-        color: #28a745;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-mark-read:hover {
-        background: #28a745;
-        color: white;
-        transform: translateY(-2px);
-    }
-    
-    .btn-delete {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        border: 1px solid #dc3545;
-        color: #dc3545;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-delete:hover {
-        background: #dc3545;
-        color: white;
-        transform: translateY(-2px);
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-    }
-    
-    .empty-state i {
-        font-size: 4rem;
-        color: var(--blue-light);
-        opacity: 0.3;
-        margin-bottom: 1rem;
-    }
-    
-    .empty-state h4 {
-        color: var(--blue-dark);
-        margin-bottom: 0.5rem;
-    }
-    
-    .empty-state p {
-        color: #6c757d;
-    }
-    
-    .stat-total {
-        border-left: 4px solid var(--orange-primary);
-    }
-    
-    .stat-unread {
-        border-left: 4px solid #ffc107;
-    }
-    
-    .stat-read {
-        border-left: 4px solid #28a745;
+    /* Responsif untuk tombol aksi */
+    @media (max-width: 768px) {
+        .action-buttons {
+            gap: 0.15rem;
+        }
+        
+        .action-buttons .btn {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.8rem;
+        }
     }
 </style>
 
 <div class="container-fluid">
-    <!-- Success Message -->
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    @endif
-
-    <!-- Header Section -->
+    {{-- Header Gradient dengan informasi halaman --}}
     <div class="gradient-header">
         <div class="header-left">
             <div class="header-icon">
-                <i class="fas fa-comment"></i>
+                <i class="fas fa-envelope"></i>
             </div>
             <div>
-                <h2 class="header-title">Daftar Pesan</h2>
-                <p class="header-subtitle">Kelola dan respon pesan dari pengguna</p>
+                <h2 class="header-title">Pesan Kontak</h2>
+                <p class="header-subtitle">Kelola dan respon pesan dari pengunjung</p>
             </div>
+        </div>
+        <div class="header-actions">
+            <button onclick="refreshPage()" class="btn-refresh">
+                <i class="fas fa-sync-alt"></i>
+                <span>Refresh</span>
+            </button>
         </div>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card stat-total">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted mb-1 small">Total Pesan</p>
-                            <h3 class="mb-0 fw-bold" style="color: var(--blue-dark);">{{ $pesanKontaks->count() }}</h3>
-                        </div>
-                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary)); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-envelope" style="color: white; font-size: 1.8rem;"></i>
-                        </div>
-                    </div>
+    {{-- Grid Statistik Pesan --}}
+    <div class="stats-grid">
+        {{-- Statistik: Total Pesan --}}
+        <div class="stat-card">
+            <div class="stat-card-inner">
+                <div class="icon-wrapper icon-primary">
+                    <i class="fas fa-envelope"></i>
                 </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ $pesanKontaks->count() }}</h3>
+                    <p class="stat-label">Total Pesan</p>
+                </div>
+            </div>
+            <div class="stat-footer">
+                <a href="{{ route('admin.pesan-kontak.index') }}" class="stat-link">
+                    Lihat Semua <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
         </div>
-        
-        <div class="col-md-4">
-            <div class="card stat-unread">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted mb-1 small">Belum Dibaca</p>
-                            <h3 class="mb-0 fw-bold" style="color: var(--blue-dark);">{{ $pesanKontaks->where('sudah_dibaca', false)->count() }}</h3>
-                        </div>
-                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #ffc107, #ffb700); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-envelope-open" style="color: white; font-size: 1.8rem;"></i>
-                        </div>
-                    </div>
+
+        {{-- Statistik: Pesan Belum Dibaca --}}
+        <div class="stat-card">
+            <div class="stat-card-inner">
+                <div class="icon-wrapper icon-warning">
+                    <i class="fas fa-envelope-open"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ $pesanKontaks->where('sudah_dibaca', false)->count() }}</h3>
+                    <p class="stat-label">Belum Dibaca</p>
                 </div>
             </div>
+            @if($pesanKontaks->where('sudah_dibaca', false)->count() > 0)
+            <div class="stat-trend">
+                <span class="trend-indicator trend-alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Perlu Perhatian
+                </span>
+            </div>
+            @endif
         </div>
-        
-        <div class="col-md-4">
-            <div class="card stat-read">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted mb-1 small">Sudah Dibaca</p>
-                            <h3 class="mb-0 fw-bold" style="color: var(--blue-dark);">{{ $pesanKontaks->where('sudah_dibaca', true)->count() }}</h3>
-                        </div>
-                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #28a745, #20c997); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-check-double" style="color: white; font-size: 1.8rem;"></i>
-                        </div>
-                    </div>
+
+        {{-- Statistik: Pesan Sudah Dibaca --}}
+        <div class="stat-card">
+            <div class="stat-card-inner">
+                <div class="icon-wrapper icon-success">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ $pesanKontaks->where('sudah_dibaca', true)->count() }}</h3>
+                    <p class="stat-label">Sudah Dibaca</p>
                 </div>
             </div>
+            @if($pesanKontaks->where('sudah_dibaca', true)->count() > 0)
+            <div class="stat-trend">
+                <span class="trend-indicator trend-up">
+                    <i class="fas fa-check"></i>
+                    Terkelola
+                </span>
+            </div>
+            @endif
         </div>
     </div>
 
-    <!-- Messages Table -->
+    {{-- Card Tabel Daftar Pesan --}}
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">
@@ -264,98 +138,112 @@
                             <th width="5%">
                                 <i class="fas fa-hashtag"></i>
                             </th>
-                            <th width="15%">
-                                <i class="fas fa-user"></i> Nama
-                            </th>
                             <th width="18%">
-                                <i class="fas fa-envelope"></i> Email
+                                <i class="fas fa-user"></i> Pengirim
                             </th>
-                            <th width="20%">
+                            <th width="22%">
                                 <i class="fas fa-tag"></i> Subjek
                             </th>
-                            <th width="12%">
+                            <th width="15%">
                                 <i class="fas fa-calendar"></i> Tanggal
                             </th>
-                            <th width="10%">
+                            <th width="12%">
                                 <i class="fas fa-eye"></i> Status
                             </th>
-                            <th width="20%" class="text-center">
+                            <th width="28%" class="text-center">
                                 <i class="fas fa-cog"></i> Aksi
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($pesanKontaks as $index => $pesanKontak)
-                        <tr class="{{ !$pesanKontak->sudah_dibaca ? 'unread-row' : '' }}">
-                            <td class="align-middle">{{ $index + 1 }}</td>
+                        {{-- Highlight baris jika pesan belum dibaca --}}
+                        <tr class="{{ !$pesanKontak->sudah_dibaca ? 'table-warning' : '' }}">
+                            {{-- Nomor urut --}}
+                            <td class="align-middle fw-bold">{{ $index + 1 }}</td>
+                            
+                            {{-- Informasi pengirim --}}
                             <td class="align-middle">
-                                <div class="sender-info">
-                                    <strong>{{ $pesanKontak->nama }}</strong>
+                                <div class="d-flex flex-column">
+                                    <strong class="text-truncate" style="max-width: 200px;">{{ $pesanKontak->nama }}</strong>
+                                    <small class="text-muted text-truncate" style="max-width: 200px;">
+                                        <i class="fas fa-envelope"></i> {{ $pesanKontak->email }}
+                                    </small>
+                                    {{-- Badge untuk pesan baru --}}
                                     @if(!$pesanKontak->sudah_dibaca)
-                                    <span class="badge badge-new">Baru</span>
+                                    <span class="badge bg-warning text-dark mt-1 badge-new">
+                                        <i class="fas fa-star"></i> Baru
+                                    </span>
                                     @endif
                                 </div>
                             </td>
+                            
+                            {{-- Subjek pesan --}}
                             <td class="align-middle">
-                                <a href="mailto:{{ $pesanKontak->email }}" class="email-link">
-                                    {{ $pesanKontak->email }}
-                                </a>
-                            </td>
-                            <td class="align-middle">
-                                <div class="subject-preview">
-                                    {{ Str::limit($pesanKontak->subjek, 40) }}
+                                <div class="text-truncate" style="max-width: 250px;" title="{{ $pesanKontak->subjek }}">
+                                    {{ $pesanKontak->subjek }}
                                 </div>
                             </td>
+                            
+                            {{-- Tanggal dan waktu pengiriman --}}
                             <td class="align-middle">
-                                <div class="date-info">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    {{ $pesanKontak->created_at->format('d M Y') }}
-                                    <br>
+                                <div class="d-flex flex-column">
+                                    <span>
+                                        <i class="fas fa-calendar-alt text-primary"></i>
+                                        {{ $pesanKontak->created_at->format('d M Y') }}
+                                    </span>
                                     <small class="text-muted">
-                                        {{ $pesanKontak->created_at->format('H:i') }}
+                                        <i class="fas fa-clock"></i>
+                                        {{ $pesanKontak->created_at->format('H:i') }} WIB
                                     </small>
                                 </div>
                             </td>
+                            
+                            {{-- Status baca --}}
                             <td class="align-middle">
                                 @if($pesanKontak->sudah_dibaca)
-                                <span class="badge badge-read">
+                                <span class="badge bg-success">
                                     <i class="fas fa-check-double"></i> Dibaca
                                 </span>
                                 @else
-                                <span class="badge badge-unread">
+                                <span class="badge bg-warning text-dark">
                                     <i class="fas fa-envelope"></i> Belum
                                 </span>
                                 @endif
                             </td>
+                            
+                            {{-- Tombol aksi --}}
                             <td class="align-middle">
                                 <div class="action-buttons">
+                                    {{-- Tombol lihat detail --}}
                                     <a href="{{ route('admin.pesan-kontak.show', $pesanKontak->id) }}" 
-                                       class="btn btn-view" 
+                                       class="btn btn-info btn-sm"
                                        title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     
+                                    {{-- Tombol tandai sudah dibaca (hanya tampil jika belum dibaca) --}}
                                     @if(!$pesanKontak->sudah_dibaca)
                                     <form action="{{ route('admin.pesan-kontak.tandai-dibaca', $pesanKontak->id) }}" 
                                           method="POST" 
-                                          class="d-inline">
+                                          class="d-inline mark-read-form">
                                         @csrf
                                         <button type="submit" 
-                                                class="btn btn-mark-read" 
+                                                class="btn btn-success btn-sm" 
                                                 title="Tandai Dibaca">
                                             <i class="fas fa-check"></i>
                                         </button>
                                     </form>
                                     @endif
                                     
+                                    {{-- Tombol hapus --}}
                                     <form action="{{ route('admin.pesan-kontak.destroy', $pesanKontak->id) }}" 
                                           method="POST" 
-                                          class="d-inline"
-                                          onsubmit="return confirm('Yakin ingin menghapus pesan ini?')">
+                                          class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
-                                                class="btn btn-delete" 
+                                                class="btn btn-danger btn-sm" 
                                                 title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -368,24 +256,133 @@
                 </table>
             </div>
             @else
-            <div class="empty-state">
-                <i class="fas fa-inbox"></i>
-                <h4>Belum Ada Pesan</h4>
-                <p>Belum ada pesan kontak yang masuk</p>
+            {{-- Tampilan ketika belum ada pesan --}}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-4x text-muted mb-3" style="opacity: 0.3;"></i>
+                <h4 class="text-muted">Belum Ada Pesan</h4>
+                <p class="text-muted">Belum ada pesan kontak yang masuk</p>
             </div>
             @endif
         </div>
     </div>
 </div>
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-// Auto hide alerts after 5 seconds
-setTimeout(function() {
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        const bsAlert = new bootstrap.Alert(alert);
-        bsAlert.close();
+
+// Notifikasi sukses dari session
+@if(session('success'))
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
     });
-}, 5000);
+@endif
+
+// Notifikasi error dari session
+@if(session('error'))
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: '{{ session('error') }}',
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
+    });
+@endif
+
+document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        Swal.fire({
+            title: 'Hapus Pesan?',
+            text: "Pesan yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Tampilkan loading saat proses hapus
+                Swal.fire({
+                    title: 'Menghapus...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Submit form
+                this.submit();
+            }
+        });
+    });
+});
+
+document.querySelectorAll('.mark-read-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        Swal.fire({
+            title: 'Tandai Sudah Dibaca?',
+            text: "Pesan akan ditandai sebagai sudah dibaca",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Tandai!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Tampilkan loading saat proses
+                Swal.fire({
+                    title: 'Memproses...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Submit form
+                this.submit();
+            }
+        });
+    });
+});
+
+function refreshPage() {
+    Swal.fire({
+        title: 'Memuat Ulang...',
+        text: 'Mengambil data terbaru',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    setTimeout(() => {
+        location.reload();
+    }, 500);
+}
+
+// Auto refrsh setiap 5 menit
+setInterval(() => {
+    console.log('Auto refresh - checking for new messages');
+}, 300000); // 5 menit = 300000 ms
 </script>
+@endpush
 @endsection
