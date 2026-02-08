@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('subjek');
             $table->text('pesan');
             $table->boolean('sudah_dibaca')->default(false);
+            $table->timestamp('dibaca_pada')->nullable();
             $table->timestamps();
         });
     }
