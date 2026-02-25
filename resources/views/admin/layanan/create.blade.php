@@ -11,16 +11,6 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     }
 
-    .form-row {
-        display: flex;
-        gap: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .form-row .form-group {
-        margin-bottom: 0;
-    }
-
     .form-group {
         margin-bottom: 1.5rem;
     }
@@ -46,6 +36,7 @@
         font-size: 0.95rem;
         transition: all 0.3s ease;
         background: #f8f9fa;
+        box-sizing: border-box;
     }
 
     .form-control:focus {
@@ -58,11 +49,6 @@
     .form-control.is-invalid {
         border-color: #dc3545;
         background: #fff5f5;
-    }
-
-    .form-control.is-valid {
-        border-color: #28a745;
-        background: #f0fff4;
     }
 
     .invalid-feedback {
@@ -84,6 +70,27 @@
         min-height: 100px;
     }
 
+    /* Slug preview */
+    .slug-preview {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: #f0f4ff;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: #6c757d;
+        min-height: 32px;
+    }
+
+    .slug-preview span {
+        font-family: monospace;
+        color: #1976d2;
+        font-weight: 600;
+    }
+
+    /* Icon */
     .icon-input-group {
         display: flex;
         gap: 1rem;
@@ -109,6 +116,7 @@
         transition: all 0.3s ease;
     }
 
+    /* Image upload */
     .image-upload-area {
         position: relative;
         border: 3px dashed #e9ecef;
@@ -120,9 +128,15 @@
         cursor: pointer;
     }
 
-    .image-upload-area:hover {
+    .image-upload-area:hover,
+    .image-upload-area.dragover {
         border-color: var(--orange-primary);
         background: white;
+    }
+
+    .image-upload-area.is-invalid {
+        border-color: #dc3545;
+        background: #fff5f5;
     }
 
     .image-upload-area input[type="file"] {
@@ -156,6 +170,17 @@
     .upload-placeholder span {
         color: #6c757d;
         font-size: 0.875rem;
+    }
+
+    .upload-placeholder .required-badge {
+        display: inline-block;
+        margin-top: 0.5rem;
+        padding: 0.2rem 0.6rem;
+        background: #dc3545;
+        color: white;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
     }
 
     .image-preview {
@@ -194,6 +219,7 @@
         transform: scale(1.1);
     }
 
+    /* Fasilitas */
     .fasilitas-container {
         display: flex;
         flex-direction: column;
@@ -250,6 +276,7 @@
         box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
     }
 
+    /* Switches */
     .custom-switches {
         display: flex;
         gap: 2rem;
@@ -311,6 +338,7 @@
         color: var(--orange-primary);
     }
 
+    /* Form actions */
     .form-actions {
         display: flex;
         gap: 1rem;
@@ -361,6 +389,7 @@
         box-shadow: 0 6px 20px rgba(251, 133, 0, 0.4);
     }
 
+    /* Info urutan */
     .auto-urutan-info {
         background: #e3f2fd;
         border: 2px solid #2196F3;
@@ -375,11 +404,10 @@
     .auto-urutan-info i {
         font-size: 2rem;
         color: #2196F3;
+        flex-shrink: 0;
     }
 
-    .auto-urutan-info div {
-        flex: 1;
-    }
+    .auto-urutan-info div { flex: 1; }
 
     .auto-urutan-info h4 {
         margin: 0 0 0.25rem 0;
@@ -397,34 +425,29 @@
         font-size: 2rem;
         font-weight: 700;
         color: var(--orange-primary);
+        flex-shrink: 0;
     }
 
+    /* Char counter */
+    .char-counter {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.25rem;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .char-counter.warning { color: #f57c00; }
+    .char-counter.danger  { color: #dc3545; font-weight: 600; }
+
     @media (max-width: 768px) {
-        .form-row {
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .form-row .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .custom-switches {
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .form-actions {
-            flex-direction: column;
-        }
-
-        .btn-cancel, .btn-submit {
-            width: 100%;
-            justify-content: center;
-        }
+        .custom-switches { flex-direction: column; gap: 1rem; }
+        .form-actions { flex-direction: column; }
+        .btn-cancel, .btn-submit { width: 100%; justify-content: center; }
     }
 </style>
 
+{{-- Header --}}
 <div class="gradient-header">
     <div class="header-left">
         <a href="{{ route('admin.layanan.index') }}" class="btn-back">
@@ -446,74 +469,128 @@
     </div>
 </div>
 
-<!-- Info Urutan Otomatis -->
+{{-- Info urutan otomatis --}}
 <div class="auto-urutan-info">
     <i class="fas fa-info-circle"></i>
     <div>
         <h4>Urutan Otomatis</h4>
-        <p>Layanan baru akan otomatis ditempatkan pada urutan berikutnya. Anda tidak perlu mengisi urutan secara manual.</p>
+        <p>Layanan baru akan otomatis ditempatkan pada urutan berikutnya. Semua field bertanda <span style="color:#dc3545;font-weight:700;">*</span> wajib diisi.</p>
     </div>
-    <div class="urutan-number">
-        #{{ $nextUrutan }}
-    </div>
+    <div class="urutan-number">#{{ $nextUrutan }}</div>
 </div>
 
 <div class="form-container">
-    <form action="{{ route('admin.layanan.store') }}" method="POST" enctype="multipart/form-data" id="layananForm">
+    <form action="{{ route('admin.layanan.store') }}" method="POST" enctype="multipart/form-data" id="layananForm" novalidate>
         @csrf
-        
+
+        {{-- Nama Layanan --}}
         <div class="form-group">
             <label for="nama">Nama Layanan <span class="required">*</span></label>
-            <input type="text" name="nama" id="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama') }}" required>
+            <input
+                type="text"
+                name="nama"
+                id="nama"
+                class="form-control @error('nama') is-invalid @enderror"
+                value="{{ old('nama') }}"
+                placeholder="Contoh: Spa &amp; Wellness"
+                maxlength="255"
+                required
+            >
+            <div class="slug-preview">
+                <i class="fas fa-link" style="font-size:0.8rem; flex-shrink:0;"></i>
+                <span id="slugText">{{ old('nama') ? Str::slug(old('nama')) : '—' }}</span>
+            </div>
             @error('nama')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
-        
+
+        {{-- Deskripsi Singkat --}}
         <div class="form-group">
-            <label for="deskripsi_singkat">Deskripsi Singkat</label>
-            <textarea name="deskripsi_singkat" id="deskripsi_singkat" rows="3" class="form-control @error('deskripsi_singkat') is-invalid @enderror">{{ old('deskripsi_singkat') }}</textarea>
-            <small class="form-text">Deskripsi singkat akan ditampilkan di halaman daftar layanan</small>
+            <label for="deskripsi_singkat">Deskripsi Singkat <span class="required">*</span></label>
+            <textarea
+                name="deskripsi_singkat"
+                id="deskripsi_singkat"
+                rows="3"
+                class="form-control @error('deskripsi_singkat') is-invalid @enderror"
+                placeholder="Tulis deskripsi singkat layanan (maks. 500 karakter)..."
+                maxlength="500"
+                required
+            >{{ old('deskripsi_singkat') }}</textarea>
+            <div class="char-counter" id="singkatCounter">
+                <span id="singkatCount">{{ strlen(old('deskripsi_singkat', '')) }}</span>/500
+            </div>
+            <small class="form-text">Ditampilkan di halaman daftar layanan</small>
             @error('deskripsi_singkat')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
-        
+
+        {{-- Deskripsi Lengkap --}}
         <div class="form-group">
-            <label for="deskripsi_lengkap">Deskripsi Lengkap</label>
-            <textarea name="deskripsi_lengkap" id="deskripsi_lengkap" rows="6" class="form-control @error('deskripsi_lengkap') is-invalid @enderror">{{ old('deskripsi_lengkap') }}</textarea>
-            <small class="form-text">Deskripsi lengkap akan ditampilkan di halaman detail layanan</small>
+            <label for="deskripsi_lengkap">Deskripsi Lengkap <span class="required">*</span></label>
+            <textarea
+                name="deskripsi_lengkap"
+                id="deskripsi_lengkap"
+                rows="6"
+                class="form-control @error('deskripsi_lengkap') is-invalid @enderror"
+                placeholder="Tulis deskripsi lengkap layanan..."
+                required
+            >{{ old('deskripsi_lengkap') }}</textarea>
+            <small class="form-text">Ditampilkan di halaman detail layanan</small>
             @error('deskripsi_lengkap')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
-        
+
+        {{-- Icon --}}
         <div class="form-group">
-            <label for="icon">Icon (Font Awesome Class)</label>
+            <label for="icon">Icon (Font Awesome Class) <span class="required">*</span></label>
             <div class="icon-input-group">
-                <input type="text" name="icon" id="icon" class="form-control @error('icon') is-invalid @enderror" value="{{ old('icon') }}" placeholder="fas fa-concierge-bell">
+                <input
+                    type="text"
+                    name="icon"
+                    id="icon"
+                    class="form-control @error('icon') is-invalid @enderror"
+                    value="{{ old('icon') }}"
+                    placeholder="fas fa-concierge-bell"
+                    maxlength="100"
+                    required
+                >
                 <div class="icon-preview" id="iconPreview">
-                    <i class="fas fa-icons"></i>
+                    <i class="{{ old('icon', 'fas fa-icons') }}"></i>
                 </div>
             </div>
-            <small class="form-text">Contoh: fas fa-spa, fas fa-hotel, fas fa-utensils</small>
+            <small class="form-text">
+                Contoh: <code>fas fa-spa</code>, <code>fas fa-hotel</code>, <code>fas fa-utensils</code>.
+                Cari icon di <a href="https://fontawesome.com/icons" target="_blank">fontawesome.com/icons</a>
+            </small>
             @error('icon')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
-        
+
+        {{-- Gambar --}}
         <div class="form-group">
-            <label for="gambar">Gambar Layanan</label>
-            <div class="image-upload-area" id="imageUploadArea">
-                <input type="file" name="gambar" id="gambar" class="form-control-file @error('gambar') is-invalid @enderror" accept="image/jpeg,image/jpg,image/png">
+            <label for="gambar">Gambar Layanan <span class="required">*</span></label>
+            <div class="image-upload-area @error('gambar') is-invalid @enderror" id="imageUploadArea">
+                <input
+                    type="file"
+                    name="gambar"
+                    id="gambar"
+                    accept="image/jpeg,image/jpg,image/png"
+                    required
+                >
                 <div class="upload-placeholder" id="uploadPlaceholder">
                     <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Klik atau drag & drop gambar di sini</p>
-                    <span>Format: JPG, JPEG, PNG (Max: 10MB)</span>
+                    <p>Klik atau drag &amp; drop gambar di sini</p>
+                    <span>Format: JPG, JPEG, PNG (Maks: 10MB)</span>
+                    <br>
+                    <span class="required-badge"><i class="fas fa-exclamation-circle"></i> Wajib diisi</span>
                 </div>
                 <div class="image-preview" id="imagePreview" style="display: none;">
                     <img src="" alt="Preview">
-                    <button type="button" class="btn-remove-image" id="removeImage">
+                    <button type="button" class="btn-remove-image" id="removeImage" title="Hapus gambar">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -522,45 +599,56 @@
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
         </div>
-        
+
+        {{-- Fasilitas --}}
         <div class="form-group">
-            <label>Fasilitas</label>
+            <label>Fasilitas <span class="required">*</span></label>
             <div class="fasilitas-container" id="fasilitasContainer">
                 @if(old('fasilitas'))
                     @foreach(old('fasilitas') as $fasilitas)
                     <div class="fasilitas-item">
-                        <input type="text" name="fasilitas[]" class="form-control" placeholder="Nama fasilitas" value="{{ $fasilitas }}">
-                        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
+                        <input type="text" name="fasilitas[]" class="form-control @error('fasilitas') is-invalid @enderror"
+                            placeholder="Nama fasilitas" value="{{ $fasilitas }}" maxlength="255" required>
+                        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)" title="Hapus">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                     @endforeach
                 @else
                     <div class="fasilitas-item">
-                        <input type="text" name="fasilitas[]" class="form-control" placeholder="Nama fasilitas">
-                        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
+                        <input type="text" name="fasilitas[]" class="form-control"
+                            placeholder="Nama fasilitas" maxlength="255" required>
+                        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)" title="Hapus">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                 @endif
             </div>
+            @error('fasilitas')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+            @error('fasilitas.*')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
             <button type="button" class="btn-add-fasilitas" id="addFasilitas">
                 <i class="fas fa-plus"></i> Tambah Fasilitas
             </button>
         </div>
-        
+
+        {{-- Unggulan & Aktif --}}
         <div class="form-group">
             <div class="custom-switches">
                 <div class="custom-switch-item">
-                    <input type="checkbox" name="unggulan" id="unggulan" value="1" {{ old('unggulan') ? 'checked' : '' }}>
+                    <input type="checkbox" name="unggulan" id="unggulan" value="1"
+                        {{ old('unggulan') ? 'checked' : '' }}>
                     <label for="unggulan">
                         <i class="fas fa-star"></i>
                         <span>Layanan Unggulan</span>
                     </label>
                 </div>
-                
                 <div class="custom-switch-item">
-                    <input type="checkbox" name="aktif" id="aktif" value="1" {{ old('aktif', true) ? 'checked' : '' }}>
+                    <input type="checkbox" name="aktif" id="aktif" value="1"
+                        {{ old('aktif', true) ? 'checked' : '' }}>
                     <label for="aktif">
                         <i class="fas fa-toggle-on"></i>
                         <span>Aktif</span>
@@ -568,12 +656,12 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="form-actions">
             <a href="{{ route('admin.layanan.index') }}" class="btn-cancel">
                 <i class="fas fa-times"></i> Batal
             </a>
-            <button type="submit" class="btn-submit">
+            <button type="submit" class="btn-submit" id="submitBtn">
                 <i class="fas fa-save"></i> Simpan Layanan
             </button>
         </div>
@@ -582,61 +670,72 @@
 @endsection
 
 @push('scripts')
-<!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
+// Slug preview
+function toSlug(text) {
+    return text.toLowerCase().trim()
+        .replace(/[\s\-]+/g, '-')
+        .replace(/[^a-z0-9\-]/g, '')
+        .replace(/^-+|-+$/g, '');
+}
+
+document.getElementById('nama').addEventListener('input', function () {
+    document.getElementById('slugText').textContent = toSlug(this.value) || '—';
+});
+
+// Char counter deskripsi singkat
+document.getElementById('deskripsi_singkat').addEventListener('input', function () {
+    const len     = this.value.length;
+    const counter = document.getElementById('singkatCounter');
+    document.getElementById('singkatCount').textContent = len;
+    counter.className = 'char-counter' + (len >= 500 ? ' danger' : len >= 400 ? ' warning' : '');
+});
+
 // Icon Preview
-document.getElementById('icon').addEventListener('input', function() {
-    const iconPreview = document.getElementById('iconPreview');
-    const iconClass = this.value || 'fas fa-icons';
-    iconPreview.innerHTML = `<i class="${iconClass}"></i>`;
+document.getElementById('icon').addEventListener('input', function () {
+    document.getElementById('iconPreview').innerHTML =
+        `<i class="${this.value.trim() || 'fas fa-icons'}"></i>`;
 });
 
 // Image Upload Preview
-const imageInput = document.getElementById('gambar');
-const imageUploadArea = document.getElementById('imageUploadArea');
+const imageInput        = document.getElementById('gambar');
+const imageUploadArea   = document.getElementById('imageUploadArea');
 const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-const imagePreview = document.getElementById('imagePreview');
-const removeImageBtn = document.getElementById('removeImage');
+const imagePreview      = document.getElementById('imagePreview');
+const removeImageBtn    = document.getElementById('removeImage');
 
-imageInput.addEventListener('change', function(e) {
+imageInput.addEventListener('change', function (e) {
     const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.querySelector('img').src = e.target.result;
-            uploadPlaceholder.style.display = 'none';
-            imagePreview.style.display = 'block';
-        }
-        reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        imagePreview.querySelector('img').src = e.target.result;
+        uploadPlaceholder.style.display = 'none';
+        imagePreview.style.display      = 'block';
+        imageUploadArea.classList.remove('is-invalid');
+    };
+    reader.readAsDataURL(file);
 });
 
-removeImageBtn.addEventListener('click', function() {
+removeImageBtn.addEventListener('click', function () {
     imageInput.value = '';
     uploadPlaceholder.style.display = 'block';
-    imagePreview.style.display = 'none';
+    imagePreview.style.display      = 'none';
 });
 
-// Drag and drop
-imageUploadArea.addEventListener('dragover', function(e) {
+imageUploadArea.addEventListener('dragover', function (e) {
     e.preventDefault();
-    this.style.borderColor = 'var(--orange-primary)';
-    this.style.background = 'white';
+    this.classList.add('dragover');
 });
 
-imageUploadArea.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    this.style.borderColor = '#e9ecef';
-    this.style.background = '#f8f9fa';
+imageUploadArea.addEventListener('dragleave', function () {
+    this.classList.remove('dragover');
 });
 
-imageUploadArea.addEventListener('drop', function(e) {
+imageUploadArea.addEventListener('drop', function (e) {
     e.preventDefault();
-    this.style.borderColor = '#e9ecef';
-    this.style.background = '#f8f9fa';
-    
+    this.classList.remove('dragover');
     const files = e.dataTransfer.files;
     if (files.length > 0) {
         imageInput.files = files;
@@ -645,17 +744,19 @@ imageUploadArea.addEventListener('drop', function(e) {
 });
 
 // Fasilitas Management
-document.getElementById('addFasilitas').addEventListener('click', function() {
+document.getElementById('addFasilitas').addEventListener('click', function () {
     const container = document.getElementById('fasilitasContainer');
-    const newItem = document.createElement('div');
+    const newItem   = document.createElement('div');
     newItem.className = 'fasilitas-item';
     newItem.innerHTML = `
-        <input type="text" name="fasilitas[]" class="form-control" placeholder="Nama fasilitas">
-        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
+        <input type="text" name="fasilitas[]" class="form-control"
+            placeholder="Nama fasilitas" maxlength="255" required>
+        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)" title="Hapus">
             <i class="fas fa-times"></i>
         </button>
     `;
     container.appendChild(newItem);
+    newItem.querySelector('input').focus();
 });
 
 function removeFasilitas(button) {
@@ -666,49 +767,96 @@ function removeFasilitas(button) {
         Swal.fire({
             icon: 'warning',
             title: 'Peringatan',
-            text: 'Minimal harus ada satu input fasilitas',
+            text: 'Minimal harus ada satu fasilitas',
+            confirmButtonColor: '#fb8500',
         });
     }
 }
 
-// SUBMIT FORM DENGAN KONFIRMASI
-document.getElementById('layananForm').addEventListener('submit', function(e) {
+// Validasi client-side sebelum submit─
+function validateForm() {
+    const errors = [];
+
+    const nama = document.getElementById('nama').value.trim();
+    if (!nama) errors.push('Nama layanan wajib diisi');
+
+    const deskSingkat = document.getElementById('deskripsi_singkat').value.trim();
+    if (!deskSingkat) errors.push('Deskripsi singkat wajib diisi');
+
+    const deskLengkap = document.getElementById('deskripsi_lengkap').value.trim();
+    if (!deskLengkap) errors.push('Deskripsi lengkap wajib diisi');
+
+    const icon = document.getElementById('icon').value.trim();
+    if (!icon) errors.push('Icon wajib diisi');
+
+    const gambar = document.getElementById('gambar').files;
+    if (!gambar || gambar.length === 0) errors.push('Gambar layanan wajib diupload');
+
+    const fasilitasInputs = document.querySelectorAll('#fasilitasContainer input[name="fasilitas[]"]');
+    let fasilitasValid = true;
+    fasilitasInputs.forEach(function (input, index) {
+        if (!input.value.trim()) {
+            fasilitasValid = false;
+        }
+    });
+    if (!fasilitasValid) errors.push('Semua nama fasilitas wajib diisi (tidak boleh ada yang kosong)');
+
+    return errors;
+}
+
+// Submit dengan konfirmasi
+document.getElementById('layananForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    
+    const form   = this;
+    const errors = validateForm();
+
+    if (errors.length > 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Data Belum Lengkap',
+            html: '<ul style="text-align:left; margin:0; padding-left:1.2rem;">'
+                + errors.map(err => `<li>${err}</li>`).join('')
+                + '</ul>',
+            confirmButtonColor: '#dc3545',
+        });
+        return;
+    }
+
     Swal.fire({
         title: 'Konfirmasi Penyimpanan',
-        html: 'Apakah Anda yakin ingin menyimpan data layanan ini?<br><small class="text-muted">Layanan akan otomatis ditempatkan pada urutan ke-{{ $nextUrutan }}.</small>',
+        html: `Apakah Anda yakin ingin menyimpan layanan ini?<br>
+               <small class="text-muted">Layanan akan ditempatkan pada urutan ke-<strong>{{ $nextUrutan }}</strong>.</small>`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '<i class="fas fa-check"></i> Ya, Simpan',
-        cancelButtonText: '<i class="fas fa-times"></i> Batal',
+        cancelButtonText:  '<i class="fas fa-times"></i> Batal',
+        confirmButtonColor: '#fb8500',
+        cancelButtonColor: '#6c757d',
         reverseButtons: true,
-        focusCancel: true
+        focusCancel: true,
     }).then((result) => {
         if (result.isConfirmed) {
-            // Menampilkan indikator loading
             Swal.fire({
                 title: 'Menyimpan Data...',
                 html: 'Mohon tunggu sebentar',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                didOpen: () => Swal.showLoading(),
             });
-            
-            // Submit form
-            this.submit();
+            form.submit();
         }
     });
 });
 
-// Show error validation failed
+// Tampilkan error validasi dari server
 @if($errors->any())
     Swal.fire({
         icon: 'error',
         title: 'Validasi Gagal',
-        html: '<ul style="text-align: left;">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>',
+        html: '<ul style="text-align:left; margin:0; padding-left:1.2rem;">'
+            + '@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach'
+            + '</ul>',
+        confirmButtonColor: '#dc3545',
     });
 @endif
 </script>

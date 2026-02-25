@@ -14,7 +14,6 @@ class LayananController extends Controller
 {
     public function __construct()
     {
-        // Set timezone default ke WIB
         DateHelper::setDefaultTimezone();
     }
 
@@ -27,7 +26,6 @@ class LayananController extends Controller
 
     public function create()
     {
-        // Ambil urutan terakhir + 1
         $nextUrutan = Layanan::max('urutan') + 1;
 
         return view('admin.layanan.create', compact('nextUrutan'));
@@ -36,37 +34,42 @@ class LayananController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('layanan', 'slug')->where(function ($query) use ($request) {
-                    return $query->where('slug', Str::slug($request->nama));
-                }),
-            ],
-            'deskripsi_singkat' => 'nullable|string',
-            'deskripsi_lengkap' => 'nullable|string',
-            'icon' => 'nullable|string|max:100',
-            'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:10240',
-            'fasilitas' => 'nullable|array',
+            'nama' => ['required', 'string', 'max:255', Rule::unique('layanan', 'nama')],
+            'deskripsi_singkat' => 'required|string|max:500',
+            'deskripsi_lengkap' => 'required|string',
+            'icon' => 'required|string|max:100',
+            'gambar' => 'required|image|mimes:jpeg,jpg,png|max:10240',
+            'fasilitas' => 'required|array|min:1',
+            'fasilitas.*' => 'required|string|max:255',
             'unggulan' => 'boolean',
             'aktif' => 'boolean',
         ], [
-            'nama.unique' => 'Nama layanan sudah digunakan, silakan gunakan nama lain',
+            'nama.required' => 'Nama layanan wajib diisi',
+            'nama.max' => 'Nama layanan maksimal 255 karakter',
+            'nama.unique' => 'Nama layanan "'.$request->nama.'" sudah digunakan, silakan gunakan nama lain',
+            'deskripsi_singkat.required' => 'Deskripsi singkat wajib diisi',
+            'deskripsi_singkat.max' => 'Deskripsi singkat maksimal 500 karakter',
+            'deskripsi_lengkap.required' => 'Deskripsi lengkap wajib diisi',
+            'icon.required' => 'Icon wajib diisi',
+            'icon.max' => 'Icon maksimal 100 karakter',
+            'gambar.required' => 'Gambar layanan wajib diupload',
+            'gambar.image' => 'File harus berupa gambar',
+            'gambar.mimes' => 'Format gambar harus JPG, JPEG, atau PNG',
+            'gambar.max' => 'Ukuran gambar maksimal 10MB',
+            'fasilitas.required' => 'Minimal satu fasilitas wajib diisi',
+            'fasilitas.min' => 'Minimal satu fasilitas wajib diisi',
+            'fasilitas.*.required' => 'Nama fasilitas tidak boleh kosong',
+            'fasilitas.*.max' => 'Nama fasilitas maksimal 255 karakter',
         ]);
 
         $validated['slug'] = Str::slug($validated['nama']);
+        $validated['urutan'] = Layanan::max('urutan') + 1;
+        $validated['created_at'] = DateHelper::now();
+        $validated['updated_at'] = DateHelper::now();
 
         if ($request->hasFile('gambar')) {
             $validated['gambar'] = $this->handleImageUpload($request->file('gambar'), 'layanan');
         }
-
-        // Set urutan otomatis (urutan terakhir + 1)
-        $validated['urutan'] = Layanan::max('urutan') + 1;
-
-        // Set created_at dan updated_at dengan waktu sekarang menggunakan DateHelper
-        $validated['created_at'] = DateHelper::now();
-        $validated['updated_at'] = DateHelper::now();
 
         Layanan::create($validated);
 
@@ -81,7 +84,6 @@ class LayananController extends Controller
 
     public function edit(Layanan $layanan)
     {
-        // Ambil semua layanan untuk dropdown urutan
         $allLayanans = Layanan::orderBy('urutan')->get();
         $maxUrutan = Layanan::max('urutan');
 
@@ -91,21 +93,13 @@ class LayananController extends Controller
     public function update(Request $request, Layanan $layanan)
     {
         $validated = $request->validate([
-            'nama' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('layanan', 'slug')
-                    ->ignore($layanan->id)
-                    ->where(function ($query) use ($request) {
-                        return $query->where('slug', Str::slug($request->nama));
-                    }),
-            ],
-            'deskripsi_singkat' => 'nullable|string',
-            'deskripsi_lengkap' => 'nullable|string',
-            'icon' => 'nullable|string|max:100',
+            'nama' => ['required', 'string', 'max:255', Rule::unique('layanan', 'nama')->ignore($layanan->id)],
+            'deskripsi_singkat' => 'required|string|max:500',
+            'deskripsi_lengkap' => 'required|string',
+            'icon' => 'required|string|max:100',
             'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:10240',
-            'fasilitas' => 'nullable|array',
+            'fasilitas' => 'required|array|min:1',
+            'fasilitas.*' => 'required|string|max:255',
             'urutan' => [
                 'required',
                 'integer',
@@ -115,7 +109,21 @@ class LayananController extends Controller
             'unggulan' => 'boolean',
             'aktif' => 'boolean',
         ], [
-            'nama.unique' => 'Nama layanan sudah digunakan, silakan gunakan nama lain',
+            'nama.required' => 'Nama layanan wajib diisi',
+            'nama.max' => 'Nama layanan maksimal 255 karakter',
+            'nama.unique' => 'Nama layanan "'.$request->nama.'" sudah digunakan, silakan gunakan nama lain',
+            'deskripsi_singkat.required' => 'Deskripsi singkat wajib diisi',
+            'deskripsi_singkat.max' => 'Deskripsi singkat maksimal 500 karakter',
+            'deskripsi_lengkap.required' => 'Deskripsi lengkap wajib diisi',
+            'icon.required' => 'Icon wajib diisi',
+            'icon.max' => 'Icon maksimal 100 karakter',
+            'gambar.image' => 'File harus berupa gambar',
+            'gambar.mimes' => 'Format gambar harus JPG, JPEG, atau PNG',
+            'gambar.max' => 'Ukuran gambar maksimal 10MB',
+            'fasilitas.required' => 'Minimal satu fasilitas wajib diisi',
+            'fasilitas.min' => 'Minimal satu fasilitas wajib diisi',
+            'fasilitas.*.required' => 'Nama fasilitas tidak boleh kosong',
+            'fasilitas.*.max' => 'Nama fasilitas maksimal 255 karakter',
             'urutan.required' => 'Urutan wajib diisi',
             'urutan.integer' => 'Urutan harus berupa angka',
             'urutan.min' => 'Urutan tidak boleh kurang dari 1',
@@ -132,42 +140,28 @@ class LayananController extends Controller
             );
         }
 
-        // Cek apakah urutan berubah
         $urutanLama = $layanan->urutan;
         $urutanBaru = $validated['urutan'];
 
         if ($urutanLama != $urutanBaru) {
-            // Geser urutan layanan lain menggunakan temporary value
             DB::transaction(function () use ($layanan, $urutanLama, $urutanBaru, $validated) {
-
-                // Hitung temporary value yang aman (lebih besar dari max urutan)
                 $maxUrutan = Layanan::max('urutan');
-                $tempValue = $maxUrutan + 1000; // Gunakan nilai yang pasti tidak konflik
+                $tempValue = $maxUrutan + 1000;
 
-                // Set layanan yang sedang diedit ke temporary value
-                // Ini untuk menghindari konflik unique constraint
                 $layanan->timestamps = false;
                 $layanan->urutan = $tempValue;
                 $layanan->save();
 
                 if ($urutanBaru < $urutanLama) {
-                    // Pindah ke atas (misal dari urutan 4 ke 2)
-                    // Semua layanan yang ada di antara urutan 2-3 harus turun (increment)
-                    // Contoh: urutan 2 jadi 3, urutan 3 jadi 4
                     Layanan::where('urutan', '>=', $urutanBaru)
                         ->where('urutan', '<', $urutanLama)
                         ->increment('urutan');
-
                 } else {
-                    // Pindah ke bawah (misal dari urutan 2 ke 4)
-                    // Semua layanan yang ada di antara urutan 3-4 harus naik (decrement)
-                    // Contoh: urutan 3 jadi 2, urutan 4 jadi 3
                     Layanan::where('urutan', '<=', $urutanBaru)
                         ->where('urutan', '>', $urutanLama)
                         ->decrement('urutan');
                 }
 
-                // Set layanan ke urutan yang baru
                 $layanan->timestamps = true;
                 $validated['updated_at'] = DateHelper::now();
                 $validated['urutan'] = $urutanBaru;
@@ -176,7 +170,6 @@ class LayananController extends Controller
                 $layanan->save();
             });
         } else {
-            // Jika urutan tidak berubah, update biasa
             $validated['updated_at'] = DateHelper::now();
             $layanan->update($validated);
         }
@@ -193,9 +186,7 @@ class LayananController extends Controller
             $this->handleImageDelete($layanan->gambar);
             $layanan->delete();
 
-            // Rapikan urutan setelah dihapus (urutan di bawahnya naik semua)
-            Layanan::where('urutan', '>', $urutanDihapus)
-                ->decrement('urutan');
+            Layanan::where('urutan', '>', $urutanDihapus)->decrement('urutan');
         });
 
         return redirect()->route('admin.layanan.index')
@@ -213,10 +204,7 @@ class LayananController extends Controller
             mkdir($path, 0755, true);
         }
 
-        // Generate unique filename
         $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
-
-        // Move file
         $file->move($path, $filename);
 
         return 'uploads/'.$folder.'/'.$filename;
