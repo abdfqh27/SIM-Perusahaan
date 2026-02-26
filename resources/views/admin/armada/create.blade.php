@@ -145,6 +145,7 @@
         padding: 1rem;
         background: #f8f9fa;
         border-radius: 10px;
+        margin-bottom: 1rem;
     }
 
     .switch {
@@ -253,59 +254,182 @@
         color: white;
     }
 
-    .galeri-preview-container {
+    /* GALERI MULTI-UPLOAD STYLES */
+    .galeri-upload-area {
+        border: 2px dashed #dee2e6;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        position: relative;
+    }
+
+    .galeri-upload-area:hover,
+    .galeri-upload-area.drag-over {
+        border-color: var(--orange-primary);
+        background: rgba(251, 133, 0, 0.05);
+    }
+
+    .galeri-upload-area i {
+        font-size: 2.5rem;
+        color: #adb5bd;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    .galeri-upload-area p {
+        color: #6c757d;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .galeri-upload-area span {
+        color: var(--orange-primary);
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    #galeri-hidden-input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .galeri-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 1rem;
         margin-top: 1rem;
     }
 
-    .galeri-preview-item {
+    .galeri-item {
         position: relative;
-        width: 100%;
-        padding-top: 100%;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background: #f8f9fa;
+        aspect-ratio: 1;
     }
 
-    .galeri-preview-item img {
+    .galeri-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .galeri-item-overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        background: rgba(0,0,0,0.4);
+        opacity: 0;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .galeri-item:hover .galeri-item-overlay {
+        opacity: 1;
+    }
+
+    .btn-hapus-galeri-item {
+        background: #dc3545;
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+    }
+
+    .btn-hapus-galeri-item:hover {
+        background: #c82333;
+        transform: scale(1.1);
+    }
+
+    .galeri-item-label {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.6);
+        color: white;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .galeri-count-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--orange-primary);
+        color: white;
+        padding: 0.3rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-top: 0.75rem;
+    }
+
+    .btn-add-more-galeri {
+        background: linear-gradient(135deg, var(--orange-primary), var(--orange-secondary));
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-add-more-galeri:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(251, 133, 0, 0.4);
+    }
+
+    .btn-add-more-galeri input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
     }
 
     @media (max-width: 768px) {
-        .form-section {
-            padding: 1.5rem;
-        }
-
-        .form-actions {
-            flex-direction: column;
-        }
-
-        .btn-submit,
-        .btn-cancel {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .preview-wrapper {
-            width: 100%;
-        }
-
-        .switch-container {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-
-        .switch-description {
-            margin-left: 0;
-        }
+        .form-section { padding: 1.5rem; }
+        .form-actions { flex-direction: column; }
+        .btn-submit, .btn-cancel { width: 100%; justify-content: center; }
+        .preview-wrapper { width: 100%; }
+        .switch-container { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+        .switch-description { margin-left: 0; }
+        .galeri-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
     }
 </style>
 
@@ -341,47 +465,28 @@
                     <label for="nama" class="form-label">
                         Nama Armada<span class="required-indicator">*</span>
                     </label>
-                    <input type="text" 
-                           class="form-control @error('nama') is-invalid @enderror" 
-                           id="nama" 
-                           name="nama" 
+                    <input type="text"
+                           class="form-control @error('nama') is-invalid @enderror"
+                           id="nama"
+                           name="nama"
                            value="{{ old('nama') }}"
                            placeholder="Contoh: Bus Pariwisata Executive"
                            required>
                     @error('nama')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+                    <small class="text-muted">Slug URL akan dibuat otomatis dari nama armada</small>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="slug" class="form-label">
-                        Slug (URL)
-                    </label>
-                    <input type="text" 
-                           class="form-control @error('slug') is-invalid @enderror" 
-                           id="slug" 
-                           name="slug" 
-                           value="{{ old('slug') }}"
-                           placeholder="Otomatis diisi jika dikosongkan">
-                    @error('slug')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    <small class="text-muted">Biarkan kosong untuk generate otomatis dari nama</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
                     <label for="tipe_bus" class="form-label">
                         Tipe Bus<span class="required-indicator">*</span>
                     </label>
-                    <select class="form-select @error('tipe_bus') is-invalid @enderror" 
-                            id="tipe_bus" 
-                            name="tipe_bus" 
+                    <select class="form-select @error('tipe_bus') is-invalid @enderror"
+                            id="tipe_bus"
+                            name="tipe_bus"
                             required>
                         <option value="">-- Pilih Tipe Bus --</option>
                         @foreach($daftarTipeBus as $tipe)
@@ -395,16 +500,18 @@
                     @enderror
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label for="kapasitas_min" class="form-label">
                         Kapasitas Minimum<span class="required-indicator">*</span>
                     </label>
-                    <input type="number" 
-                           class="form-control @error('kapasitas_min') is-invalid @enderror" 
-                           id="kapasitas_min" 
-                           name="kapasitas_min" 
+                    <input type="number"
+                           class="form-control @error('kapasitas_min') is-invalid @enderror"
+                           id="kapasitas_min"
+                           name="kapasitas_min"
                            value="{{ old('kapasitas_min') }}"
                            min="1"
                            placeholder="20"
@@ -415,15 +522,15 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label for="kapasitas_max" class="form-label">
                         Kapasitas Maximum<span class="required-indicator">*</span>
                     </label>
-                    <input type="number" 
-                           class="form-control @error('kapasitas_max') is-invalid @enderror" 
-                           id="kapasitas_max" 
-                           name="kapasitas_max" 
+                    <input type="number"
+                           class="form-control @error('kapasitas_max') is-invalid @enderror"
+                           id="kapasitas_max"
+                           name="kapasitas_max"
                            value="{{ old('kapasitas_max') }}"
                            min="1"
                            placeholder="45"
@@ -437,9 +544,9 @@
 
         <div class="form-group">
             <label for="deskripsi" class="form-label">Deskripsi</label>
-            <textarea class="form-control @error('deskripsi') is-invalid @enderror" 
-                      id="deskripsi" 
-                      name="deskripsi" 
+            <textarea class="form-control @error('deskripsi') is-invalid @enderror"
+                      id="deskripsi"
+                      name="deskripsi"
                       rows="4"
                       placeholder="Deskripsi lengkap tentang armada ini...">{{ old('deskripsi') }}</textarea>
             @error('deskripsi')
@@ -449,9 +556,9 @@
 
         <div class="form-group">
             <label class="form-label">Urutan Tampilan</label>
-            <input type="text" 
-                   class="form-control" 
-                   value="{{ $nextUrutan }}" 
+            <input type="text"
+                   class="form-control"
+                   value="{{ $nextUrutan }}"
                    disabled>
             <small class="text-muted">Armada baru akan ditambahkan di urutan terakhir</small>
         </div>
@@ -464,13 +571,12 @@
             Gambar Armada
         </h2>
 
+        <!-- Gambar Utama -->
         <div class="form-group">
-            <label for="gambar_utama" class="form-label">
-                Gambar Utama
-            </label>
-            <input type="file" 
-                   class="form-control @error('gambar_utama') is-invalid @enderror" 
-                   id="gambar_utama" 
+            <label for="gambar_utama" class="form-label">Gambar Utama</label>
+            <input type="file"
+                   class="form-control @error('gambar_utama') is-invalid @enderror"
+                   id="gambar_utama"
                    name="gambar_utama"
                    accept="image/jpeg,image/jpg,image/png,image/webp"
                    onchange="previewImage(this, 'preview-utama')">
@@ -478,7 +584,7 @@
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
             <small class="text-muted">Format: JPG, PNG, WebP. Maksimal 10MB. Gambar akan dikonversi ke WebP HD.</small>
-            
+
             <div class="image-preview-container">
                 <div class="preview-wrapper" id="preview-utama">
                     <div class="preview-placeholder">
@@ -489,23 +595,40 @@
             </div>
         </div>
 
+        <!-- Galeri Multi-Upload -->
         <div class="form-group">
-            <label for="galeri" class="form-label">
-                Galeri Gambar
-            </label>
-            <input type="file" 
-                   class="form-control @error('galeri.*') is-invalid @enderror" 
-                   id="galeri" 
-                   name="galeri[]"
-                   accept="image/jpeg,image/jpg,image/png,image/webp"
-                   multiple
-                   onchange="previewGaleri(this)">
-            @error('galeri.*')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-            <small class="text-muted">Pilih multiple gambar. Format: JPG, PNG, WebP. Maksimal 10MB per file.</small>
-            
-            <div class="galeri-preview-container" id="galeri-preview"></div>
+            <label class="form-label">Galeri Gambar</label>
+            <small class="text-muted d-block mb-2">
+                Pilih satu atau beberapa gambar. Bisa tambah gambar lagi berkali-kali sebelum menyimpan. Format: JPG, PNG, WebP. Maksimal 10MB per file.
+            </small>
+
+            <!-- Drop zone -->
+            <div class="galeri-upload-area" id="galeriDropZone">
+                <input type="file" id="galeri-hidden-input" accept="image/jpeg,image/jpg,image/png,image/webp" multiple>
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p><span>Klik untuk pilih gambar</span> atau drag &amp; drop di sini</p>
+                <p><small>Bisa pilih beberapa gambar sekaligus</small></p>
+            </div>
+
+            <!-- Container untuk preview gambar yang sudah dipilih -->
+            <div id="galeri-grid" class="galeri-grid"></div>
+
+            <!-- Tombol tambah lebih banyak gambar (muncul setelah ada gambar) -->
+            <div id="galeri-actions" style="display:none; margin-top: 0.75rem;">
+                <span id="galeri-count-badge" class="galeri-count-badge">
+                    <i class="fas fa-images"></i>
+                    <span id="galeri-count-text">0 gambar dipilih</span>
+                </span>
+                <br>
+                <button type="button" class="btn-add-more-galeri" onclick="document.getElementById('galeri-tambah-input').click()">
+                    <i class="fas fa-plus"></i>
+                    Tambah Gambar Lagi
+                </button>
+                <input type="file" id="galeri-tambah-input" accept="image/jpeg,image/jpg,image/png,image/webp" multiple style="display:none;" onchange="handleGaleriFiles(this.files)">
+            </div>
+
+            <!-- Hidden container untuk file inputs yang akan di-submit -->
+            <div id="galeri-file-inputs" style="display:none;"></div>
         </div>
     </div>
 
@@ -520,9 +643,9 @@
             @if(old('fasilitas'))
                 @foreach(old('fasilitas') as $index => $fasilitas)
                 <div class="fasilitas-item-input">
-                    <input type="text" 
-                           class="form-control" 
-                           name="fasilitas[]" 
+                    <input type="text"
+                           class="form-control"
+                           name="fasilitas[]"
                            value="{{ $fasilitas }}"
                            placeholder="Contoh: AC, Reclining Seat, TV, etc">
                     <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
@@ -532,9 +655,9 @@
                 @endforeach
             @else
                 <div class="fasilitas-item-input">
-                    <input type="text" 
-                           class="form-control" 
-                           name="fasilitas[]" 
+                    <input type="text"
+                           class="form-control"
+                           name="fasilitas[]"
                            placeholder="Contoh: AC, Reclining Seat, TV, etc">
                     <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
                         <i class="fas fa-times"></i>
@@ -558,9 +681,9 @@
 
         <div class="switch-container">
             <label class="switch">
-                <input type="checkbox" 
-                       name="unggulan" 
-                       value="1" 
+                <input type="checkbox"
+                       name="unggulan"
+                       value="1"
                        {{ old('unggulan') ? 'checked' : '' }}>
                 <span class="slider"></span>
             </label>
@@ -570,9 +693,9 @@
 
         <div class="switch-container">
             <label class="switch">
-                <input type="checkbox" 
-                       name="tersedia" 
-                       value="1" 
+                <input type="checkbox"
+                       name="tersedia"
+                       value="1"
                        {{ old('tersedia', true) ? 'checked' : '' }}>
                 <span class="slider"></span>
             </label>
@@ -596,52 +719,175 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // Preview gambar utama
+    // GALERI MULTI-BATCH UPLOAD
+    // Menyimpan semua File objects yang sudah dipilih user
+    let galeriFiles = [];
+
+    const dropZone = document.getElementById('galeriDropZone');
+    const hiddenInput = document.getElementById('galeri-hidden-input');
+
+    // Klik drop zone -> buka file picker
+    dropZone.addEventListener('click', function(e) {
+        if (e.target !== hiddenInput) {
+            hiddenInput.click();
+        }
+    });
+
+    // Handle file dari drop zone input
+    hiddenInput.addEventListener('change', function() {
+        handleGaleriFiles(this.files);
+        this.value = ''; // reset supaya bisa pilih file yang sama lagi jika perlu
+    });
+
+    // Drag & Drop support
+    dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', function() {
+        this.classList.remove('drag-over');
+    });
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+        handleGaleriFiles(e.dataTransfer.files);
+    });
+
+    function handleGaleriFiles(fileList) {
+        if (!fileList || fileList.length === 0) return;
+
+        Array.from(fileList).forEach(file => {
+            // Validasi tipe file
+            if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+                Swal.fire('Format Tidak Didukung', `File "${file.name}" bukan gambar yang valid (JPG, PNG, WebP).`, 'warning');
+                return;
+            }
+            // Validasi ukuran (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                Swal.fire('File Terlalu Besar', `File "${file.name}" melebihi batas 10MB.`, 'warning');
+                return;
+            }
+
+            // Cek duplikat berdasarkan nama + size
+            const isDuplicate = galeriFiles.some(f => f.name === file.name && f.size === file.size);
+            if (!isDuplicate) {
+                galeriFiles.push(file);
+                addGaleriPreview(file, galeriFiles.length - 1);
+            }
+        });
+
+        updateGaleriFileInputs();
+        updateGaleriUI();
+    }
+
+    function addGaleriPreview(file, index) {
+        const grid = document.getElementById('galeri-grid');
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const item = document.createElement('div');
+            item.className = 'galeri-item';
+            item.dataset.index = index;
+            item.innerHTML = `
+                <img src="${e.target.result}" alt="${file.name}">
+                <div class="galeri-item-overlay">
+                    <button type="button" class="btn-hapus-galeri-item" onclick="removeGaleriItem(${index})" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="galeri-item-label">${file.name}</div>
+            `;
+            grid.appendChild(item);
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    function removeGaleriItem(index) {
+        // Tandai sebagai null (bukan splice supaya index lain tidak bergeser)
+        galeriFiles[index] = null;
+
+        // Hapus elemen preview dari DOM
+        const item = document.querySelector(`.galeri-item[data-index="${index}"]`);
+        if (item) item.remove();
+
+        updateGaleriFileInputs();
+        updateGaleriUI();
+    }
+
+    function updateGaleriFileInputs() {
+        // Rebuild DataTransfer untuk setiap file yang masih ada
+        // Karena HTML file input tidak bisa programatically set, kita buat input per-file
+        const container = document.getElementById('galeri-file-inputs');
+        container.innerHTML = '';
+
+        // Buat satu DataTransfer untuk semua file yang valid
+        const dt = new DataTransfer();
+        galeriFiles.forEach(file => {
+            if (file !== null) dt.items.add(file);
+        });
+
+        // Satu input file dengan semua file
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.name = 'galeri[]';
+        input.multiple = true;
+        input.style.display = 'none';
+
+        try {
+            input.files = dt.files;
+        } catch(e) {
+            // Fallback: buat input terpisah per file
+            container.innerHTML = '';
+            galeriFiles.forEach((file, idx) => {
+                if (file === null) return;
+                const singleDt = new DataTransfer();
+                singleDt.items.add(file);
+                const singleInput = document.createElement('input');
+                singleInput.type = 'file';
+                singleInput.name = 'galeri[]';
+                singleInput.style.display = 'none';
+                singleInput.files = singleDt.files;
+                container.appendChild(singleInput);
+            });
+            return;
+        }
+
+        container.appendChild(input);
+    }
+
+    function updateGaleriUI() {
+        const validCount = galeriFiles.filter(f => f !== null).length;
+        const actions = document.getElementById('galeri-actions');
+        const countText = document.getElementById('galeri-count-text');
+
+        if (validCount > 0) {
+            actions.style.display = 'block';
+            countText.textContent = validCount + ' gambar dipilih';
+        } else {
+            actions.style.display = 'none';
+        }
+    }
+
+    // PREVIEW GAMBAR UTAMA
     function previewImage(input, previewId) {
         const preview = document.getElementById(previewId);
-        
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            
             reader.onload = function(e) {
                 preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-            }
-            
+            };
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // Preview galeri multiple
-    function previewGaleri(input) {
-        const container = document.getElementById('galeri-preview');
-        container.innerHTML = '';
-        
-        if (input.files) {
-            Array.from(input.files).forEach((file, index) => {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'galeri-preview-item';
-                    wrapper.innerHTML = `<img src="${e.target.result}" alt="Galeri ${index + 1}">`;
-                    container.appendChild(wrapper);
-                }
-                
-                reader.readAsDataURL(file);
-            });
-        }
-    }
-
-    // Tambah fasilitas
+    // FASILITAS
     function addFasilitas() {
         const container = document.getElementById('fasilitas-container');
         const newItem = document.createElement('div');
         newItem.className = 'fasilitas-item-input';
         newItem.innerHTML = `
-            <input type="text" 
-                   class="form-control" 
-                   name="fasilitas[]" 
-                   placeholder="Contoh: AC, Reclining Seat, TV, etc">
+            <input type="text" class="form-control" name="fasilitas[]" placeholder="Contoh: AC, Reclining Seat, TV, etc">
             <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)">
                 <i class="fas fa-times"></i>
             </button>
@@ -649,39 +895,19 @@
         container.appendChild(newItem);
     }
 
-    // Hapus fasilitas
     function removeFasilitas(button) {
         const container = document.getElementById('fasilitas-container');
         if (container.children.length > 1) {
             button.parentElement.remove();
         } else {
-            Swal.fire({
-                title: 'Perhatian',
-                text: 'Minimal harus ada 1 field fasilitas',
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
+            Swal.fire({ title: 'Perhatian', text: 'Minimal harus ada 1 field fasilitas', icon: 'warning', confirmButtonText: 'OK' });
         }
     }
 
-    // Auto-generate slug dari nama
-    document.getElementById('nama').addEventListener('input', function() {
-        const slugInput = document.getElementById('slug');
-        if (!slugInput.value || slugInput.value === '') {
-            const slug = this.value
-                .toLowerCase()
-                .replace(/[^a-z0-9\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-')
-                .trim();
-            slugInput.value = slug;
-        }
-    });
-
-    // Form submission confirmation
+    // FORM SUBMIT
     document.getElementById('formArmada').addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         Swal.fire({
             title: 'Simpan Armada?',
             text: "Data armada baru akan disimpan ke database",
@@ -692,18 +918,14 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Show loading
                 Swal.fire({
                     title: 'Menyimpan...',
                     text: 'Mohon tunggu sebentar',
                     allowOutsideClick: false,
                     allowEscapeKey: false,
                     showConfirmButton: false,
-                    willOpen: () => {
-                        Swal.showLoading();
-                    }
+                    willOpen: () => { Swal.showLoading(); }
                 });
-                
                 this.submit();
             }
         });

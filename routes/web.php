@@ -95,15 +95,22 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
             ]);
 
         // Armada Management
-        Route::resource('armada', App\Http\Controllers\Admin\ArmadaController::class)->names([
-            'index' => 'armada.index',
-            'create' => 'armada.create',
-            'store' => 'armada.store',
-            'show' => 'armada.show',
-            'edit' => 'armada.edit',
-            'update' => 'armada.update',
-            'destroy' => 'armada.destroy',
-        ]);
+        Route::resource('armada', App\Http\Controllers\Admin\ArmadaController::class)
+            ->parameters(['armada' => 'armada:slug'])  // pakai slug sebagai parameter
+            ->names([
+                'index' => 'armada.index',
+                'create' => 'armada.create',
+                'store' => 'armada.store',
+                'show' => 'armada.show',
+                'edit' => 'armada.edit',
+                'update' => 'armada.update',
+                'destroy' => 'armada.destroy',
+            ]);
+
+        // Route tambahan untuk hapus gambar galeri via AJAX
+        Route::post('armada/{armada:slug}/galeri/hapus', [
+            App\Http\Controllers\Admin\ArmadaController::class, 'deleteGaleriImage',
+        ])->name('armada.deleteGaleriImage');
 
         // Fasilitas Armada Management
         Route::post('armada/{armada}/fasilitas', [App\Http\Controllers\Admin\ArmadaController::class, 'storeFacility'])->name('armada.fasilitas.store');
