@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="@yield('meta_description', 'Sri Maju Trans - Rental Bus Terpercaya di Indonesia')">
-    <meta name="keywords" content="rental bus, sewa bus, pariwisata, transportasi">
-    <meta name="author" content="Sri Maju Trans">
-    <title>@yield('title', 'Beranda') - {{ config('app.name', 'Sri Maju Trans') }}</title>
+    <meta name="description" content="@yield('meta_description', $pengaturan->meta_description ?? 'Sri Maju Trans - Rental Bus Terpercaya di Indonesia')">
+    <meta name="keywords" content="@yield('meta_keywords', $pengaturan->meta_keywords ?? 'rental bus, sewa bus, pariwisata, transportasi')">
+    <meta name="author" content="{{ $pengaturan->nama_perusahaan ?? 'Sri Maju Trans' }}">
+    <title>@yield('title', 'Beranda') - {{ $pengaturan->nama_perusahaan ?? config('app.name', 'Sri Maju Trans') }}</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('storage/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ $pengaturan->favicon ? asset('storage/'.$pengaturan->favicon) : asset('storage/favicon.png') }}">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,7 +24,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark shadow-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{ asset('storage/logo.png') }}" alt="Sri Maju Trans Logo" class="me-2">
+                <img src="{{ $pengaturan->logo ? asset('storage/'.$pengaturan->logo) : asset('storage/logo.png') }}" 
+                     alt="{{ $pengaturan->nama_perusahaan ?? 'Sri Maju Trans' }} Logo" 
+                     class="me-2">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -80,16 +82,18 @@
     <footer class="py-5 mt-5">
         <div class="container">
             <div class="row g-4">
-                <!-- Tentanng Section -->
+                <!-- Tentang Section -->
                 <div class="col-lg-4 col-md-6 animate-fade-in">
                     <h5 class="mb-3">
                         <i class="fas fa-bus-alt me-2"></i>Tentang Kami
                     </h5>
                     <p class="text-white-50">
-                        Sri Maju Trans adalah perusahaan rental bus terpercaya dengan armada lengkap dan pelayanan terbaik untuk perjalanan Anda. Kami berkomitmen memberikan pengalaman perjalanan yang aman, nyaman, dan berkesan.
+                        {{ $pengaturan->deskripsi ?? 'Sri Maju Trans adalah perusahaan rental bus terpercaya dengan armada lengkap dan pelayanan terbaik untuk perjalanan Anda. Kami berkomitmen memberikan pengalaman perjalanan yang aman, nyaman, dan berkesan.' }}
                     </p>
                     <div class="mt-3">
-                        <img src="{{ asset('storage/logo.png') }}" alt="Sri Maju Trans" class="footer-logo">
+                        <img src="{{ $pengaturan->logo ? asset('storage/'.$pengaturan->logo) : asset('storage/logo.png') }}" 
+                             alt="{{ $pengaturan->nama_perusahaan ?? 'Sri Maju Trans' }}" 
+                             class="footer-logo">
                     </div>
                 </div>
                 
@@ -99,22 +103,40 @@
                         <i class="fas fa-map-marked-alt me-2"></i>Kontak Kami
                     </h5>
                     <ul class="list-unstyled text-white-50">
+                        @if($pengaturan->alamat)
                         <li class="mb-3">
                             <i class="fas fa-map-marker-alt me-2"></i>
-                            Jl. Raya Utama No. 123, Jakarta
+                            {{ $pengaturan->alamat }}
                         </li>
+                        @endif
+                        
+                        @if($pengaturan->telepon)
                         <li class="mb-3">
                             <i class="fas fa-phone me-2"></i>
-                            <a href="tel:02112345678" class="text-white-50 text-decoration-none">021-12345678</a>
+                            <a href="tel:{{ $pengaturan->telepon }}" class="text-white-50 text-decoration-none">
+                                {{ $pengaturan->telepon }}
+                            </a>
                         </li>
+                        @endif
+                        
+                        @if($pengaturan->whatsapp)
                         <li class="mb-3">
                             <i class="fas fa-mobile-alt me-2"></i>
-                            <a href="tel:081234567890" class="text-white-50 text-decoration-none">0812-3456-7890</a>
+                            <a href="https://wa.me/{{ $pengaturan->whatsapp }}" class="text-white-50 text-decoration-none">
+                                {{ $pengaturan->whatsapp }}
+                            </a>
                         </li>
+                        @endif
+                        
+                        @if($pengaturan->email)
                         <li class="mb-3">
                             <i class="fas fa-envelope me-2"></i>
-                            <a href="mailto:info@srimajutrans.com" class="text-white-50 text-decoration-none">info@srimajutrans.com</a>
+                            <a href="mailto:{{ $pengaturan->email }}" class="text-white-50 text-decoration-none">
+                                {{ $pengaturan->email }}
+                            </a>
                         </li>
+                        @endif
+                        
                         <li class="mb-3">
                             <i class="fas fa-clock me-2"></i>
                             Senin - Minggu: 24 Jam
@@ -131,21 +153,29 @@
                         Dapatkan update terbaru, promo menarik, dan tips perjalanan dari kami melalui media sosial.
                     </p>
                     <div class="social-links d-flex gap-3">
-                        <a href="https://facebook.com" class="text-white" title="Facebook" target="_blank" rel="noopener noreferrer">
+                        @if($pengaturan->facebook)
+                        <a href="{{ $pengaturan->facebook }}" class="text-white" title="Facebook" target="_blank" rel="noopener noreferrer">
                             <i class="fab fa-facebook-f fs-5"></i>
                         </a>
-                        <a href="https://instagram.com" class="text-white" title="Instagram" target="_blank" rel="noopener noreferrer">
+                        @endif
+                        
+                        @if($pengaturan->instagram)
+                        <a href="{{ $pengaturan->instagram }}" class="text-white" title="Instagram" target="_blank" rel="noopener noreferrer">
                             <i class="fab fa-instagram fs-5"></i>
                         </a>
-                        <a href="https://twitter.com" class="text-white" title="Twitter" target="_blank" rel="noopener noreferrer">
+                        @endif
+                        
+                        @if($pengaturan->twitter)
+                        <a href="{{ $pengaturan->twitter }}" class="text-white" title="Twitter" target="_blank" rel="noopener noreferrer">
                             <i class="fab fa-twitter fs-5"></i>
                         </a>
-                        <a href="https://youtube.com" class="text-white" title="YouTube" target="_blank" rel="noopener noreferrer">
+                        @endif
+                        
+                        @if($pengaturan->youtube)
+                        <a href="{{ $pengaturan->youtube }}" class="text-white" title="YouTube" target="_blank" rel="noopener noreferrer">
                             <i class="fab fa-youtube fs-5"></i>
                         </a>
-                        <a href="https://tiktok.com" class="text-white" title="TikTok" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-tiktok fs-5"></i>
-                        </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -156,7 +186,7 @@
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                     <p class="mb-0 text-white-50">
                         <i class="fas fa-copyright me-1"></i>
-                        {{ date('Y') }} Sri Maju Trans. All Rights Reserved.
+                        {{ date('Y') }} {{ $pengaturan->nama_perusahaan ?? 'Sri Maju Trans' }}. All Rights Reserved.
                     </p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
@@ -169,7 +199,8 @@
     </footer>
 
     <!-- WhatsApp Float Button -->
-    <a href="https://wa.me/6281234567890?text=Halo%20Sri%20Maju%20Trans,%20saya%20ingin%20bertanya%20tentang%20layanan%20rental%20bus" 
+    @if($pengaturan->whatsapp)
+    <a href="https://wa.me/{{ $pengaturan->whatsapp }}?text=Halo%20{{ str_replace(' ', '%20', $pengaturan->nama_perusahaan ?? 'Sri Maju Trans') }},%20saya%20ingin%20bertanya%20tentang%20layanan%20rental%20bus" 
        class="whatsapp-float position-fixed bottom-0 end-0 m-4 text-white text-decoration-none"
        style="z-index: 1000;"
        target="_blank"
@@ -177,6 +208,7 @@
        title="Hubungi Kami via WhatsApp">
         <i class="fab fa-whatsapp fs-2"></i>
     </a>
+    @endif
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

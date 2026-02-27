@@ -380,7 +380,7 @@
             align-items: flex-start;
         }
     }
-    </style>
+</style>
 @endpush
 
 @section('content')
@@ -436,7 +436,7 @@
         </div>
 
         <div class="layanan-grid featured-grid" data-filter-type="unggulan">
-            @foreach($layanans->where('unggulan', true) as $layanans)
+            @foreach($layanans->where('unggulan', true) as $layanan)
             <div class="layanan-card featured" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                 <div class="layanan-badge">
                     <i class="fas fa-crown"></i>
@@ -444,45 +444,45 @@
                 </div>
                 
                 <div class="layanan-image">
-                    @if($layanans->gambar)
-                        <img src="{{ asset('storage/' . $layanans->gambar) }}" alt="{{ $layanans->nama }}">
+                    @if($layanan->gambar)
+                        <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}">
                     @else
                         <div class="no-image">
                             <i class="fas fa-image"></i>
                         </div>
                     @endif
                     <div class="image-overlay">
-                        <a href="{{ route('layanan.detail', $layanans->slug) }}" class="view-btn">
+                        <a href="{{ route('layanan.detail', $layanan->slug) }}" class="view-btn">
                             <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
                 
                 <div class="layanan-content">
-                    @if($layanans->icon)
+                    @if($layanan->icon)
                     <div class="layanan-icon">
-                        <i class="{{ $layanans->icon }}"></i>
+                        <i class="{{ $layanan->icon }}"></i>
                     </div>
                     @endif
                     
                     <h3 class="layanan-title">
-                        <a href="{{ route('layanan.detail', $layanans->slug) }}">{{ $layanans->nama }}</a>
+                        <a href="{{ route('layanan.detail', $layanan->slug) }}">{{ $layanan->nama }}</a>
                     </h3>
                     
-                    @if($layanans->deskripsi_singkat)
-                    <p class="layanan-description">{{ Str::limit($layanans->deskripsi_singkat, 120) }}</p>
+                    @if($layanan->deskripsi_singkat)
+                    <p class="layanan-description">{{ Str::limit($layanan->deskripsi_singkat, 120) }}</p>
                     @endif
                     
                     <div class="layanan-meta">
-                        @if($layanans->fasilitas && count($layanans->fasilitas) > 0)
+                        @if($layanan->fasilitas && count($layanan->fasilitas) > 0)
                         <div class="layanan-fasilitas-count">
                             <i class="fas fa-check-circle"></i>
-                            <span>{{ count($layanans->fasilitas) }} Fasilitas</span>
+                            <span>{{ count($layanan->fasilitas) }} Fasilitas</span>
                         </div>
                         @endif
                     </div>
                     
-                    <a href="{{ route('layanan.detail', $layanans->slug) }}" class="layanan-link">
+                    <a href="{{ route('layanan.detail', $layanan->slug) }}" class="layanan-link">
                         Lihat Detail
                         <i class="fas fa-arrow-right"></i>
                     </a>
@@ -503,55 +503,48 @@
         </div>
 
         <div class="layanan-grid regular-grid" data-filter-type="regular">
-            @foreach($layanans->where('unggulan', false) as $layanans)
+            @foreach($layanans->where('unggulan', false) as $layanan)
             <div class="layanan-card" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                 <div class="layanan-image">
-                    @if($layanans->gambar)
-                        <img src="{{ asset('storage/' . $layanans->gambar) }}" alt="{{ $layanans->nama }}">
+                    @if($layanan->gambar)
+                        <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}">
                     @else
                         <div class="no-image">
                             <i class="fas fa-image"></i>
                         </div>
                     @endif
                     <div class="image-overlay">
-                        <a href="{{ route('layanan.detail', $layanans->slug) }}" class="view-btn">
+                        <a href="{{ route('layanan.detail', $layanan->slug) }}" class="view-btn">
                             <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
                 
                 <div class="layanan-content">
-                    @if($layanans->icon)
+                    @if($layanan->icon)
                     <div class="layanan-icon">
-                        <i class="{{ $layanans->icon }}"></i>
+                        <i class="{{ $layanan->icon }}"></i>
                     </div>
                     @endif
                     
                     <h3 class="layanan-title">
-                        <a href="{{ route('layanan.detail', $layanans->slug) }}">{{ $layanans->nama }}</a>
+                        <a href="{{ route('layanan.detail', $layanan->slug) }}">{{ $layanan->nama }}</a>
                     </h3>
                     
-                    @if($layanans->deskripsi_singkat)
-                    <p class="layanan-description">{{ Str::limit($layanans->deskripsi_singkat, 100) }}</p>
+                    @if($layanan->deskripsi_singkat)
+                    <p class="layanan-description">{{ Str::limit($layanan->deskripsi_singkat, 100) }}</p>
                     @endif
                     
                     <div class="layanan-meta">
-                        @if($layanans->harga)
-                        <div class="layanan-price">
-                            <i class="fas fa-tag"></i>
-                            <span>Rp {{ number_format($layanans->harga, 0, ',', '.') }}</span>
-                        </div>
-                        @endif
-                        
-                        @if($layanans->fasilitas && count($layanans->fasilitas) > 0)
+                        @if($layanan->fasilitas && count($layanan->fasilitas) > 0)
                         <div class="layanan-fasilitas-count">
                             <i class="fas fa-check-circle"></i>
-                            <span>{{ count($layanans->fasilitas) }} Fasilitas</span>
+                            <span>{{ count($layanan->fasilitas) }} Fasilitas</span>
                         </div>
                         @endif
                     </div>
                     
-                    <a href="{{ route('layanan.detail', $layanans->slug) }}" class="layanan-link">
+                    <a href="{{ route('layanan.detail', $layanan->slug) }}" class="layanan-link">
                         Lihat Detail
                         <i class="fas fa-arrow-right"></i>
                     </a>

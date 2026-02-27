@@ -1,8 +1,6 @@
 @extends('frontend.layouts.app')
 
 @section('title', 'Beranda')
-
-{{-- Push CSS khusus untuk halaman home --}}
 @push('styles')
     @vite('resources/css/frontend/home.css')
 @endpush
@@ -198,7 +196,7 @@
                 <div class="layanan-card">
                     <div class="layanan-image">
                         @if($layanan->gambar)
-                        <img src="{{ asset('storage/' . $layanan->gambar) }}" alt="{{ $layanan->nama }}">
+                        <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}">
                         @endif
                         <div class="layanan-overlay">
                             <i class="fas fa-concierge-bell"></i>

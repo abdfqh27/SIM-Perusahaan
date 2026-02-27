@@ -606,7 +606,7 @@
                 <!-- Header Image -->
                 <div class="detail-header-image">
                     @if($layanan->gambar)
-                        <img src="{{ asset('storage/' . $layanan->gambar) }}" alt="{{ $layanan->nama }}">
+                        <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}">
                     @else
                         <div class="no-image">
                             <i class="fas fa-image"></i>
@@ -787,14 +787,14 @@
         </div>
         
         <div class="other-layanans-grid">
-            @foreach($layananLainnya as $index => $layananLainnya)
-            <a href="{{ route('layanan.detail', $layananLainnya->slug) }}" 
+            @foreach($layananLainnya as $index => $item)
+            <a href="{{ route('layanan.detail', $item->slug) }}" 
                class="other-layanan-card" 
                data-aos="fade-up" 
                data-aos-delay="{{ $index * 100 }}">
                 <div class="other-layanan-image">
-                    @if($layananLainnya->gambar)
-                        <img src="{{ asset('storage/' . $layananLainnya->gambar) }}" alt="{{ $layananLainnya->nama }}">
+                    @if($item->gambar)
+                        <img src="{{ asset($item->gambar) }}" alt="{{ $item->nama }}">
                     @else
                         <div class="no-image">
                             <i class="fas fa-image"></i>
@@ -803,18 +803,18 @@
                 </div>
                 
                 <div class="other-layanan-content">
-                    <h3 class="other-layanan-title">{{ $layananLainnya->nama }}</h3>
+                    <h3 class="other-layanan-title">{{ $item->nama }}</h3>
                     
-                    @if($layananLainnya->deskripsi_singkat)
+                    @if($item->deskripsi_singkat)
                     <p class="other-layanan-desc">
-                        {{ Str::limit($layananLainnya->deskripsi_singkat, 80) }}
+                        {{ Str::limit($item->deskripsi_singkat, 80) }}
                     </p>
                     @endif
                     
                     <div class="other-layanan-meta">
-                        @if($layananLainnya->harga)
+                        @if($item->harga)
                         <span class="other-layanan-price">
-                            Rp {{ number_format($layananLainnya->harga, 0, ',', '.') }}
+                            Rp {{ number_format($item->harga, 0, ',', '.') }}
                         </span>
                         @endif
                         <i class="fas fa-arrow-right other-layanan-link"></i>
