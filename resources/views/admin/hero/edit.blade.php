@@ -110,39 +110,19 @@
         font-weight: 600;
         font-size: 1rem;
     }
-    
-    .hero-option {
-        padding: 0.5rem;
-        border-left: 3px solid transparent;
+
+    /* Animasi shake untuk field kosong */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%       { transform: translateX(-8px); }
+        40%       { transform: translateX(8px); }
+        60%       { transform: translateX(-5px); }
+        80%       { transform: translateX(5px); }
     }
-    
-    .hero-option.current {
-        background: #e3f2fd;
-        border-left-color: var(--blue-light);
-        font-weight: 600;
-    }
-    
-    .hero-badge {
-        display: inline-block;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        margin-left: 0.5rem;
-    }
-    
-    .hero-badge.current {
-        background: var(--blue-light);
-        color: white;
-    }
-    
-    .hero-badge.active {
-        background: #4caf50;
-        color: white;
-    }
-    
-    .hero-badge.inactive {
-        background: #9e9e9e;
-        color: white;
+    .field-shake {
+        animation: shake 0.4s ease;
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
     }
 </style>
 
@@ -172,7 +152,7 @@
         <i class="fas fa-pen me-2"></i> Form Edit Hero Section
     </div>
     <div class="card-body">
-        <form id="heroEditForm" action="{{ route('admin.hero.update', $heroSection) }}" method="POST" enctype="multipart/form-data">
+        <form id="heroEditForm" action="{{ route('admin.hero.update', $heroSection) }}" method="POST" enctype="multipart/form-data" novalidate>
             @csrf
             @method('PUT')
             
@@ -190,20 +170,19 @@
                            id="judul" 
                            name="judul" 
                            value="{{ old('judul', $heroSection->judul) }}" 
-                           placeholder="Masukkan judul hero section"
-                           required>
+                           placeholder="Masukkan judul hero section">
                     @error('judul')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label for="deskripsi" class="form-label">Deskripsi</label>
+                    <label for="deskripsi" class="form-label">Deskripsi <span class="text-danger">*</span></label>
                     <textarea class="form-control @error('deskripsi') is-invalid @enderror" 
                               id="deskripsi" 
                               name="deskripsi" 
                               rows="4"
-                              placeholder="Masukkan deskripsi hero section (opsional)">{{ old('deskripsi', $heroSection->deskripsi) }}</textarea>
+                              placeholder="Masukkan deskripsi hero section">{{ old('deskripsi', $heroSection->deskripsi) }}</textarea>
                     @error('deskripsi')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -219,7 +198,7 @@
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="tombol_text" class="form-label">Teks Tombol</label>
+                        <label for="tombol_text" class="form-label">Teks Tombol <span class="text-danger">*</span></label>
                         <input type="text" 
                                class="form-control @error('tombol_text') is-invalid @enderror" 
                                id="tombol_text" 
@@ -232,7 +211,7 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="tombol_link" class="form-label">Link Tombol</label>
+                        <label for="tombol_link" class="form-label">Link Tombol <span class="text-danger">*</span></label>
                         <input type="text" 
                                class="form-control @error('tombol_link') is-invalid @enderror" 
                                id="tombol_link" 
@@ -269,10 +248,15 @@
                 @endif
                 
                 <div class="mb-3">
+                    {{-- Jika sudah ada gambar → opsional (ganti). Jika belum → wajib --}}
                     <label for="gambar" class="form-label">
-                        {{ $heroSection->gambar ? 'Ganti Gambar (Opsional)' : 'Upload Gambar' }}
+                        @if($heroSection->gambar)
+                            Ganti Gambar <span class="text-muted">(Opsional)</span>
+                        @else
+                            Upload Gambar <span class="text-danger">*</span>
+                        @endif
                     </label>
-                    <div class="image-upload-area">
+                    <div class="image-upload-area" id="gambar-upload-area">
                         <i class="fas fa-cloud-upload-alt upload-icon"></i>
                         <input type="file" 
                                class="form-control @error('gambar') is-invalid @enderror" 
@@ -294,7 +278,7 @@
                 </div>
             </div>
 
-            <!-- Pengaturan Urutan dengan Dropdown -->
+            <!-- Pengaturan Urutan -->
             <div class="form-section">
                 <div class="section-title">
                     <i class="fas fa-sort"></i>
@@ -311,7 +295,7 @@
                     </div>
                     <small class="text-muted">
                         <i class="fas fa-info-circle"></i>
-                        Pilih hero mana yang ingin ditukar urutannya
+                        Pilih urutan tujuan — hero lain akan otomatis bergeser
                     </small>
                 </div>
                 
@@ -319,22 +303,13 @@
                     <label for="urutan" class="form-label">Tukar Urutan Dengan <span class="text-danger">*</span></label>
                     <select class="form-control @error('urutan') is-invalid @enderror" 
                             id="urutan" 
-                            name="urutan"
-                            required>
+                            name="urutan">
                         @foreach($allHeroes as $hero)
                             <option value="{{ $hero->urutan }}" 
-                                    {{ old('urutan', $heroSection->urutan) == $hero->urutan ? 'selected' : '' }}
-                                    data-hero-id="{{ $hero->id }}"
-                                    data-is-current="{{ $hero->id == $heroSection->id ? 'true' : 'false' }}">
+                                    {{ old('urutan', $heroSection->urutan) == $hero->urutan ? 'selected' : '' }}>
                                 #{{ $hero->urutan }} - {{ Str::limit($hero->judul, 50) }}
-                                @if($hero->id == $heroSection->id)
-                                    (Ini)
-                                @endif
-                                @if($hero->aktif)
-                                    ✓
-                                @else
-                                    ✗
-                                @endif
+                                @if($hero->id == $heroSection->id) (Ini) @endif
+                                @if($hero->aktif) ✓ @else ✗ @endif
                             </option>
                         @endforeach
                     </select>
@@ -343,7 +318,7 @@
                     @enderror
                     <small class="text-muted">
                         <i class="fas fa-exchange-alt"></i>
-                        Pilih urutan tujuan. Hero lain akan otomatis menyesuaikan.
+                        Hero lain akan otomatis menyesuaikan urutannya.
                     </small>
                 </div>
 
@@ -392,80 +367,158 @@
 @endsection
 
 @push('scripts')
-<!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-const urutanAwal = {{ $heroSection->urutan }};
+const urutanAwal      = {{ $heroSection->urutan }};
+const sudahAdaGambar  = {{ $heroSection->gambar ? 'true' : 'false' }};
 
-// FUNGSI PREVIEW GAMBAR
+// PREVIEW GAMBAR 
 function previewImage(event) {
     const preview = document.getElementById('imagePreview');
-    const file = event.target.files[0];
-    
-    if (file) {
-        // Validasi ukuran file (maksimal 10MB)
-        if (file.size > 10240 * 1024) {
-            Swal.fire({
-                icon: 'error',
-                title: 'File Terlalu Besar',
-                text: 'Ukuran file maksimal 10MB',
-                confirmButtonText: 'OK'
-            });
-            event.target.value = '';
-            preview.innerHTML = '';
-            return;
-        }
-        
-        // Validasi tipe file gambar
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        if (!validTypes.includes(file.type)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Format File Tidak Valid',
-                text: 'Hanya file JPG, JPEG, dan PNG yang diperbolehkan',
-                confirmButtonText: 'OK'
-            });
-            event.target.value = '';
-            preview.innerHTML = '';
-            return;
-        }
-        
-        // Membaca file dan menampilkan preview gambar
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.innerHTML = `
-                <div class="mt-3">
-                    <div class="preview-label">
-                        <i class="fas fa-eye"></i>
-                        <span>Preview Gambar Baru:</span>
-                    </div>
-                    <img src="${e.target.result}" class="img-thumbnail" style="max-width: 100%; max-height: 400px;">
-                </div>
-            `;
-        };
-        reader.readAsDataURL(file);
-    } else {
-        // Mengosongkan preview jika tidak ada file
+    const file    = event.target.files[0];
+
+    if (!file) {
         preview.innerHTML = '';
+        return;
     }
+
+    if (file.size > 10240 * 1024) {
+        Swal.fire({ icon: 'error', title: 'File Terlalu Besar', text: 'Ukuran file maksimal 10MB' });
+        event.target.value = '';
+        preview.innerHTML  = '';
+        return;
+    }
+
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!validTypes.includes(file.type)) {
+        Swal.fire({ icon: 'error', title: 'Format Tidak Valid', text: 'Hanya JPG, JPEG, dan PNG yang diperbolehkan' });
+        event.target.value = '';
+        preview.innerHTML  = '';
+        return;
+    }
+
+    // Bersihkan error gambar jika sudah dipilih
+    clearFieldError('gambar');
+
+    const reader  = new FileReader();
+    reader.onload = function (e) {
+        preview.innerHTML = `
+            <div class="mt-3">
+                <div class="preview-label">
+                    <i class="fas fa-eye"></i>
+                    <span>Preview Gambar Baru:</span>
+                </div>
+                <img src="${e.target.result}" class="img-thumbnail" style="max-width:100%;max-height:400px;">
+            </div>
+        `;
+    };
+    reader.readAsDataURL(file);
 }
 
-// SUBMIT FORM DENGAN KONFIRMASI
-document.getElementById('heroEditForm').addEventListener('submit', function(e) {
+// HELPER: Tampilkan error ─
+function showFieldError(el, label) {
+    el.classList.add('is-invalid', 'field-shake');
+
+    let errEl = document.getElementById(el.id + '-error');
+    if (!errEl) {
+        errEl    = document.createElement('div');
+        errEl.id = el.id + '-error';
+        errEl.classList.add('invalid-feedback');
+        const insertAfter = el.closest('.image-upload-area') ?? el;
+        insertAfter.parentNode.insertBefore(errEl, insertAfter.nextSibling);
+    }
+    errEl.style.display = 'block';
+    errEl.textContent   = label + ' wajib diisi.';
+
+    el.addEventListener('animationend', () => el.classList.remove('field-shake'), { once: true });
+}
+
+// HELPER: Bersihkan error ─
+function clearFieldError(id) {
+    const el    = document.getElementById(id);
+    const errEl = document.getElementById(id + '-error');
+    if (el)    el.classList.remove('is-invalid');
+    if (errEl) errEl.style.display = 'none';
+}
+
+// HELPER: Scroll ke field ─
+function scrollToField(el) {
+    const offset = 80;
+    const top    = el.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+    if (el.type !== 'file' && el.tagName !== 'SELECT') el.focus();
+}
+
+// BERSIHKAN ERROR SAAT USER MENGISI ['judul', 'deskripsi', 'tombol_text', 'tombol_link'].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', function () {
+        if (el.value.trim()) clearFieldError(id);
+    });
+});
+document.getElementById('gambar').addEventListener('change', function () {
+    if (this.files.length > 0) clearFieldError('gambar');
+});
+
+// VALIDASI SEMUA FIELD WAJIB 
+function validateAllFields() {
+    // Field teks yang selalu wajib
+    const textFields = [
+        { id: 'judul',       label: 'Judul'       },
+        { id: 'deskripsi',   label: 'Deskripsi'   },
+        { id: 'tombol_text', label: 'Teks Tombol' },
+        { id: 'tombol_link', label: 'Link Tombol' },
+    ];
+
+    let firstEmptyEl = null;
+
+    textFields.forEach(function (field) {
+        const el    = document.getElementById(field.id);
+        const empty = !el || el.value.trim() === '';
+        if (empty) {
+            showFieldError(el, field.label);
+            if (!firstEmptyEl) firstEmptyEl = el;
+        } else {
+            clearFieldError(field.id);
+        }
+    });
+
+    // Gambar hanya wajib jika belum ada gambar sebelumnya
+    if (!sudahAdaGambar) {
+        const gambarEl = document.getElementById('gambar');
+        const empty    = !gambarEl || gambarEl.files.length === 0;
+        if (empty) {
+            showFieldError(gambarEl, 'Gambar');
+            if (!firstEmptyEl) firstEmptyEl = gambarEl;
+        } else {
+            clearFieldError('gambar');
+        }
+    }
+
+    if (firstEmptyEl) {
+        scrollToField(firstEmptyEl);
+        return false;
+    }
+
+    return true;
+}
+
+// SUBMIT FORM 
+document.getElementById('heroEditForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    
+
+    // Validasi dulu — jika ada yang kosong, STOP (tidak ada konfirmasi/loading)
+    if (!validateAllFields()) return;
+
+    // Semua terisi → tampilkan konfirmasi
     const urutanBaru = parseInt(document.getElementById('urutan').value);
-    const selectedOption = document.getElementById('urutan').selectedOptions[0];
-    const selectedHeroText = selectedOption.text;
-    
-    // Pesan konfirmasi berbeda jika urutan berubah atau tidak
     let confirmMessage = '';
+
     if (urutanBaru !== urutanAwal) {
         confirmMessage = `
             <strong>Tukar Urutan:</strong><br>
             Dari urutan <strong>#${urutanAwal}</strong> ke <strong>#${urutanBaru}</strong><br>
-            <small class="text-muted">Hero lain akan otomatis bergeser untuk menyesuaikan urutan.</small>
+            <small class="text-muted">Hero lain akan otomatis bergeser menyesuaikan urutan.</small>
         `;
     } else {
         confirmMessage = `
@@ -473,30 +526,25 @@ document.getElementById('heroEditForm').addEventListener('submit', function(e) {
             <small class="text-muted">Urutan tetap di posisi #${urutanAwal}</small>
         `;
     }
-    
+
     Swal.fire({
         title: 'Konfirmasi Update',
         html: confirmMessage,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '<i class="fas fa-check"></i> Ya, Update',
-        cancelButtonText: '<i class="fas fa-times"></i> Batal',
+        cancelButtonText:  '<i class="fas fa-times"></i> Batal',
         reverseButtons: true,
         focusCancel: true
     }).then((result) => {
         if (result.isConfirmed) {
-            // Menampilkan indikator loading
             Swal.fire({
                 title: 'Mengupdate Data...',
                 html: 'Mohon tunggu sebentar',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                didOpen: () => Swal.showLoading()
             });
-            
-            // Mengirim form
             this.submit();
         }
     });

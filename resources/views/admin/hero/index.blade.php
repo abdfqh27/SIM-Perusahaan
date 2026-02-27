@@ -620,7 +620,7 @@
                 </a>
                 <form action="{{ route('admin.hero.destroy', $hero) }}" 
                       method="POST" 
-                      class="hero-form-inline"
+                      class="hero-form-inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="hero-btn hero-btn-delete" title="Hapus">

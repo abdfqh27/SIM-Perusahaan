@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\HeroSection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class HeroSectionController extends Controller
@@ -28,10 +29,10 @@ class HeroSectionController extends Controller
     {
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'tombol_text' => 'nullable|string|max:100',
-            'tombol_link' => 'nullable|string|max:255',
-            'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:10240',
+            'deskripsi' => 'required|string',
+            'tombol_text' => 'required|string|max:100',
+            'tombol_link' => 'required|string|max:255',
+            'gambar' => 'required|image|mimes:jpeg,jpg,png|max:10240',
             'aktif' => 'boolean',
         ]);
 
@@ -67,10 +68,15 @@ class HeroSectionController extends Controller
     {
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'tombol_text' => 'nullable|string|max:100',
-            'tombol_link' => 'nullable|string|max:255',
-            'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:10240',
+            'deskripsi' => 'required|string',
+            'tombol_text' => 'required|string|max:100',
+            'tombol_link' => 'required|string|max:255',
+            'gambar' => [
+                $heroSection->gambar ? 'nullable' : 'required',
+                'image',
+                'mimes:jpeg,jpg,png',
+                'max:10240',
+            ],
             'urutan' => [
                 'required',
                 'integer',
@@ -97,42 +103,38 @@ class HeroSectionController extends Controller
             );
         }
 
-        // Cek apakah urutan berubah
         if ($urutanLama != $urutanBaru) {
-            // Geser urutan hero lain menggunakan temporary value
-            \Illuminate\Support\Facades\DB::transaction(function () use ($heroSection, $urutanLama, $urutanBaru, $validated) {
+            DB::transaction(function () use ($heroSection, $urutanLama, $urutanBaru, $validated) {
 
-                // Hitung temporary value yang aman (lebih besar dari max urutan)
-                $maxUrutan = HeroSection::max('urutan');
-                $tempValue = $maxUrutan + 1000; // Gunakan nilai yang pasti tidak konflik
-
-                // Set hero yang sedang diedit ke temporary value
-                // Ini untuk menghindari konflik unique constraint
-                $heroSection->timestamps = false;
-                $heroSection->urutan = $tempValue;
-                $heroSection->save();
+                // Langkah 1: Parkir hero yang diedit ke urutan sementara (negatif)
+                DB::statement('UPDATE hero_section SET urutan = -1 WHERE id = ?', [$heroSection->id]);
 
                 if ($urutanBaru < $urutanLama) {
-                    // Pindah ke atas (misal dari urutan 4 ke 2)
-                    // Semua hero yang ada di antara urutan 2-3 harus turun (increment)
-                    // Contoh: urutan 2 jadi 3, urutan 3 jadi 4
-                    HeroSection::where('urutan', '>=', $urutanBaru)
-                        ->where('urutan', '<', $urutanLama)
-                        ->increment('urutan');
-
+                    // Pindah ke atas (contoh: urutan 3 -> 1)
+                    // Hero di urutan 1, 2 harus bergeser ke 2, 3
+                    // ORDER BY DESC: proses terbesar dulu → tidak bentrok unique constraint
+                    DB::statement('
+                        UPDATE hero_section
+                        SET urutan = urutan + 1
+                        WHERE urutan >= ?
+                          AND urutan < ?
+                        ORDER BY urutan DESC
+                    ', [$urutanBaru, $urutanLama]);
                 } else {
-                    // Pindah ke bawah (misal dari urutan 2 ke 4)
-                    // Semua hero yang ada di antara urutan 3-4 harus naik (decrement)
-                    // Contoh: urutan 3 jadi 2, urutan 4 jadi 3
-                    HeroSection::where('urutan', '<=', $urutanBaru)
-                        ->where('urutan', '>', $urutanLama)
-                        ->decrement('urutan');
+                    // Pindah ke bawah (contoh: urutan 1 -> 3)
+                    // Hero di urutan 2, 3 harus bergeser ke 1, 2
+                    // ORDER BY ASC: proses terkecil dulu → tidak bentrok unique constraint
+                    DB::statement('
+                        UPDATE hero_section
+                        SET urutan = urutan - 1
+                        WHERE urutan > ?
+                          AND urutan <= ?
+                        ORDER BY urutan ASC
+                    ', [$urutanLama, $urutanBaru]);
                 }
 
-                // Set hero ke urutan yang baru
-                $heroSection->timestamps = true;
+                // Langkah 3: Pindahkan hero ke urutan tujuan yang sudah kosong
                 $validated['urutan'] = $urutanBaru;
-
                 $heroSection->fill($validated);
                 $heroSection->save();
             });
@@ -143,14 +145,16 @@ class HeroSectionController extends Controller
 
         return redirect()->route('admin.hero.index')
             ->with('success', 'Hero section berhasil diupdate'.
-                ($urutanLama != $urutanBaru ? ' dan dipindah dari urutan '.$urutanLama.' ke urutan '.$urutanBaru : ''));
+                ($urutanLama != $urutanBaru
+                    ? ' dan dipindah dari urutan '.$urutanLama.' ke urutan '.$urutanBaru
+                    : ''));
     }
 
     public function destroy(HeroSection $heroSection)
     {
         $urutanDihapus = $heroSection->urutan;
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($heroSection, $urutanDihapus) {
+        DB::transaction(function () use ($heroSection, $urutanDihapus) {
             // Hapus gambar jika ada
             $this->handleImageDelete($heroSection->gambar);
 
@@ -158,8 +162,13 @@ class HeroSectionController extends Controller
             $heroSection->delete();
 
             // Rapikan urutan setelah dihapus (urutan di bawahnya naik semua)
-            HeroSection::where('urutan', '>', $urutanDihapus)
-                ->decrement('urutan');
+            // ORDER BY ASC agar decrement tidak bentrok unique constraint
+            DB::statement('
+                UPDATE hero_section
+                SET urutan = urutan - 1
+                WHERE urutan > ?
+                ORDER BY urutan ASC
+            ', [$urutanDihapus]);
         });
 
         return redirect()->route('admin.hero.index')
