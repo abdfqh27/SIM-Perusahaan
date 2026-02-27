@@ -69,18 +69,22 @@
     font-size: 0.85rem;
 }
 </style>
-<!-- Page Header -->
-<div class="page-header">
+<!-- Header Section -->
+<div class="gradient-header">
     <div class="header-left">
         <div class="header-icon">
-            <i class="fas fa-users"></i>
+            <i class="fas fa-users-cog"></i>
         </div>
         <div>
-            <h1 class="page-title">Manajemen User</h1>
-            <p class="page-subtitle">Kelola data pengguna sistem</p>
+            <h2 class="header-title">Manajemen User</h2>
+            <p class="header-subtitle">Kelola Daftar Pengguna</p>
         </div>
     </div>
     <div class="header-actions">
+        <button class="btn-refresh" onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+        </button>
         <a href="{{ route('admin.users.create') }}" class="btn-add">
             <i class="fas fa-plus"></i>
             <span>Tambah User</span>
@@ -104,7 +108,7 @@
 @endif
 
 <!-- Statistik Grid -->
-<div class="stats-grid">
+<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
     <div class="stat-card">
         <div class="stat-card-inner">
             <div class="icon-wrapper icon-primary">
@@ -120,11 +124,11 @@
     <div class="stat-card">
         <div class="stat-card-inner">
             <div class="icon-wrapper icon-success">
-                <i class="fas fa-user-shield"></i>
+                <i class="fas fa-crown"></i>
             </div>
             <div class="stat-content">
-                <h2 class="stat-number">{{ $users->where('role.name', 'Admin')->count() }}</h2>
-                <p class="stat-label">Admin</p>
+                <h2 class="stat-number">{{ $users->filter(fn($u) => $u->role && $u->role->slug === 'owner')->count() }}</h2>
+                <p class="stat-label">Owner</p>
             </div>
         </div>
     </div>
@@ -132,11 +136,23 @@
     <div class="stat-card">
         <div class="stat-card-inner">
             <div class="icon-wrapper icon-info">
-                <i class="fas fa-user-tie"></i>
+                <i class="fas fa-user-shield"></i>
             </div>
             <div class="stat-content">
-                <h2 class="stat-number">{{ $users->where('role.name', 'Kasir')->count() }}</h2>
-                <p class="stat-label">Kasir</p>
+                <h2 class="stat-number">{{ $users->filter(fn($u) => $u->role && $u->role->slug === 'admin-company')->count() }}</h2>
+                <p class="stat-label">Admin Company</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-inner">
+            <div class="icon-wrapper icon-warning">
+                <i class="fas fa-user-cog"></i>
+            </div>
+            <div class="stat-content">
+                <h2 class="stat-number">{{ $users->filter(fn($u) => $u->role && $u->role->slug === 'admin-operasional')->count() }}</h2>
+                <p class="stat-label">Admin Operasional</p>
             </div>
         </div>
     </div>
@@ -177,12 +193,7 @@
                             <strong>{{ $user->name }}</strong>
                         </td>
                         <td>{{ $user->email }}</td>
-                        <td>
-                            <span class="trend-indicator {{ $user->role->name === 'Admin' ? 'trend-up' : 'trend-neutral' }}">
-                                <i class="fas fa-{{ $user->role->name === 'Admin' ? 'shield-alt' : 'user' }}"></i>
-                                {{ $user->role->name }}
-                            </span>
-                        </td>
+                        <td>{{ $user->role ? $user->role->nama : 'ROLE NULL' }}</td>
                         <td>{{ $user->created_at->format('d M Y') }}</td>
                         <td>
                             <div class="action-buttons">

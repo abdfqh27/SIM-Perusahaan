@@ -104,21 +104,24 @@
 
 <div class="container-fluid">
     <!-- Page Header -->
-    <div class="page-header">
+    <div class="gradient-header">
         <div class="header-left">
+            <a href="{{ route('admin.users.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
             <div class="header-icon">
-                <i class="fas fa-user-plus"></i>
+                <i class="fas fa-plus-circle"></i>
             </div>
             <div>
-                <h1 class="page-title">Tambah User Baru</h1>
-                <p class="page-subtitle">Buat akun user baru untuk sistem</p>
+                <h2 class="header-title">Tambah User</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">User</a></li>
+                        <li class="breadcrumb-item active">Tambah</li>
+                    </ol>
+                </nav>
             </div>
-        </div>
-        <div class="header-actions">
-            <a href="{{ route('admin.users.index') }}" class="btn-secondary">
-                <i class="fas fa-arrow-left"></i>
-                <span>Kembali</span>
-            </a>
         </div>
     </div>
 
@@ -166,16 +169,19 @@
                         <div class="mb-3">
                             <label for="role_id" class="form-label">Role <span class="text-danger">*</span></label>
                             <select class="form-select @error('role_id') is-invalid @enderror" 
-                                    id="role_id" 
-                                    name="role_id" 
-                                    required>
-                                <option value="">-- Pilih Role --</option>
-                                @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
-                                        {{ ucfirst($role->name) }}
-                                    </option>
-                                @endforeach
-                            </select>
+                                id="role_id" 
+                                name="role_id" 
+                                required
+                                style="color: #212529; background-color: #fff;">
+                            <option value="" style="color: #6c757d;">-- Pilih Role --</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->id }}" 
+                                        style="color: #212529;"
+                                        {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                                    {{ ucfirst($role->nama) }}
+                                </option>
+                            @endforeach
+                        </select>
                             @error('role_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
