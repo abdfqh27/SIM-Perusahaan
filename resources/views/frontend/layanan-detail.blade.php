@@ -606,7 +606,7 @@
                 <!-- Header Image -->
                 <div class="detail-header-image">
                     @if($layanan->gambar)
-                        <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}">
+                        <img src="{{ asset('storage/' . $layanan->gambar) }}" alt="{{ $layanan->nama }}">
                     @else
                         <div class="no-image">
                             <i class="fas fa-image"></i>
@@ -794,7 +794,7 @@
                data-aos-delay="{{ $index * 100 }}">
                 <div class="other-layanan-image">
                     @if($item->gambar)
-                        <img src="{{ asset($item->gambar) }}" alt="{{ $item->nama }}">
+                        <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama }}">
                     @else
                         <div class="no-image">
                             <i class="fas fa-image"></i>

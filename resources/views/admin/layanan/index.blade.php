@@ -265,25 +265,19 @@
             align-items: flex-start;
             gap: 0.5rem;
         }
-        
+
         .layanan-actions {
             grid-template-columns: 1fr;
         }
-        
+
         .btn-action.btn-delete {
             width: 100%;
         }
     }
-    
+
     @keyframes slideOutUp {
-        from {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
+        from { opacity: 1; transform: translateY(0); }
+        to   { opacity: 0; transform: translateY(-20px); }
     }
 </style>
 
@@ -334,7 +328,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="stat-card">
         <div class="stat-card-inner">
             <div class="icon-wrapper icon-success">
@@ -346,7 +340,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="stat-card">
         <div class="stat-card-inner">
             <div class="icon-wrapper icon-warning">
@@ -358,7 +352,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="stat-card">
         <div class="stat-card-inner">
             <div class="icon-wrapper icon-secondary">
@@ -380,7 +374,7 @@
         <div class="layanan-card">
             <div class="layanan-image">
                 @if($item->gambar)
-                    <img src="{{ asset($item->gambar) }}" alt="{{ $item->nama }}">
+                    <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama }}">
                 @else
                     <div class="no-image">
                         <i class="fas fa-image"></i>
@@ -404,7 +398,7 @@
                     <i class="fas fa-sort"></i> Urutan: {{ $item->urutan }}
                 </div>
             </div>
-            
+
             <div class="layanan-body">
                 <div class="layanan-icon-name">
                     @if($item->icon)
@@ -414,11 +408,11 @@
                     @endif
                     <h3>{{ $item->nama }}</h3>
                 </div>
-                
+
                 <p class="layanan-description">
                     {{ $item->deskripsi_singkat ? Str::limit($item->deskripsi_singkat, 100) : 'Tidak ada deskripsi' }}
                 </p>
-                
+
                 @if($item->fasilitas && count($item->fasilitas) > 0)
                 <div class="layanan-fasilitas">
                     <i class="fas fa-list-check"></i>
@@ -426,7 +420,7 @@
                 </div>
                 @endif
             </div>
-            
+
             <div class="layanan-actions">
                 <a href="{{ route('admin.layanan.show', $item) }}" class="btn-action btn-view" title="Lihat Detail">
                     <i class="fas fa-eye"></i>
@@ -436,10 +430,11 @@
                     <i class="fas fa-edit"></i>
                     <span>Edit</span>
                 </a>
+                {{-- type="button" agar tidak langsung submit — dikontrol lewat JS --}}
                 <form action="{{ route('admin.layanan.destroy', $item) }}" method="POST" class="d-inline delete-form">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn-action btn-delete" title="Hapus">
+                    <button type="button" class="btn-action btn-delete btn-hapus" title="Hapus">
                         <i class="fas fa-trash"></i>
                     </button>
                 </form>
@@ -462,26 +457,20 @@
 @endsection
 
 @push('scripts')
-<!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-// Auto hide alerts after 5 seconds
+// Auto hide alerts setelah 5 detik
 setTimeout(() => {
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
+    document.querySelectorAll('.alert').forEach(alert => {
         alert.style.animation = 'slideOutUp 0.5s ease';
-        setTimeout(() => {
-            alert.remove();
-        }, 500);
+        setTimeout(() => alert.remove(), 500);
     });
 }, 5000);
 
-// Konfirmasi hapus dengan SweetAlert2
-document.querySelectorAll('.delete-form').forEach(form => {
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
+// Konfirmasi hapus — delegasi ke tombol .btn-hapus agar tidak ada submit native
+document.querySelectorAll('.btn-hapus').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const form = this.closest('form');
         Swal.fire({
             title: 'Konfirmasi Hapus',
             html: 'Apakah Anda yakin ingin menghapus layanan ini?<br><small class="text-muted">Tindakan ini tidak dapat dibatalkan.</small>',
@@ -489,28 +478,12 @@ document.querySelectorAll('.delete-form').forEach(form => {
             showCancelButton: true,
             confirmButtonText: '<i class="fas fa-trash"></i> Ya, Hapus',
             cancelButtonText: '<i class="fas fa-times"></i> Batal',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
             reverseButtons: true,
             focusCancel: true,
-            customClass: {
-                confirmButton: 'swal2-confirm',
-                cancelButton: 'swal2-cancel'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Tampilkan loading
-                Swal.fire({
-                    title: 'Menghapus Data...',
-                    html: 'Mohon tunggu sebentar',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-                
-                // Submit form
-                this.submit();
-            }
+        }).then(result => {
+            if (result.isConfirmed) form.submit();
         });
     });
 });

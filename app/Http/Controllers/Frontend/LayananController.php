@@ -13,7 +13,7 @@ class LayananController extends Controller
         $layanans = Layanan::where('aktif', true)
             ->orderBy('urutan')
             ->get();
-            
+
         return view('frontend.layanan', compact('layanans'));
     }
 
@@ -22,16 +22,16 @@ class LayananController extends Controller
         $layanan = Layanan::where('slug', $slug)
             ->where('aktif', true)
             ->firstOrFail();
-            
+
         $layananLainnya = Layanan::where('aktif', true)
             ->where('id', '!=', $layanan->id)
             ->orderBy('unggulan', 'desc')
             ->orderBy('urutan')
             ->take(3)
             ->get();
-        
+
         $pengaturans = Pengaturan::first();
-        
+
         return view('frontend.layanan-detail', compact('layanan', 'layananLainnya', 'pengaturans'));
     }
 }

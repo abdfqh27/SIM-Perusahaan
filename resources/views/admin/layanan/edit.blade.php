@@ -45,6 +45,26 @@
 
     .form-control.is-invalid { border-color: #dc3545; background: #fff5f5; }
 
+    /* Shake animation untuk field yang error */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%       { transform: translateX(-8px); }
+        40%       { transform: translateX(8px); }
+        60%       { transform: translateX(-5px); }
+        80%       { transform: translateX(5px); }
+    }
+
+    .field-shake {
+        animation: shake 0.4s ease;
+    }
+
+    /* Highlight merah mencolok untuk field yang wajib diisi */
+    .field-error-highlight {
+        border-color: #dc3545 !important;
+        background: #fff5f5 !important;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2) !important;
+    }
+
     .invalid-feedback {
         display: block;
         color: #dc3545;
@@ -140,6 +160,17 @@
     .image-upload-area.dragover {
         border-color: var(--orange-primary);
         background: white;
+    }
+
+    .image-upload-area.is-invalid {
+        border-color: #dc3545;
+        background: #fff5f5;
+    }
+
+    .image-upload-area.field-error-highlight {
+        border-color: #dc3545 !important;
+        background: #fff5f5 !important;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2) !important;
     }
 
     .image-upload-area input[type="file"] {
@@ -330,7 +361,7 @@
         @method('PUT')
 
         {{-- Nama Layanan --}}
-        <div class="form-group">
+        <div class="form-group" id="group-nama">
             <label for="nama">Nama Layanan <span class="required">*</span></label>
             <input
                 type="text"
@@ -352,7 +383,7 @@
         </div>
 
         {{-- Urutan --}}
-        <div class="form-group">
+        <div class="form-group" id="group-urutan">
             <label for="urutan">Urutan Tampil <span class="required">*</span></label>
             <div class="urutan-selector">
                 <div class="current-order-info">
@@ -385,7 +416,7 @@
         </div>
 
         {{-- Deskripsi Singkat --}}
-        <div class="form-group">
+        <div class="form-group" id="group-deskripsi_singkat">
             <label for="deskripsi_singkat">Deskripsi Singkat <span class="required">*</span></label>
             <textarea
                 name="deskripsi_singkat"
@@ -406,7 +437,7 @@
         </div>
 
         {{-- Deskripsi Lengkap --}}
-        <div class="form-group">
+        <div class="form-group" id="group-deskripsi_lengkap">
             <label for="deskripsi_lengkap">Deskripsi Lengkap <span class="required">*</span></label>
             <textarea
                 name="deskripsi_lengkap"
@@ -423,7 +454,7 @@
         </div>
 
         {{-- Icon --}}
-        <div class="form-group">
+        <div class="form-group" id="group-icon">
             <label for="icon">Icon (Font Awesome Class) <span class="required">*</span></label>
             <div class="icon-input-group">
                 <input
@@ -450,13 +481,13 @@
         </div>
 
         {{-- Gambar --}}
-        <div class="form-group">
+        <div class="form-group" id="group-gambar">
             <label for="gambar">Gambar Layanan <span class="required">*</span></label>
 
             {{-- Gambar saat ini --}}
             @if($layanan->gambar)
             <div class="current-image" id="currentImageContainer">
-                <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}" id="currentImageEl">
+                <img src="{{ asset('storage/' . $layanan->gambar) }}" alt="{{ $layanan->nama }}" id="currentImageEl">
                 <span class="current-image-label">
                     <i class="fas fa-check-circle" style="color:#28a745;"></i>
                     Gambar saat ini — upload baru di bawah untuk mengganti
@@ -495,7 +526,7 @@
         </div>
 
         {{-- Fasilitas --}}
-        <div class="form-group">
+        <div class="form-group" id="group-fasilitas">
             <label>Fasilitas <span class="required">*</span></label>
             <div class="fasilitas-container" id="fasilitasContainer">
                 @php
@@ -561,206 +592,133 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 // Slug preview
-function toSlug(text) {
-    return text.toLowerCase().trim()
-        .replace(/[\s\-]+/g, '-')
-        .replace(/[^a-z0-9\-]/g, '')
-        .replace(/^-+|-+$/g, '');
-}
-
 document.getElementById('nama').addEventListener('input', function () {
-    document.getElementById('slugText').textContent = toSlug(this.value) || '—';
+    const slug = this.value.toLowerCase().trim().replace(/[\s\-]+/g, '-').replace(/[^a-z0-9\-]/g, '').replace(/^-+|-+$/g, '');
+    document.getElementById('slugText').textContent = slug || '—';
 });
 
-// Char counter deskripsi singkat
-(function initCounter() {
-    const textarea = document.getElementById('deskripsi_singkat');
-    const counter  = document.getElementById('singkatCounter');
-    const countEl  = document.getElementById('singkatCount');
+// Char counter (inisialisasi sekaligus saat load)
+const deskSingkatEl = document.getElementById('deskripsi_singkat');
+function updateCounter() {
+    const len = deskSingkatEl.value.length;
+    document.getElementById('singkatCount').textContent = len;
+    document.getElementById('singkatCounter').className = 'char-counter' + (len >= 500 ? ' danger' : len >= 400 ? ' warning' : '');
+}
+deskSingkatEl.addEventListener('input', updateCounter);
+updateCounter();
 
-    function update() {
-        const len = textarea.value.length;
-        countEl.textContent = len;
-        counter.className = 'char-counter' + (len >= 500 ? ' danger' : len >= 400 ? ' warning' : '');
-    }
-
-    textarea.addEventListener('input', update);
-    update(); // inisialisasi saat halaman load
-})();
-
-// Icon Preview
+// Icon preview
 document.getElementById('icon').addEventListener('input', function () {
-    document.getElementById('iconPreview').innerHTML =
-        `<i class="${this.value.trim() || 'fas fa-icons'}"></i>`;
+    document.getElementById('iconPreview').innerHTML = `<i class="${this.value.trim() || 'fas fa-icons'}"></i>`;
 });
 
-// Image Upload Preview
-const imageInput        = document.getElementById('gambar');
-const imageUploadArea   = document.getElementById('imageUploadArea');
-const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-const imagePreview      = document.getElementById('imagePreview');
-const removeImageBtn    = document.getElementById('removeImage');
-const hasExistingImage  = {{ $layanan->gambar ? 'true' : 'false' }};
+// Image upload preview
+const imageUploadArea  = document.getElementById('imageUploadArea');
+const imageInput       = document.getElementById('gambar');
+const hasExistingImage = {{ $layanan->gambar ? 'true' : 'false' }};
 
-imageInput.addEventListener('change', function (e) {
-    const file = e.target.files[0];
+imageInput.addEventListener('change', function () {
+    const file = this.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = function (e) {
-        imagePreview.querySelector('img').src = e.target.result;
-        uploadPlaceholder.style.display = 'none';
-        imagePreview.style.display      = 'block';
+    reader.onload = e => {
+        document.getElementById('imagePreview').querySelector('img').src = e.target.result;
+        document.getElementById('uploadPlaceholder').style.display = 'none';
+        document.getElementById('imagePreview').style.display = 'block';
+        imageUploadArea.classList.remove('field-error-highlight');
     };
     reader.readAsDataURL(file);
 });
 
-removeImageBtn.addEventListener('click', function () {
+document.getElementById('removeImage').addEventListener('click', function () {
     imageInput.value = '';
-    uploadPlaceholder.style.display = 'block';
-    imagePreview.style.display      = 'none';
+    document.getElementById('uploadPlaceholder').style.display = 'block';
+    document.getElementById('imagePreview').style.display = 'none';
 });
 
-imageUploadArea.addEventListener('dragover', function (e) {
-    e.preventDefault();
-    this.classList.add('dragover');
-});
-
-imageUploadArea.addEventListener('dragleave', function () {
-    this.classList.remove('dragover');
-});
-
+imageUploadArea.addEventListener('dragover',  e => { e.preventDefault(); imageUploadArea.classList.add('dragover'); });
+imageUploadArea.addEventListener('dragleave', ()  => imageUploadArea.classList.remove('dragover'));
 imageUploadArea.addEventListener('drop', function (e) {
     e.preventDefault();
     this.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        imageInput.files = files;
+    if (e.dataTransfer.files.length) {
+        imageInput.files = e.dataTransfer.files;
         imageInput.dispatchEvent(new Event('change'));
     }
 });
 
-// Fasilitas Management
+// Tambah fasilitas
 document.getElementById('addFasilitas').addEventListener('click', function () {
-    const container = document.getElementById('fasilitasContainer');
-    const newItem   = document.createElement('div');
-    newItem.className = 'fasilitas-item';
-    newItem.innerHTML = `
-        <input type="text" name="fasilitas[]" class="form-control"
-            placeholder="Nama fasilitas" maxlength="255" required>
-        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)" title="Hapus">
-            <i class="fas fa-times"></i>
-        </button>
+    const item = document.createElement('div');
+    item.className = 'fasilitas-item';
+    item.innerHTML = `
+        <input type="text" name="fasilitas[]" class="form-control" placeholder="Nama fasilitas" maxlength="255" required>
+        <button type="button" class="btn-remove-fasilitas" onclick="removeFasilitas(this)" title="Hapus"><i class="fas fa-times"></i></button>
     `;
-    container.appendChild(newItem);
-    newItem.querySelector('input').focus();
+    document.getElementById('fasilitasContainer').appendChild(item);
+    item.querySelector('input').focus();
 });
 
-function removeFasilitas(button) {
+function removeFasilitas(btn) {
     const container = document.getElementById('fasilitasContainer');
     if (container.children.length > 1) {
-        button.closest('.fasilitas-item').remove();
+        btn.closest('.fasilitas-item').remove();
     } else {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Peringatan',
-            text: 'Minimal harus ada satu fasilitas',
-            confirmButtonColor: '#fb8500',
-        });
+        Swal.fire({ icon: 'warning', title: 'Peringatan', text: 'Minimal harus ada satu fasilitas', confirmButtonColor: '#fb8500' });
     }
 }
 
-// Validasi client-side sebelum submit─
-function validateForm() {
-    const errors = [];
+// Hapus highlight saat field diisi
+document.querySelectorAll('.form-control').forEach(el => {
+    el.addEventListener('input', () => el.classList.remove('field-error-highlight'));
+});
 
-    const nama = document.getElementById('nama').value.trim();
-    if (!nama) errors.push('Nama layanan wajib diisi');
-
-    const deskSingkat = document.getElementById('deskripsi_singkat').value.trim();
-    if (!deskSingkat) errors.push('Deskripsi singkat wajib diisi');
-
-    const deskLengkap = document.getElementById('deskripsi_lengkap').value.trim();
-    if (!deskLengkap) errors.push('Deskripsi lengkap wajib diisi');
-
-    const icon = document.getElementById('icon').value.trim();
-    if (!icon) errors.push('Icon wajib diisi');
-
-    // Gambar: di edit, wajib jika belum ada gambar sebelumnya
-    if (!hasExistingImage) {
-        const gambar = document.getElementById('gambar').files;
-        if (!gambar || gambar.length === 0) {
-            errors.push('Gambar layanan wajib diupload');
-        }
-    }
-
-    const fasilitasInputs = document.querySelectorAll('#fasilitasContainer input[name="fasilitas[]"]');
-    let fasilitasValid = true;
-    fasilitasInputs.forEach(function (input) {
-        if (!input.value.trim()) fasilitasValid = false;
-    });
-    if (fasilitasInputs.length === 0) {
-        errors.push('Minimal satu fasilitas wajib diisi');
-    } else if (!fasilitasValid) {
-        errors.push('Semua nama fasilitas wajib diisi (tidak boleh ada yang kosong)');
-    }
-
-    return errors;
+// Scroll + highlight ke field kosong
+function scrollToError(el, doFocus = true) {
+    el.classList.remove('field-shake');
+    void el.offsetWidth;
+    el.classList.add('field-error-highlight', 'field-shake');
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+    if (doFocus) setTimeout(() => el.focus(), 400);
+    el.addEventListener('animationend', () => el.classList.remove('field-shake'), { once: true });
 }
 
-// Submit dengan konfirmasi
+// Submit
 document.getElementById('layananForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    const form   = this;
-    const errors = validateForm();
+    const form = this;
 
-    if (errors.length > 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Data Belum Lengkap',
-            html: '<ul style="text-align:left; margin:0; padding-left:1.2rem;">'
-                + errors.map(err => `<li>${err}</li>`).join('')
-                + '</ul>',
-            confirmButtonColor: '#dc3545',
-        });
-        return;
+    const checks = [
+        document.getElementById('nama'),
+        document.getElementById('deskripsi_singkat'),
+        document.getElementById('deskripsi_lengkap'),
+        document.getElementById('icon'),
+    ];
+    for (const el of checks) {
+        if (!el.value.trim()) { scrollToError(el); return; }
     }
 
+    if (!hasExistingImage && (!imageInput.files || !imageInput.files.length)) {
+        scrollToError(imageUploadArea, false); return;
+    }
+
+    const emptyFasilitas = [...document.querySelectorAll('#fasilitasContainer input[name="fasilitas[]"]')]
+        .find(i => !i.value.trim());
+    if (emptyFasilitas) { scrollToError(emptyFasilitas); return; }
+
+    // Semua valid → konfirmasi
     Swal.fire({
         title: 'Konfirmasi Update',
-        html: 'Apakah Anda yakin ingin mengupdate data layanan ini?<br>'
-            + '<small class="text-muted">Pastikan semua data sudah benar sebelum menyimpan.</small>',
+        html: 'Apakah Anda yakin ingin mengupdate data layanan ini?<br><small class="text-muted">Pastikan semua data sudah benar sebelum menyimpan.</small>',
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '<i class="fas fa-check"></i> Ya, Update',
-        cancelButtonText:  '<i class="fas fa-times"></i> Batal',
+        cancelButtonText: '<i class="fas fa-times"></i> Batal',
         confirmButtonColor: '#fb8500',
         cancelButtonColor: '#6c757d',
         reverseButtons: true,
         focusCancel: true,
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: 'Mengupdate Data...',
-                html: 'Mohon tunggu sebentar',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => Swal.showLoading(),
-            });
-            form.submit();
-        }
-    });
+    }).then(result => { if (result.isConfirmed) form.submit(); });
 });
-
-// Tampilkan error validasi dari server
-@if($errors->any())
-    Swal.fire({
-        icon: 'error',
-        title: 'Validasi Gagal',
-        html: '<ul style="text-align:left; margin:0; padding-left:1.2rem;">'
-            + '@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach'
-            + '</ul>',
-        confirmButtonColor: '#dc3545',
-    });
-@endif
 </script>
 @endpush

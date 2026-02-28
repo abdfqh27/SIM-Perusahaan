@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Helpers\DateHelper;
+use App\Helpers\ImageHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Layanan;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class LayananController extends Controller
             'deskripsi_singkat' => 'required|string|max:500',
             'deskripsi_lengkap' => 'required|string',
             'icon' => 'required|string|max:100',
-            'gambar' => 'required|image|mimes:jpeg,jpg,png|max:10240',
+            'gambar' => 'required|image|mimes:jpeg,jpg,png,webp|max:10240',
             'fasilitas' => 'required|array|min:1',
             'fasilitas.*' => 'required|string|max:255',
             'unggulan' => 'boolean',
@@ -54,7 +55,7 @@ class LayananController extends Controller
             'icon.max' => 'Icon maksimal 100 karakter',
             'gambar.required' => 'Gambar layanan wajib diupload',
             'gambar.image' => 'File harus berupa gambar',
-            'gambar.mimes' => 'Format gambar harus JPG, JPEG, atau PNG',
+            'gambar.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau WebP',
             'gambar.max' => 'Ukuran gambar maksimal 10MB',
             'fasilitas.required' => 'Minimal satu fasilitas wajib diisi',
             'fasilitas.min' => 'Minimal satu fasilitas wajib diisi',
@@ -67,8 +68,14 @@ class LayananController extends Controller
         $validated['created_at'] = DateHelper::now();
         $validated['updated_at'] = DateHelper::now();
 
+        // Upload gambar (convert ke WebP HD)
         if ($request->hasFile('gambar')) {
-            $validated['gambar'] = $this->handleImageUpload($request->file('gambar'), 'layanan');
+            $validated['gambar'] = ImageHelper::uploadHDWebP(
+                $request->file('gambar'),
+                'layanan',
+                1920,
+                90
+            );
         }
 
         Layanan::create($validated);
@@ -97,7 +104,7 @@ class LayananController extends Controller
             'deskripsi_singkat' => 'required|string|max:500',
             'deskripsi_lengkap' => 'required|string',
             'icon' => 'required|string|max:100',
-            'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:10240',
+            'gambar' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:10240',
             'fasilitas' => 'required|array|min:1',
             'fasilitas.*' => 'required|string|max:255',
             'urutan' => [
@@ -118,7 +125,7 @@ class LayananController extends Controller
             'icon.required' => 'Icon wajib diisi',
             'icon.max' => 'Icon maksimal 100 karakter',
             'gambar.image' => 'File harus berupa gambar',
-            'gambar.mimes' => 'Format gambar harus JPG, JPEG, atau PNG',
+            'gambar.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau WebP',
             'gambar.max' => 'Ukuran gambar maksimal 10MB',
             'fasilitas.required' => 'Minimal satu fasilitas wajib diisi',
             'fasilitas.min' => 'Minimal satu fasilitas wajib diisi',
@@ -132,11 +139,17 @@ class LayananController extends Controller
 
         $validated['slug'] = Str::slug($validated['nama']);
 
+        // Upload gambar baru (convert ke WebP HD), hapus gambar lama
         if ($request->hasFile('gambar')) {
-            $validated['gambar'] = $this->handleImageUpload(
+            if ($layanan->gambar) {
+                ImageHelper::delete($layanan->gambar);
+            }
+
+            $validated['gambar'] = ImageHelper::uploadHDWebP(
                 $request->file('gambar'),
                 'layanan',
-                $layanan->gambar
+                1920,
+                90
             );
         }
 
@@ -145,27 +158,35 @@ class LayananController extends Controller
 
         if ($urutanLama != $urutanBaru) {
             DB::transaction(function () use ($layanan, $urutanLama, $urutanBaru, $validated) {
-                $maxUrutan = Layanan::max('urutan');
-                $tempValue = $maxUrutan + 1000;
 
-                $layanan->timestamps = false;
-                $layanan->urutan = $tempValue;
-                $layanan->save();
+                // Langkah 1: Parkir layanan yang diedit ke urutan sementara (negatif)
+                DB::statement('UPDATE layanan SET urutan = -1 WHERE id = ?', [$layanan->id]);
 
                 if ($urutanBaru < $urutanLama) {
-                    Layanan::where('urutan', '>=', $urutanBaru)
-                        ->where('urutan', '<', $urutanLama)
-                        ->increment('urutan');
+                    // Pindah ke atas: geser ke bawah semua yang ada di antara urutanBaru s/d urutanLama-1
+                    // ORDER BY DESC agar tidak bentrok unique constraint
+                    DB::statement('
+                        UPDATE layanan
+                        SET urutan = urutan + 1
+                        WHERE urutan >= ?
+                          AND urutan < ?
+                        ORDER BY urutan DESC
+                    ', [$urutanBaru, $urutanLama]);
                 } else {
-                    Layanan::where('urutan', '<=', $urutanBaru)
-                        ->where('urutan', '>', $urutanLama)
-                        ->decrement('urutan');
+                    // Pindah ke bawah: geser ke atas semua yang ada di antara urutanLama+1 s/d urutanBaru
+                    // ORDER BY ASC agar tidak bentrok unique constraint
+                    DB::statement('
+                        UPDATE layanan
+                        SET urutan = urutan - 1
+                        WHERE urutan > ?
+                          AND urutan <= ?
+                        ORDER BY urutan ASC
+                    ', [$urutanLama, $urutanBaru]);
                 }
 
-                $layanan->timestamps = true;
+                // Langkah 3: Pindahkan layanan ke urutan tujuan yang sudah kosong
                 $validated['updated_at'] = DateHelper::now();
                 $validated['urutan'] = $urutanBaru;
-
                 $layanan->fill($validated);
                 $layanan->save();
             });
@@ -183,37 +204,24 @@ class LayananController extends Controller
         $urutanDihapus = $layanan->urutan;
 
         DB::transaction(function () use ($layanan, $urutanDihapus) {
-            $this->handleImageDelete($layanan->gambar);
+            // Hapus gambar dari storage
+            if ($layanan->gambar) {
+                ImageHelper::delete($layanan->gambar);
+            }
+
             $layanan->delete();
 
-            Layanan::where('urutan', '>', $urutanDihapus)->decrement('urutan');
+            // Rapikan urutan: semua di bawahnya naik satu
+            // ORDER BY ASC agar decrement tidak bentrok unique constraint
+            DB::statement('
+                UPDATE layanan
+                SET urutan = urutan - 1
+                WHERE urutan > ?
+                ORDER BY urutan ASC
+            ', [$urutanDihapus]);
         });
 
         return redirect()->route('admin.layanan.index')
             ->with('success', 'Layanan berhasil dihapus pada '.DateHelper::formatDateTimeIndonesia(DateHelper::now()));
-    }
-
-    protected function handleImageUpload($file, $folder, $oldImage = null)
-    {
-        if ($oldImage) {
-            $this->handleImageDelete($oldImage);
-        }
-
-        $path = public_path('uploads/'.$folder);
-        if (! file_exists($path)) {
-            mkdir($path, 0755, true);
-        }
-
-        $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
-        $file->move($path, $filename);
-
-        return 'uploads/'.$folder.'/'.$filename;
-    }
-
-    protected function handleImageDelete($imagePath)
-    {
-        if ($imagePath && file_exists(public_path($imagePath))) {
-            unlink(public_path($imagePath));
-        }
     }
 }

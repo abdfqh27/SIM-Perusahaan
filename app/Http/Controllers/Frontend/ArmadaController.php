@@ -9,22 +9,22 @@ class ArmadaController extends Controller
 {
     public function index()
     {
-        $armadas = Armada::tersedia()->with('fasilitas')->get();
+        $armadas = Armada::tersedia()->get();
+
         return view('frontend.armada', compact('armadas'));
     }
 
     public function show($slug)
     {
         $armada = Armada::where('slug', $slug)
-                    ->where('tersedia', true)
-                    ->with('fasilitas')
-                    ->firstOrFail();
-        
+            ->where('tersedia', true)
+            ->firstOrFail();
+
         $armadaLainnya = Armada::tersedia()
-                            ->where('id', '!=', $armada->id)
-                            ->take(3)
-                            ->get();
-        
+            ->where('id', '!=', $armada->id)
+            ->take(3)
+            ->get();
+
         return view('frontend.armada-detail', compact('armada', 'armadaLainnya'));
     }
 }

@@ -445,7 +445,7 @@
                 
                 <div class="layanan-image">
                     @if($layanan->gambar)
-                        <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}">
+                        <img src="{{ asset('storage/' . $layanan->gambar) }}" alt="{{ $layanan->nama }}">
                     @else
                         <div class="no-image">
                             <i class="fas fa-image"></i>
@@ -507,7 +507,7 @@
             <div class="layanan-card" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                 <div class="layanan-image">
                     @if($layanan->gambar)
-                        <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}">
+                        <img src="{{ asset('storage/' . $layanan->gambar) }}" alt="{{ $layanan->nama }}">
                     @else
                         <div class="no-image">
                             <i class="fas fa-image"></i>

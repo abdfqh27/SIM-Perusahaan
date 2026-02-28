@@ -432,7 +432,7 @@
         <div class="detail-card">
             <div class="detail-image-section">
                 @if($layanan->gambar)
-                    <img src="{{ asset($layanan->gambar) }}" alt="{{ $layanan->nama }}" class="detail-image">
+                    <img src="{{ asset('storage/' . $layanan->gambar) }}" alt="{{ $layanan->nama }}" class="detail-image">
                 @else
                     <div class="detail-no-image">
                         <i class="fas fa-image"></i>
