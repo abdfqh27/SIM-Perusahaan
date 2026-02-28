@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('status_booking', ['draft', 'confirmed', 'selesai', 'batal'])->default('draft');
             $table->text('catatan')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

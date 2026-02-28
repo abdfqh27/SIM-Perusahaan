@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('kategori_bus', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kategori');
-            $table->integer('kapasitas');
+            $table->integer('kapasitas_min');
+            $table->integer('kapasitas_max');
             $table->timestamps();
         });
     }

@@ -12,13 +12,9 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('slug')->unique();
-            $table->string('tipe_bus');
-            $table->integer('kapasitas_min');
-            $table->integer('kapasitas_max');
+            $table->foreignId('kategori_bus_id')->constrained('kategori_bus')->cascadeOnDelete();
             $table->text('deskripsi')->nullable();
-            // Gambar (akan dikonversi ke WebP)
             $table->string('gambar_utama')->nullable();
-            // Galeri (JSON array untuk multiple gambar)
             $table->json('galeri')->nullable();
             $table->json('fasilitas')->nullable();
             $table->integer('urutan')->unique();
@@ -26,12 +22,10 @@ return new class extends Migration
             $table->boolean('tersedia')->default(true);
             $table->timestamps();
 
-            // Index untuk performa query
-            $table->index('tipe_bus');
+            $table->index('kategori_bus_id');
             $table->index('unggulan');
             $table->index('tersedia');
             $table->index('urutan');
-            $table->index(['kapasitas_min', 'kapasitas_max']);
         });
     }
 

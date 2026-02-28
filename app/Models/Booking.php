@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Helpers\DateHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Booking extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'booking';
 
@@ -54,8 +56,8 @@ class Booking extends Model
     public static function generateKodeBooking()
     {
         $prefix = 'BKG';
-        $date = date('Ymd');
-        $lastBooking = self::whereDate('created_at', today())
+        $date = DateHelper::now()->format('Ymd');
+        $lastBooking = self::whereDate('created_at', DateHelper::today())
             ->orderBy('id', 'desc')
             ->first();
 
@@ -70,6 +72,7 @@ class Booking extends Model
     public function buses()
     {
         return $this->belongsToMany(Bus::class, 'booking_bus', 'booking_id', 'bus_id')
+            ->withTrashed() // Tetap tampilkan bus yang sudah dihapus
             ->withTimestamps();
     }
 
@@ -82,7 +85,7 @@ class Booking extends Model
             return 0;
         }
 
-        return $this->tanggal_berangkat->diffInDays($this->tanggal_selesai) + 1;
+        return DateHelper::diffInDays($this->tanggal_berangkat, $this->tanggal_selesai);
     }
 
     /**
@@ -112,7 +115,7 @@ class Booking extends Model
      */
     public function scopeBerjalanPadaTanggal($query, $tanggal = null)
     {
-        $tanggal = $tanggal ?? today();
+        $tanggal = $tanggal ?? DateHelper::today();
 
         return $query->where('status_booking', 'confirmed')
             ->whereDate('tanggal_berangkat', '<=', $tanggal)
@@ -124,7 +127,7 @@ class Booking extends Model
      */
     public function isBerjalanPadaTanggal($tanggal = null)
     {
-        $tanggal = $tanggal ?? today();
+        $tanggal = $tanggal ?? DateHelper::today();
 
         return $this->status_booking === 'confirmed'
             && $this->tanggal_berangkat <= $tanggal
@@ -136,17 +139,19 @@ class Booking extends Model
      */
     public static function cekBentrokJadwal($busIds, $tanggalBerangkat, $tanggalSelesai, $excludeBookingId = null)
     {
-        return self::where('id', '!=', $excludeBookingId)
-            ->where('status_booking', 'confirmed')
+        $query = self::where('status_booking', 'confirmed')
             ->whereHas('buses', function ($query) use ($busIds) {
                 $query->whereIn('bus_id', $busIds);
             })
             ->where(function ($query) use ($tanggalBerangkat, $tanggalSelesai) {
-                // Cek overlap: (Start1 <= End2) AND (End1 >= Start2)
-                $query->where(function ($q) use ($tanggalBerangkat, $tanggalSelesai) {
-                    $q->whereDate('tanggal_berangkat', '<=', $tanggalSelesai)
-                        ->whereDate('tanggal_selesai', '>=', $tanggalBerangkat);
-                });
+                $query->whereDate('tanggal_berangkat', '<=', $tanggalSelesai)
+                    ->whereDate('tanggal_selesai', '>=', $tanggalBerangkat);
             });
+
+        if ($excludeBookingId) {
+            $query->where('id', '!=', $excludeBookingId);
+        }
+
+        return $query;
     }
 }

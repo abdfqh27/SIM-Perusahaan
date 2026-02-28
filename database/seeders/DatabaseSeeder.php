@@ -3,9 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\UserSeeder;
-use Database\Seeders\HeroSectionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,6 +13,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             HeroSectionSeeder::class,
             PengaturanSeeder::class,
+            KategoriBusSeeder::class,
+            SopirSeeder::class,
+            BusSeeder::class,
+            BookingSeeder::class,
         ]);
     }
 }

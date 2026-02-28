@@ -15,9 +15,7 @@ class Armada extends Model
     protected $fillable = [
         'nama',
         'slug',
-        'tipe_bus',
-        'kapasitas_min',
-        'kapasitas_max',
+        'kategori_bus_id',
         'deskripsi',
         'gambar_utama',
         'galeri',
@@ -32,8 +30,7 @@ class Armada extends Model
         'fasilitas' => 'array',
         'unggulan' => 'boolean',
         'tersedia' => 'boolean',
-        'kapasitas_min' => 'integer',
-        'kapasitas_max' => 'integer',
+        'kategori_bus_id' => 'integer',
     ];
 
     protected static function boot()
@@ -41,12 +38,10 @@ class Armada extends Model
         parent::boot();
 
         static::creating(function ($armada) {
-            // Generate slug otomatis dari nama
             if (empty($armada->slug)) {
                 $armada->slug = Str::slug($armada->nama);
             }
 
-            // Set urutan otomatis ke urutan terakhir + 1
             if (empty($armada->urutan)) {
                 $maxUrutan = static::max('urutan') ?? 0;
                 $armada->urutan = $maxUrutan + 1;
@@ -54,30 +49,47 @@ class Armada extends Model
         });
 
         static::updating(function ($armada) {
-            // Update slug jika nama berubah
             if ($armada->isDirty('nama')) {
                 $armada->slug = Str::slug($armada->nama);
             }
         });
     }
 
-    // Accessor untuk menampilkan kapasitas dalam format range
-    public function getKapasitasAttribute()
+    // Relasi ke KategoriBus
+    public function kategoriBus()
     {
-        if ($this->kapasitas_min == $this->kapasitas_max) {
-            return $this->kapasitas_min.' kursi';
-        }
-
-        return $this->kapasitas_min.' - '.$this->kapasitas_max.' kursi';
+        return $this->belongsTo(KategoriBus::class, 'kategori_bus_id');
     }
 
-    // Accessor untuk URL gambar utama
+    // Accessor tipe bus dari relasi
+    public function getTipeBusAttribute()
+    {
+        return $this->kategoriBus?->nama_kategori;
+    }
+
+    // Accessor kapasitas dari relasi
+    public function getKapasitasAttribute()
+    {
+        $kategori = $this->kategoriBus;
+
+        if (! $kategori) {
+            return '-';
+        }
+
+        if ($kategori->kapasitas_min == $kategori->kapasitas_max) {
+            return $kategori->kapasitas_min.' kursi';
+        }
+
+        return $kategori->kapasitas_min.' - '.$kategori->kapasitas_max.' kursi';
+    }
+
+    // Accessor URL gambar utama
     public function getGambarUtamaUrlAttribute()
     {
         return \App\Helpers\ImageHelper::url($this->gambar_utama, '/images/no-bus.png');
     }
 
-    // Accessor untuk array URL galeri
+    // Accessor array URL galeri
     public function getGaleriUrlsAttribute()
     {
         if (! $this->galeri || ! is_array($this->galeri)) {
@@ -89,31 +101,31 @@ class Armada extends Model
         }, $this->galeri);
     }
 
-    // Scope untuk armada yang tersedia
+    // Scope armada yang tersedia
     public function scopeTersedia($query)
     {
         return $query->where('tersedia', true)->orderBy('urutan');
     }
 
-    // Scope untuk armada unggulan
+    // Scope armada unggulan
     public function scopeUnggulan($query)
     {
         return $query->where('unggulan', true)->where('tersedia', true)->orderBy('urutan');
     }
 
-    // Scope untuk filter berdasrkan tipe bus
+    // Scope filter berdasarkan tipe bus (nama kategori)
     public function scopeTipeBus($query, $tipe)
     {
-        return $query->where('tipe_bus', $tipe);
+        return $query->whereHas('kategoriBus', fn ($q) => $q->where('nama_kategori', $tipe));
     }
 
-    // Scope untuk filter berdasarkan kapasitas minimum
+    // Scope filter berdasarkan kapasitas minimum
     public function scopeMinKapasitas($query, $kapasitas)
     {
-        return $query->where('kapasitas_max', '>=', $kapasitas);
+        return $query->whereHas('kategoriBus', fn ($q) => $q->where('kapasitas_max', '>=', $kapasitas));
     }
 
-    // cek apakah armada memiliki fasilitas tertentu
+    // Cek apakah armada memiliki fasilitas tertentu
     public function hasFasilitas($namaFasilitas)
     {
         if (! $this->fasilitas || ! is_array($this->fasilitas)) {
@@ -123,35 +135,21 @@ class Armada extends Model
         return in_array($namaFasilitas, $this->fasilitas);
     }
 
-    // Get Daftar tipe bus yang tersedia
+    // Get daftar tipe bus dari KategoriBus
     public static function getDaftarTipeBus()
     {
-        return [
-            'SHD' => 'Super High Deck (SHD)',
-            'HDD' => 'High Deck (HDD)',
-            'Medium' => 'Medium Bus',
-            'Elf' => 'Elf/Microbus',
-            'HiAce' => 'HiAce/Minibus',
-        ];
+        return KategoriBus::pluck('nama_kategori', 'id')->toArray();
     }
 
-    // Get Jumlah gambar galeri
+    // Get jumlah gambar galeri
     public function getJumlahGaleriAttribute()
     {
-        if (! $this->galeri || ! is_array($this->galeri)) {
-            return 0;
-        }
-
-        return count($this->galeri);
+        return is_array($this->galeri) ? count($this->galeri) : 0;
     }
 
     // Get jumlah fasilitas
     public function getJumlahFasilitasAttribute()
     {
-        if (! $this->fasilitas || ! is_array($this->fasilitas)) {
-            return 0;
-        }
-
-        return count($this->fasilitas);
+        return is_array($this->fasilitas) ? count($this->fasilitas) : 0;
     }
 }

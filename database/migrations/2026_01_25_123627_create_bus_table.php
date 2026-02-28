@@ -13,11 +13,12 @@ return new class extends Migration
             $table->string('kode_bus', 50)->unique();
             $table->string('nama_bus');
             $table->foreignId('kategori_bus_id')->constrained('kategori_bus')->onDelete('restrict');
-            $table->foreignId('sopir_id')->unique()->constrained('sopir')->onDelete('restrict');
+            $table->foreignId('sopir_id')->nullable()->constrained('sopir')->onDelete('restrict');
             $table->string('warna_bus', 50);
             $table->string('nomor_polisi', 20)->unique();
             $table->enum('status', ['aktif', 'perawatan'])->default('aktif');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

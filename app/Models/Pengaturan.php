@@ -27,7 +27,7 @@ class Pengaturan extends Model
         'meta_description',
         'meta_keywords',
         'logo',
-        'favicon'
+        'favicon',
     ];
 
     // Helper method untuk get data pengaturan
@@ -40,6 +40,27 @@ class Pengaturan extends Model
     public static function getField($field, $default = null)
     {
         $pengaturan = self::first();
+
         return $pengaturan ? $pengaturan->$field : $default;
+    }
+
+    // Helper untuk mendapatkan path logo lengkap
+    public function getLogoPathAttribute()
+    {
+        if ($this->logo) {
+            return public_path('storage/'.$this->logo);
+        }
+
+        return null;
+    }
+
+    // Helper untuk mendapatkan URL logo
+    public function getLogoUrlAttribute()
+    {
+        if ($this->logo) {
+            return asset('storage/'.$this->logo);
+        }
+
+        return null;
     }
 }
