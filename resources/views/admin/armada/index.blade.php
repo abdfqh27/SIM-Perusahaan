@@ -433,7 +433,7 @@
                         <i class="fas fa-users"></i>
                     </div>
                     <div>
-                        <strong>Kapasitas:</strong> {{ $armada->kapasitas_min }} - {{ $armada->kapasitas_max }} penumpang
+                        <strong>Kapasitas:</strong> {{ $armada->kategoriBus->kapasitas_min }} - {{ $armada->kategoriBus->kapasitas_max }} penumpang
                     </div>
                 </div>
             </div>

@@ -481,21 +481,25 @@
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="tipe_bus" class="form-label">
+                    <label for="kategori_bus_id" class="form-label">
                         Tipe Bus<span class="required-indicator">*</span>
                     </label>
-                    <select class="form-select @error('tipe_bus') is-invalid @enderror"
-                            id="tipe_bus"
-                            name="tipe_bus"
-                            required>
+                    <select class="form-select @error('kategori_bus_id') is-invalid @enderror"
+                            id="kategori_bus_id"
+                            name="kategori_bus_id"
+                            required
+                            onchange="updateKapasitas(this)">
                         <option value="">-- Pilih Tipe Bus --</option>
-                        @foreach($daftarTipeBus as $tipe)
-                            <option value="{{ $tipe }}" {{ old('tipe_bus') == $tipe ? 'selected' : '' }}>
-                                {{ $tipe }}
+                        @foreach($kategoriBus as $kategori)
+                            <option value="{{ $kategori->id }}"
+                                    data-min="{{ $kategori->kapasitas_min }}"
+                                    data-max="{{ $kategori->kapasitas_max }}"
+                                    {{ old('kategori_bus_id') == $kategori->id ? 'selected' : '' }}>
+                                {{ $kategori->nama_kategori }}
                             </option>
                         @endforeach
                     </select>
-                    @error('tipe_bus')
+                    @error('kategori_bus_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -505,42 +509,22 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="kapasitas_min" class="form-label">
-                        Kapasitas Minimum<span class="required-indicator">*</span>
-                    </label>
-                    <input type="number"
-                           class="form-control @error('kapasitas_min') is-invalid @enderror"
-                           id="kapasitas_min"
-                           name="kapasitas_min"
-                           value="{{ old('kapasitas_min') }}"
-                           min="1"
-                           placeholder="20"
-                           required>
-                    @error('kapasitas_min')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                    <label class="form-label">Kapasitas Minimum</label>
+                    <input type="text" class="form-control" id="display_kapasitas_min" 
+                        value="{{ old('kategori_bus_id') ? $kategoriBus->find(old('kategori_bus_id'))?->kapasitas_min : '' }}"
+                        placeholder="Otomatis dari tipe bus" disabled>
                 </div>
             </div>
-
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="kapasitas_max" class="form-label">
-                        Kapasitas Maximum<span class="required-indicator">*</span>
-                    </label>
-                    <input type="number"
-                           class="form-control @error('kapasitas_max') is-invalid @enderror"
-                           id="kapasitas_max"
-                           name="kapasitas_max"
-                           value="{{ old('kapasitas_max') }}"
-                           min="1"
-                           placeholder="45"
-                           required>
-                    @error('kapasitas_max')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                    <label class="form-label">Kapasitas Maximum</label>
+                    <input type="text" class="form-control" id="display_kapasitas_max"
+                        value="{{ old('kategori_bus_id') ? $kategoriBus->find(old('kategori_bus_id'))?->kapasitas_max : '' }}"
+                        placeholder="Otomatis dari tipe bus" disabled>
                 </div>
             </div>
         </div>
+        <small class="text-muted d-block mb-3">Kapasitas diambil otomatis dari tipe bus yang dipilih</small>
 
         <div class="form-group">
             <label for="deskripsi" class="form-label">Deskripsi</label>
