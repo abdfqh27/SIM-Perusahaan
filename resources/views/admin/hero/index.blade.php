@@ -672,13 +672,13 @@
         });
         
         // Auto hide alerts
-        const alerts = document.querySelectorAll('.alert-success, .alert-danger');
-        alerts.forEach(alert => {
+        const heroAlerts = document.querySelectorAll('.hero-alert');
+        heroAlerts.forEach(alert => {
             setTimeout(() => {
                 alert.style.transition = 'opacity 0.5s ease';
                 alert.style.opacity = '0';
                 setTimeout(() => alert.remove(), 500);
-            }, 5000);
+            }, 10000);
         });
     });
 

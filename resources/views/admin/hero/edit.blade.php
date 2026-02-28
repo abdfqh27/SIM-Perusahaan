@@ -110,20 +110,6 @@
         font-weight: 600;
         font-size: 1rem;
     }
-
-    /* Animasi shake untuk field kosong */
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        20%       { transform: translateX(-8px); }
-        40%       { transform: translateX(8px); }
-        60%       { transform: translateX(-5px); }
-        80%       { transform: translateX(5px); }
-    }
-    .field-shake {
-        animation: shake 0.4s ease;
-        border-color: #dc3545 !important;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
-    }
 </style>
 
 <div class="gradient-header">
@@ -152,7 +138,7 @@
         <i class="fas fa-pen me-2"></i> Form Edit Hero Section
     </div>
     <div class="card-body">
-        <form id="heroEditForm" action="{{ route('admin.hero.update', $heroSection) }}" method="POST" enctype="multipart/form-data" novalidate>
+        <form id="heroEditForm" action="{{ route('admin.hero.update', $heroSection) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             
@@ -170,7 +156,8 @@
                            id="judul" 
                            name="judul" 
                            value="{{ old('judul', $heroSection->judul) }}" 
-                           placeholder="Masukkan judul hero section">
+                           placeholder="Masukkan judul hero section"
+                           required>
                     @error('judul')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -182,7 +169,8 @@
                               id="deskripsi" 
                               name="deskripsi" 
                               rows="4"
-                              placeholder="Masukkan deskripsi hero section">{{ old('deskripsi', $heroSection->deskripsi) }}</textarea>
+                              placeholder="Masukkan deskripsi hero section"
+                              required>{{ old('deskripsi', $heroSection->deskripsi) }}</textarea>
                     @error('deskripsi')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -204,7 +192,8 @@
                                id="tombol_text" 
                                name="tombol_text" 
                                value="{{ old('tombol_text', $heroSection->tombol_text) }}"
-                               placeholder="Contoh: Selengkapnya">
+                               placeholder="Contoh: Selengkapnya"
+                               required>
                         @error('tombol_text')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -217,7 +206,8 @@
                                id="tombol_link" 
                                name="tombol_link" 
                                value="{{ old('tombol_link', $heroSection->tombol_link) }}"
-                               placeholder="Contoh: /tentang-kami">
+                               placeholder="Contoh: /tentang-kami"
+                               required>
                         @error('tombol_link')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -248,7 +238,6 @@
                 @endif
                 
                 <div class="mb-3">
-                    {{-- Jika sudah ada gambar → opsional (ganti). Jika belum → wajib --}}
                     <label for="gambar" class="form-label">
                         @if($heroSection->gambar)
                             Ganti Gambar <span class="text-muted">(Opsional)</span>
@@ -256,14 +245,15 @@
                             Upload Gambar <span class="text-danger">*</span>
                         @endif
                     </label>
-                    <div class="image-upload-area" id="gambar-upload-area">
+                    <div class="image-upload-area">
                         <i class="fas fa-cloud-upload-alt upload-icon"></i>
                         <input type="file" 
                                class="form-control @error('gambar') is-invalid @enderror" 
                                id="gambar" 
                                name="gambar" 
                                accept="image/jpeg,image/jpg,image/png"
-                               onchange="previewImage(event)">
+                               onchange="previewImage(event)"
+                               @if(!$heroSection->gambar) required @endif>
                         <small class="text-muted d-block mt-2">
                             @if($heroSection->gambar)
                                 Kosongkan jika tidak ingin mengganti gambar<br>
@@ -368,20 +358,15 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-const urutanAwal      = {{ $heroSection->urutan }};
-const sudahAdaGambar  = {{ $heroSection->gambar ? 'true' : 'false' }};
+const urutanAwal = {{ $heroSection->urutan }};
 
-// PREVIEW GAMBAR 
+// Preview gambar
 function previewImage(event) {
     const preview = document.getElementById('imagePreview');
     const file    = event.target.files[0];
 
-    if (!file) {
-        preview.innerHTML = '';
-        return;
-    }
+    if (!file) { preview.innerHTML = ''; return; }
 
     if (file.size > 10240 * 1024) {
         Swal.fire({ icon: 'error', title: 'File Terlalu Besar', text: 'Ukuran file maksimal 10MB' });
@@ -398,9 +383,6 @@ function previewImage(event) {
         return;
     }
 
-    // Bersihkan error gambar jika sudah dipilih
-    clearFieldError('gambar');
-
     const reader  = new FileReader();
     reader.onload = function (e) {
         preview.innerHTML = `
@@ -416,116 +398,15 @@ function previewImage(event) {
     reader.readAsDataURL(file);
 }
 
-// HELPER: Tampilkan error ─
-function showFieldError(el, label) {
-    el.classList.add('is-invalid', 'field-shake');
-
-    let errEl = document.getElementById(el.id + '-error');
-    if (!errEl) {
-        errEl    = document.createElement('div');
-        errEl.id = el.id + '-error';
-        errEl.classList.add('invalid-feedback');
-        const insertAfter = el.closest('.image-upload-area') ?? el;
-        insertAfter.parentNode.insertBefore(errEl, insertAfter.nextSibling);
-    }
-    errEl.style.display = 'block';
-    errEl.textContent   = label + ' wajib diisi.';
-
-    el.addEventListener('animationend', () => el.classList.remove('field-shake'), { once: true });
-}
-
-// HELPER: Bersihkan error ─
-function clearFieldError(id) {
-    const el    = document.getElementById(id);
-    const errEl = document.getElementById(id + '-error');
-    if (el)    el.classList.remove('is-invalid');
-    if (errEl) errEl.style.display = 'none';
-}
-
-// HELPER: Scroll ke field ─
-function scrollToField(el) {
-    const offset = 80;
-    const top    = el.getBoundingClientRect().top + window.pageYOffset - offset;
-    window.scrollTo({ top, behavior: 'smooth' });
-    if (el.type !== 'file' && el.tagName !== 'SELECT') el.focus();
-}
-
-// BERSIHKAN ERROR SAAT USER MENGISI ['judul', 'deskripsi', 'tombol_text', 'tombol_link'].forEach(function (id) {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', function () {
-        if (el.value.trim()) clearFieldError(id);
-    });
-});
-document.getElementById('gambar').addEventListener('change', function () {
-    if (this.files.length > 0) clearFieldError('gambar');
-});
-
-// VALIDASI SEMUA FIELD WAJIB 
-function validateAllFields() {
-    // Field teks yang selalu wajib
-    const textFields = [
-        { id: 'judul',       label: 'Judul'       },
-        { id: 'deskripsi',   label: 'Deskripsi'   },
-        { id: 'tombol_text', label: 'Teks Tombol' },
-        { id: 'tombol_link', label: 'Link Tombol' },
-    ];
-
-    let firstEmptyEl = null;
-
-    textFields.forEach(function (field) {
-        const el    = document.getElementById(field.id);
-        const empty = !el || el.value.trim() === '';
-        if (empty) {
-            showFieldError(el, field.label);
-            if (!firstEmptyEl) firstEmptyEl = el;
-        } else {
-            clearFieldError(field.id);
-        }
-    });
-
-    // Gambar hanya wajib jika belum ada gambar sebelumnya
-    if (!sudahAdaGambar) {
-        const gambarEl = document.getElementById('gambar');
-        const empty    = !gambarEl || gambarEl.files.length === 0;
-        if (empty) {
-            showFieldError(gambarEl, 'Gambar');
-            if (!firstEmptyEl) firstEmptyEl = gambarEl;
-        } else {
-            clearFieldError('gambar');
-        }
-    }
-
-    if (firstEmptyEl) {
-        scrollToField(firstEmptyEl);
-        return false;
-    }
-
-    return true;
-}
-
-// SUBMIT FORM 
+// Konfirmasi update
 document.getElementById('heroEditForm').addEventListener('submit', function (e) {
     e.preventDefault();
+    const form = this;
 
-    // Validasi dulu — jika ada yang kosong, STOP (tidak ada konfirmasi/loading)
-    if (!validateAllFields()) return;
-
-    // Semua terisi → tampilkan konfirmasi
     const urutanBaru = parseInt(document.getElementById('urutan').value);
-    let confirmMessage = '';
-
-    if (urutanBaru !== urutanAwal) {
-        confirmMessage = `
-            <strong>Tukar Urutan:</strong><br>
-            Dari urutan <strong>#${urutanAwal}</strong> ke <strong>#${urutanBaru}</strong><br>
-            <small class="text-muted">Hero lain akan otomatis bergeser menyesuaikan urutan.</small>
-        `;
-    } else {
-        confirmMessage = `
-            Apakah Anda yakin ingin mengupdate data hero section ini?<br>
-            <small class="text-muted">Urutan tetap di posisi #${urutanAwal}</small>
-        `;
-    }
+    const confirmMessage = urutanBaru !== urutanAwal
+        ? `<strong>Tukar Urutan:</strong><br>Dari urutan <strong>#${urutanAwal}</strong> ke <strong>#${urutanBaru}</strong><br><small class="text-muted">Hero lain akan otomatis bergeser menyesuaikan urutan.</small>`
+        : `Apakah Anda yakin ingin mengupdate data hero section ini?<br><small class="text-muted">Urutan tetap di posisi #${urutanAwal}</small>`;
 
     Swal.fire({
         title: 'Konfirmasi Update',
@@ -534,9 +415,11 @@ document.getElementById('heroEditForm').addEventListener('submit', function (e) 
         showCancelButton: true,
         confirmButtonText: '<i class="fas fa-check"></i> Ya, Update',
         cancelButtonText:  '<i class="fas fa-times"></i> Batal',
+        confirmButtonColor: '#fb8500',
+        cancelButtonColor:  '#6c757d',
         reverseButtons: true,
-        focusCancel: true
-    }).then((result) => {
+        focusCancel: true,
+    }).then(result => {
         if (result.isConfirmed) {
             Swal.fire({
                 title: 'Mengupdate Data...',
@@ -545,7 +428,7 @@ document.getElementById('heroEditForm').addEventListener('submit', function (e) 
                 allowEscapeKey: false,
                 didOpen: () => Swal.showLoading()
             });
-            this.submit();
+            form.submit();
         }
     });
 });

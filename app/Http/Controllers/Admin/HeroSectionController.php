@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ImageHelper;
 use App\Http\Controllers\Controller;
 use App\Models\HeroSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class HeroSectionController extends Controller
 {
@@ -19,7 +19,6 @@ class HeroSectionController extends Controller
 
     public function create()
     {
-        // Ambil urutan terakhir + 1 untuk urutan baru otomatis
         $nextUrutan = HeroSection::max('urutan') + 1;
 
         return view('admin.hero.create', compact('nextUrutan'));
@@ -32,13 +31,23 @@ class HeroSectionController extends Controller
             'deskripsi' => 'required|string',
             'tombol_text' => 'required|string|max:100',
             'tombol_link' => 'required|string|max:255',
-            'gambar' => 'required|image|mimes:jpeg,jpg,png|max:10240',
+            'gambar' => 'required|image|mimes:jpeg,jpg,png,webp|max:10240',
             'aktif' => 'boolean',
+        ], [
+            'gambar.required' => 'Gambar wajib diupload',
+            'gambar.image' => 'File harus berupa gambar',
+            'gambar.mimes' => 'Format gambar harus jpeg, jpg, png, atau webp',
+            'gambar.max' => 'Ukuran gambar maksimal 10MB',
         ]);
 
-        // Upload gambar jika ada
+        // Upload gambar (convert ke WebP HD)
         if ($request->hasFile('gambar')) {
-            $validated['gambar'] = $this->handleImageUpload($request->file('gambar'), 'hero');
+            $validated['gambar'] = ImageHelper::uploadHDWebP(
+                $request->file('gambar'),
+                'hero',
+                1920,
+                90
+            );
         }
 
         // Set urutan otomatis ke urutan terakhir + 1
@@ -57,7 +66,6 @@ class HeroSectionController extends Controller
 
     public function edit(HeroSection $heroSection)
     {
-        // Ambil semua hero untuk dropdown urutan
         $allHeroes = HeroSection::orderBy('urutan')->get();
         $maxUrutan = HeroSection::max('urutan');
 
@@ -74,7 +82,7 @@ class HeroSectionController extends Controller
             'gambar' => [
                 $heroSection->gambar ? 'nullable' : 'required',
                 'image',
-                'mimes:jpeg,jpg,png',
+                'mimes:jpeg,jpg,png,webp',
                 'max:10240',
             ],
             'urutan' => [
@@ -85,6 +93,10 @@ class HeroSectionController extends Controller
             ],
             'aktif' => 'boolean',
         ], [
+            'gambar.required' => 'Gambar wajib diupload',
+            'gambar.image' => 'File harus berupa gambar',
+            'gambar.mimes' => 'Format gambar harus jpeg, jpg, png, atau webp',
+            'gambar.max' => 'Ukuran gambar maksimal 10MB',
             'urutan.required' => 'Urutan wajib diisi',
             'urutan.integer' => 'Urutan harus berupa angka',
             'urutan.min' => 'Urutan tidak boleh kurang dari 1',
@@ -94,12 +106,17 @@ class HeroSectionController extends Controller
         $urutanLama = $heroSection->urutan;
         $urutanBaru = $validated['urutan'];
 
-        // Upload gambar baru jika ada
+        // Upload gambar baru (convert ke WebP HD), hapus gambar lama
         if ($request->hasFile('gambar')) {
-            $validated['gambar'] = $this->handleImageUpload(
+            if ($heroSection->gambar) {
+                ImageHelper::delete($heroSection->gambar);
+            }
+
+            $validated['gambar'] = ImageHelper::uploadHDWebP(
                 $request->file('gambar'),
                 'hero',
-                $heroSection->gambar
+                1920,
+                90
             );
         }
 
@@ -110,9 +127,8 @@ class HeroSectionController extends Controller
                 DB::statement('UPDATE hero_section SET urutan = -1 WHERE id = ?', [$heroSection->id]);
 
                 if ($urutanBaru < $urutanLama) {
-                    // Pindah ke atas (contoh: urutan 3 -> 1)
-                    // Hero di urutan 1, 2 harus bergeser ke 2, 3
-                    // ORDER BY DESC: proses terbesar dulu → tidak bentrok unique constraint
+                    // Pindah ke atas: geser ke bawah semua yang ada di antara urutanBaru s/d urutanLama-1
+                    // ORDER BY DESC agar tidak bentrok unique constraint
                     DB::statement('
                         UPDATE hero_section
                         SET urutan = urutan + 1
@@ -121,9 +137,8 @@ class HeroSectionController extends Controller
                         ORDER BY urutan DESC
                     ', [$urutanBaru, $urutanLama]);
                 } else {
-                    // Pindah ke bawah (contoh: urutan 1 -> 3)
-                    // Hero di urutan 2, 3 harus bergeser ke 1, 2
-                    // ORDER BY ASC: proses terkecil dulu → tidak bentrok unique constraint
+                    // Pindah ke bawah: geser ke atas semua yang ada di antara urutanLama+1 s/d urutanBaru
+                    // ORDER BY ASC agar tidak bentrok unique constraint
                     DB::statement('
                         UPDATE hero_section
                         SET urutan = urutan - 1
@@ -139,7 +154,6 @@ class HeroSectionController extends Controller
                 $heroSection->save();
             });
         } else {
-            // Jika urutan tidak berubah, update biasa
             $heroSection->update($validated);
         }
 
@@ -155,13 +169,14 @@ class HeroSectionController extends Controller
         $urutanDihapus = $heroSection->urutan;
 
         DB::transaction(function () use ($heroSection, $urutanDihapus) {
-            // Hapus gambar jika ada
-            $this->handleImageDelete($heroSection->gambar);
+            // Hapus gambar dari storage
+            if ($heroSection->gambar) {
+                ImageHelper::delete($heroSection->gambar);
+            }
 
-            // Hapus hero
             $heroSection->delete();
 
-            // Rapikan urutan setelah dihapus (urutan di bawahnya naik semua)
+            // Rapikan urutan: semua di bawahnya naik satu
             // ORDER BY ASC agar decrement tidak bentrok unique constraint
             DB::statement('
                 UPDATE hero_section
@@ -173,26 +188,5 @@ class HeroSectionController extends Controller
 
         return redirect()->route('admin.hero.index')
             ->with('success', 'Hero section berhasil dihapus dan urutan disesuaikan');
-    }
-
-    protected function handleImageUpload(\Illuminate\Http\UploadedFile $file, string $folder, ?string $oldImage = null): string
-    {
-        // Hapus gambar lama jika ada
-        if ($oldImage) {
-            $this->handleImageDelete($oldImage);
-        }
-
-        // Upload gambar baru
-        $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
-        $path = $file->storeAs($folder, $filename, 'public');
-
-        return $path;
-    }
-
-    protected function handleImageDelete(?string $path): void
-    {
-        if ($path && Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
-        }
     }
 }

@@ -97,20 +97,6 @@
         color: var(--blue-light);
         margin-right: 0.5rem;
     }
-
-    /* Highlight animasi untuk field yang kosong */
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        20%       { transform: translateX(-8px); }
-        40%       { transform: translateX(8px); }
-        60%       { transform: translateX(-5px); }
-        80%       { transform: translateX(5px); }
-    }
-    .field-shake {
-        animation: shake 0.4s ease;
-        border-color: #dc3545 !important;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
-    }
 </style>
 
 <!-- Header Section -->
@@ -140,7 +126,7 @@
         <i class="fas fa-edit me-2"></i> Form Tambah Hero Section
     </div>
     <div class="card-body">
-        <form id="heroForm" action="{{ route('admin.hero.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+        <form id="heroForm" action="{{ route('admin.hero.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             
             <!-- Informasi Urutan Otomatis -->
@@ -180,11 +166,10 @@
                            name="judul" 
                            value="{{ old('judul') }}" 
                            placeholder="Masukkan judul hero section"
-                           data-label="Judul">
+                           required>
                     @error('judul')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                    <div class="invalid-feedback" id="judul-error"></div>
                 </div>
 
                 <div class="mb-3">
@@ -193,7 +178,8 @@
                               id="deskripsi" 
                               name="deskripsi" 
                               rows="4"
-                              placeholder="Masukkan deskripsi hero section (opsional)">{{ old('deskripsi') }}</textarea>
+                              placeholder="Masukkan deskripsi hero section"
+                              required>{{ old('deskripsi') }}</textarea>
                     @error('deskripsi')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -215,7 +201,8 @@
                                id="tombol_text" 
                                name="tombol_text" 
                                value="{{ old('tombol_text') }}"
-                               placeholder="Contoh: Selengkapnya">
+                               placeholder="Contoh: Selengkapnya"
+                               required>
                         @error('tombol_text')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -228,7 +215,8 @@
                                id="tombol_link" 
                                name="tombol_link" 
                                value="{{ old('tombol_link') }}"
-                               placeholder="Contoh: /tentang-kami">
+                               placeholder="Contoh: /tentang-kami"
+                               required>
                         @error('tombol_link')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -252,7 +240,8 @@
                                id="gambar" 
                                name="gambar" 
                                accept="image/jpeg,image/jpg,image/png"
-                               onchange="previewImage(event)">
+                               onchange="previewImage(event)"
+                               required>
                         <small class="text-muted d-block mt-2">
                             Format: JPG, PNG | Maksimal: 10MB | Rekomendasi: 1920x1080px
                         </small>
@@ -300,21 +289,15 @@
 @endsection
 
 @push('scripts')
-<!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-// PREVIEW GAMBAR 
+// Preview gambar
 function previewImage(event) {
     const preview = document.getElementById('imagePreview');
     const file    = event.target.files[0];
 
-    if (!file) {
-        preview.innerHTML = '';
-        return;
-    }
+    if (!file) { preview.innerHTML = ''; return; }
 
-    // Validasi ukuran file (maks 10MB)
     if (file.size > 10240 * 1024) {
         Swal.fire({ icon: 'error', title: 'File Terlalu Besar', text: 'Ukuran file maksimal 10MB' });
         event.target.value = '';
@@ -322,7 +305,6 @@ function previewImage(event) {
         return;
     }
 
-    // Validasi tipe file
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     if (!validTypes.includes(file.type)) {
         Swal.fire({ icon: 'error', title: 'Format Tidak Valid', text: 'Hanya JPG, JPEG, dan PNG yang diperbolehkan' });
@@ -330,9 +312,6 @@ function previewImage(event) {
         preview.innerHTML  = '';
         return;
     }
-
-    // Bersihkan error gambar jika file sudah dipilih
-    clearFieldError('gambar');
 
     const reader  = new FileReader();
     reader.onload = function (e) {
@@ -346,97 +325,11 @@ function previewImage(event) {
     reader.readAsDataURL(file);
 }
 
-// HELPER: Tampilkan error pada field ─
-function showFieldError(el, label) {
-    el.classList.add('is-invalid', 'field-shake');
-
-    let errEl = document.getElementById(el.id + '-error');
-    if (!errEl) {
-        errEl    = document.createElement('div');
-        errEl.id = el.id + '-error';
-        errEl.classList.add('invalid-feedback');
-        // Untuk input file, taruh error setelah parent .image-upload-area
-        const insertAfter = el.closest('.image-upload-area') ?? el;
-        insertAfter.parentNode.insertBefore(errEl, insertAfter.nextSibling);
-    }
-    errEl.style.display = 'block';
-    errEl.textContent   = label + ' wajib diisi.';
-
-    el.addEventListener('animationend', () => el.classList.remove('field-shake'), { once: true });
-}
-
-// HELPER: Bersihkan error pada field ─
-function clearFieldError(id) {
-    const el    = document.getElementById(id);
-    const errEl = document.getElementById(id + '-error');
-    if (el)    el.classList.remove('is-invalid');
-    if (errEl) errEl.style.display = 'none';
-}
-
-// HELPER: Scroll ke field 
-function scrollToField(el) {
-    const offset = 80;
-    const top    = el.getBoundingClientRect().top + window.pageYOffset - offset;
-    window.scrollTo({ top, behavior: 'smooth' });
-    // Fokus hanya untuk non-file input
-    if (el.type !== 'file') el.focus();
-}
-
-// BERSIHKAN ERROR SAAT USER MENGISI ['judul', 'deskripsi', 'tombol_text', 'tombol_link'].forEach(function (id) {
-    const el = document.getElementById(id);
-    if (el) {
-        el.addEventListener('input', function () {
-            if (el.value.trim()) clearFieldError(id);
-        });
-    }
-});
-// Gambar: clear error saat file berubah (sudah ditangani di previewImage)
-document.getElementById('gambar').addEventListener('change', function () {
-    if (this.files.length > 0) clearFieldError('gambar');
-});
-
-// VALIDASI SEMUA FIELD WAJIB 
-function validateAllFields() {
-    const fields = [
-        { id: 'judul',       label: 'Judul',       type: 'text' },
-        { id: 'deskripsi',   label: 'Deskripsi',   type: 'text' },
-        { id: 'tombol_text', label: 'Teks Tombol', type: 'text' },
-        { id: 'tombol_link', label: 'Link Tombol', type: 'text' },
-        { id: 'gambar',      label: 'Gambar',      type: 'file' },
-    ];
-
-    let firstEmptyEl = null;
-
-    fields.forEach(function (field) {
-        const el      = document.getElementById(field.id);
-        const isEmpty = field.type === 'file'
-            ? (!el || el.files.length === 0)
-            : (!el || el.value.trim() === '');
-
-        if (isEmpty) {
-            showFieldError(el, field.label);
-            if (!firstEmptyEl) firstEmptyEl = el;
-        } else {
-            clearFieldError(field.id);
-        }
-    });
-
-    if (firstEmptyEl) {
-        scrollToField(firstEmptyEl);
-        return false;
-    }
-
-    return true;
-}
-
-// SUBMIT FORM 
+// Konfirmasi simpan
 document.getElementById('heroForm').addEventListener('submit', function (e) {
     e.preventDefault();
+    const form = this;
 
-    // Validasi dulu — jika ada yang kosong, STOP di sini (tidak ada konfirmasi/loading)
-    if (!validateAllFields()) return;
-
-    // Semua terisi → tampilkan konfirmasi
     Swal.fire({
         title: 'Konfirmasi Penyimpanan',
         html: 'Hero baru akan ditambahkan ke urutan <strong>#{{ $nextUrutan }}</strong><br><small class="text-muted">Pastikan semua data sudah benar sebelum menyimpan.</small>',
@@ -444,9 +337,11 @@ document.getElementById('heroForm').addEventListener('submit', function (e) {
         showCancelButton: true,
         confirmButtonText: '<i class="fas fa-check"></i> Ya, Simpan',
         cancelButtonText:  '<i class="fas fa-times"></i> Batal',
+        confirmButtonColor: '#fb8500',
+        cancelButtonColor:  '#6c757d',
         reverseButtons: true,
-        focusCancel: true
-    }).then((result) => {
+        focusCancel: true,
+    }).then(result => {
         if (result.isConfirmed) {
             Swal.fire({
                 title: 'Menyimpan Data...',
@@ -455,7 +350,7 @@ document.getElementById('heroForm').addEventListener('submit', function (e) {
                 allowEscapeKey: false,
                 didOpen: () => Swal.showLoading()
             });
-            this.submit();
+            form.submit();
         }
     });
 });
